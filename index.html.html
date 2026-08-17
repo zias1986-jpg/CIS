@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)file:///C:/Users/USER/Desktop/calculator.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial Seat Rate &amp; 3-Model Billing Calculator</title>
+<style>
+  :root {
+    --primary: #0f2756;
+    --primary-light: #f0f6ff;
+    --accent: #2563eb;
+    --border: #cbd5e1;
+    --bg: #f8fafc;
+    --text: #0f172a;
+    --card-bg: #ffffff;
+    --pill-bg: #dbeafe;
+    --pill-text: #1e40af;
+    --success-bg: #dcfce7;
+    --success-text: #166534;
+    --v3-color: #0284c7;
+    --v4-color: #7c3aed;
+  }
+  * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); }
+  .container { max-width: 1320px; margin: 0 auto; }
+  .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+  h1 { font-size: 22px; color: var(--primary); margin-top: 0; margin-bottom: 16px; }
+  h2 { font-size: 15px; margin-top: 0; margin-bottom: 14px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .form-group { display: flex; flex-direction: column; }
+  label { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+  input, select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; outline: none; background: #fff; }
+  input:focus, select:focus { border-color: var(--accent); }
+  .readonly-input { background: #f1f5f9 !important; font-weight: 600; color: var(--primary); }
+  .badge { font-size: 11px; padding: 3px 8px; background: var(--pill-bg); color: var(--pill-text); border-radius: 12px; font-weight: 600; }
+  .badge-success { background: var(--success-bg); color: var(--success-text); }
+  .badge-v3 { background: #e0f2fe; color: #0369a1; }
+  .badge-v4 { background: #ede9fe; color: #6d28d9; }
+  
+  /* Proposal Comparison Highlight Cards */
+  .proposal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; margin-bottom: 16px; }
+  @media (max-width: 820px) { .proposal-grid { grid-template-columns: 1fr; } }
+  .proposal-card { border-radius: 8px; padding: 18px; border: 2px solid; }
+  .v3-card { background: #f0f9ff; border-color: #7dd3fc; }
+  .v4-card { background: #faf5ff; border-color: #c4b5fd; }
+  .proposal-card .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .proposal-card .rate-title { font-size: 16px; font-weight: 700; }
+  .v3-card .rate-title { color: #0369a1; }
+  .v4-card .rate-title { color: #6d28d9; }
+  .big-rate { font-size: 26px; font-weight: 800; margin: 4px 0 2px 0; }
+  .v3-card .big-rate { color: #0284c7; }
+  .v4-card .big-rate { color: #7c3aed; }
+  .rate-sub { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+  .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed rgba(0,0,0,0.12); font-size: 12.5px; }
+  .stat-row:last-child { border-bottom: none; }
+  .highlight-val { font-size: 13.5px; font-weight: 700; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 14px; margin-top: 10px; }
+  .kpi-box { background: var(--primary-light); border: 1px solid #bfdbfe; border-radius: 6px; padding: 12px; text-align: center; }
+  .kpi-box-margin { background: #f0fdf4; border-color: #bbf7d0; }
+  .kpi-box .label { font-size: 12px; font-weight: 600; color: #1e40af; }
+  .kpi-box-margin .label { color: #166534; }
+  .kpi-box .value { font-size: 18px; font-weight: 700; color: var(--primary); margin-top: 4px; }
+  .kpi-box-margin .value { color: #15803d; }
+  .model-banner { padding: 12px 16px; border-radius: 6px; margin-bottom: 14px; font-size: 12.5px; line-height: 1.5; }
+  .model-nonbillable { background: #eff6ff; border-left: 5px solid #3b82f6; color: #1e3a8a; }
+  .model-parity { background: #f0fdf4; border-left: 5px solid #22c55e; color: #166534; }
+  .model-billable { background: #fefce8; border-left: 5px solid #eab308; color: #854d0e; }
+  
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  th { background: #f1f5f9; font-weight: 600; color: #334155; }
+  tr:nth-child(even) { background: #f8fafc; }
+  .total-row { font-weight: 700; background: #e2e8f0 !important; }
+  .table-input { width: 100%; padding: 6px 8px; font-size: 12px; border: 1px solid var(--border); border-radius: 4px; }
+  .btn-action { padding: 6px 12px; background: var(--accent); color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
+  .btn-action:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Commercial Seat Rate &amp; 3-Model Client Billing Calculator</h1>
+
+  <!-- 3 COMMERCIAL MODELS CLIENT PROPOSAL CARD -->
+  <div class="card" style="border: 2px solid #2563eb;">
+    <h2>
+      <span>Final Commercial Billing Proposal (Versant 3 vs. Versant 4)</span>
+      <span class="badge badge-success">3 Pricing Models</span>
+    </h2>
+
+    <!-- 3 Models Selector -->
+    <div class="grid" style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:14px;">
+      <div class="form-group" style="grid-column: span 2;">
+        <label style="font-size: 13px; color: #0f2756;">Select Commercial Billing Model (Choose 1 of 3)</label>
+        <select id="commercialModelSelect" style="font-weight:600; font-size:13.5px; border-color:#2563eb;" onchange="calculate()">
+          <option value="support_non_billable" selected="">1. Support Non-Billable Rate (Support Cost Bundled into Billable Agent FTE Rate)</option>
+          <option value="bundled_agent_parity">2. Bundled with Agent Rate Parity (Support &amp; Agents Billed at Same Parity FTE Rate)</option>
+          <option value="support_billable">3. Support Billable (Unbundled Direct Line Items — Agent Standalone + Support Invoicing)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="grid-column: span 2;">
+        <label>Selected Model Commercial Governance Rule</label>
+        <input type="text" id="modelRuleDescription" class="readonly-input" readonly="" value="Support staff (TL, QA, AM, MIS, Trainer) is non-billable to the client. All support overhead is absorbed into the Billable Agent FTE rate.">
+      </div>
+    </div>
+
+    <div id="modelBanner" class="model-banner model-billable"><b>Model 3: Support Billable (Unbundled Direct Line Items)</b> — Agent FTE rate excludes support staff burden (billed as pure standalone agent rate). Support staff are invoiced separately as direct billable line items at ₹4,48,180 / mo.</div>
+
+    <!-- Side-by-Side Proposal Highlight Cards -->
+    <div class="proposal-grid">
+      <!-- Versant 3 Card -->
+      <div class="proposal-card v3-card">
+        <div class="title-row">
+          <span class="rate-title">Versant 3 Proposal (Baseline Voice)</span>
+          <span class="badge badge-v3" id="v3PremiumTag">+₹0 Premium</span>
+        </div>
+        <div class="big-rate" id="v3BilledFte">₹29,136</div>
+        <div class="rate-sub" id="v3RateUnitLabel">Standalone Agent Billed Rate per FTE / Month (@ 18% GM)</div>
+        
+        <div class="stat-row">
+          <span>Billed Rate per Physical Seat:</span>
+          <strong class="highlight-val" id="v3BilledSeat" style="color:#0369a1;">₹29,457 / seat / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Total Monthly Invoicing:</span>
+          <strong id="v3MonthlyTcv">₹33,61,812 / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Monthly Gross Margin:</span>
+          <strong id="v3MarginMonthly" style="color:#166534;">₹6,05,126 / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Annual Contract Value (ACV):</span>
+          <strong id="v3Acv">₹4,03,41,749</strong>
+        </div>
+      </div>
+
+      <!-- Versant 4 Card -->
+      <div class="proposal-card v4-card">
+        <div class="title-row">
+          <span class="rate-title">Versant 4 Proposal (Enhanced Voice)</span>
+          <span class="badge badge-v4" id="v4PremiumTag">+₹3,000 Extra</span>
+        </div>
+        <div class="big-rate" id="v4BilledFte">₹32,755</div>
+        <div class="rate-sub" id="v4RateUnitLabel">Standalone Agent Billed Rate per FTE / Month (@ 18% GM)</div>
+        
+        <div class="stat-row">
+          <span>Billed Rate per Physical Seat:</span>
+          <strong class="highlight-val" id="v4BilledSeat" style="color:#6d28d9;">₹33,115 / seat / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Total Monthly Invoicing:</span>
+          <strong id="v4MonthlyTcv">₹37,23,689 / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Monthly Gross Margin:</span>
+          <strong id="v4MarginMonthly" style="color:#166534;">₹6,70,264 / mo</strong>
+        </div>
+        <div class="stat-row">
+          <span>Annual Contract Value (ACV):</span>
+          <strong id="v4Acv">₹4,46,84,273</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Detailed Comparison Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Commercial &amp; Pricing Line Item</th>
+          <th style="background:#e0f2fe; color:#0369a1;">Versant 3 Proposal</th>
+          <th style="background:#ede9fe; color:#6d28d9;">Versant 4 Proposal</th>
+          <th>Rate Delta (V4 - V3)</th>
+        </tr>
+      </thead>
+      <tbody id="versantComparisonTbody"><tr style="">
+      <td>Effective Agent Base CTC</td>
+      <td style="">₹18,000</td>
+      <td style="">₹21,000</td>
+      <td style="color:#2563eb; font-weight:600;">+₹3,000</td>
+    </tr><tr style="">
+      <td>Agent Direct Salary per FTE (Loaded)</td>
+      <td style="">₹17,804</td>
+      <td style="">₹20,772</td>
+      <td style="color:#2563eb; font-weight:600;">+₹2,967</td>
+    </tr><tr style="">
+      <td>Support Staff Billing (Invoiced Separately)</td>
+      <td style="">₹4,48,180 / mo</td>
+      <td style="">₹4,48,180 / mo</td>
+      <td style="color:#2563eb; font-weight:600;">-</td>
+    </tr><tr style="">
+      <td>Agent Production Seat Infra+IT Cost</td>
+      <td style="">₹4,748</td>
+      <td style="">₹4,748</td>
+      <td style="color:#2563eb; font-weight:600;">+₹0</td>
+    </tr><tr style="">
+      <td>Target Gross Margin (%)</td>
+      <td style="">18%</td>
+      <td style="">18%</td>
+      <td style="color:#2563eb; font-weight:600;">-</td>
+    </tr><tr style="background:#ecfdf5; font-weight:800; font-size:14px; border:2px solid #10b981;">
+      <td>STANDALONE AGENT BILLED RATE / FTE</td>
+      <td style="">₹29,136</td>
+      <td style="">₹32,755</td>
+      <td style="color:#2563eb; font-weight:600;">+₹3,619</td>
+    </tr><tr style="background:#f0f9ff; font-weight:800; font-size:13.5px; border:2px solid #0284c7;">
+      <td>AGENT PRODUCTION SEAT RATE (75 Seats)</td>
+      <td style="">₹29,457</td>
+      <td style="">₹33,115</td>
+      <td style="color:#2563eb; font-weight:600;">+₹3,659</td>
+    </tr><tr style="font-weight:700;">
+      <td>TOTAL MONTHLY INVOICE VALUE</td>
+      <td style="">₹33,61,812</td>
+      <td style="">₹37,23,689</td>
+      <td style="color:#2563eb; font-weight:600;">+₹3,61,877</td>
+    </tr><tr style="">
+      <td>Monthly Gross Margin Realized</td>
+      <td style="color:#166534; font-weight:700;">₹6,05,126</td>
+      <td style="color:#166534; font-weight:700;">₹6,70,264</td>
+      <td style="color:#2563eb; font-weight:600;">+₹65,138</td>
+    </tr></tbody>
+    </table>
+  </div>
+
+  <!-- 1. Location & Statutory Minimum Wage Reference -->
+  <div class="card">
+    <h2>
+      <span>1. Location &amp; Statutory Minimum Wage Baseline</span>
+      <span class="badge">w.e.f. 01.04.2026 Gazette Rates</span>
+    </h2>
+    <div class="grid">
+      <div class="form-group">
+        <label>State / Union Territory</label>
+        <select id="stateSelect" onchange="handleStateChange()">
+          <option value="MH">Maharashtra</option>
+          <option value="DL" selected="">Delhi (NCT)</option>
+          <option value="KA">Karnataka</option>
+          <option value="TN">Tamil Nadu</option>
+          <option value="TS">Telangana</option>
+          <option value="UP">Uttar Pradesh</option>
+          <option value="WB">West Bengal</option>
+          <option value="GJ">Gujarat</option>
+          <option value="HR">Haryana</option>
+          <option value="RJ">Rajasthan</option>
+          <option value="AP">Andhra Pradesh</option>
+          <option value="KL">Kerala</option>
+          <option value="MP">Madhya Pradesh</option>
+          <option value="PB">Punjab</option>
+          <option value="BR">Bihar</option>
+          <option value="OD">Odisha</option>
+          <option value="JH">Jharkhand</option>
+          <option value="CT">Chhattisgarh</option>
+          <option value="UK">Uttarakhand</option>
+          <option value="GA">Goa</option>
+          <option value="AS">Assam</option>
+          <option value="JK">Jammu &amp; Kashmir</option>
+          <option value="CH">Chandigarh</option>
+          <option value="PY">Puducherry</option>
+          <option value="OTHER">Other States / UTs</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>City / Location Type</label>
+        <select id="citySelect" onchange="handleCityChange()"><option value="B">Bhopal / Indore / Jabalpur / Gwalior [Area B]</option><option value="C">Rest of Madhya Pradesh [Area C]</option></select>
+      </div>
+
+      <div class="form-group">
+        <label>Gazette Area Tier (Auto Updates Wage, Infra &amp; IT)</label>
+        <select id="areaTier" onchange="applyLocationAndWage(true)">
+          <option value="A" selected="">Area A (Metros / Major Urban)</option>
+          <option value="B">Area B (Tier-2 Agglomerations)</option>
+          <option value="C">Area C (Rest of State / Non-Metro)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Statutory Worker Category</label>
+        <select id="workerCategory" onchange="applyLocationAndWage(false)">
+          <option value="watch_noarms" selected="">Watch &amp; Ward / Security (No Arms)</option>
+          <option value="watch_arms">Watch &amp; Ward / Security (With Arms)</option>
+          <option value="clerical_skilled">Clerical / Skilled (Construction Schedule)</option>
+          <option value="semi_skilled">Semi-Skilled / Supervisory</option>
+          <option value="unskilled">Unskilled Operations / Housekeeping</option>
+          <option value="sweeping">Sweeping &amp; Cleaning</option>
+          <option value="custom">Custom / State-Specific Board Wage</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Operational Days</label>
+        <input type="number" id="workingDays" value="26" oninput="applyLocationAndWage(false)">
+      </div>
+
+      <div class="form-group">
+        <label>Statutory Minimum Floor (Daily / Monthly)</label>
+        <input type="text" id="statutoryFloorDisplay" class="readonly-input" readonly="" value="Rs. 1,008 / day (₹26,208/mo)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Operational Sizing, Attrition & Seat Utilization Dynamics -->
+  <div class="card">
+    <h2>
+      <span>2. Operational Sizing &amp; Seat Utilization Dynamics</span>
+      <span class="badge">Shift &amp; Seat Sizing</span>
+    </h2>
+    <div class="grid">
+      <div class="form-group">
+        <label>Billable Agent FTEs</label>
+        <input type="number" id="billableFte" value="100" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Seat Utilization (%) / Shift Factor</label>
+        <input type="number" id="seatUtilizationPct" value="131.87" step="0.5" placeholder="e.g. 131.87% (1.32 FTE/seat)" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>FTE Definition in Monthly Hours</label>
+        <input type="number" id="fteHrsDefn" value="182" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Attrition Rate (%)</label>
+        <input type="number" id="attritionPct" value="10" step="0.5" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Training Throughput / Pass Rate (%)</label>
+        <input type="number" id="throughputPct" value="85" step="1" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Training Duration (Days)</label>
+        <input type="number" id="trainingDays" value="0" min="0" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Is Training Billable to Client?</label>
+        <select id="trainingBillable" onchange="calculate()">
+          <option value="no" selected="">No (Non-Billable — Loaded into FTE Cost &amp; Buffers)</option>
+          <option value="yes">Yes (Billable — Trainees Billed Separately by Client)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Agent Production Seats Required</label>
+        <input type="text" id="csaSeatsDisplay" class="readonly-input" readonly="" value="75.01 Physical Seats">
+      </div>
+
+      <div class="form-group">
+        <label>Total Facility Physical Seats (Agent + Support)</label>
+        <input type="text" id="totalPhysicalSeatsDisplay" class="readonly-input" readonly="" value="82.86 Physical Seats">
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Agent Base Salary Matrix & Versant Premiums -->
+  <div class="card">
+    <h2>
+      <span>3. Agent Base Salary Matrix &amp; Versant Premiums</span>
+      <span class="badge">Editable CTC</span>
+    </h2>
+    <div class="grid">
+      <div class="form-group">
+        <label>Fresher Base CTC (Rs./mo)</label>
+        <input type="number" id="fresherCtc" value="25000" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Experienced Base CTC (Rs./mo)</label>
+        <input type="number" id="experiencedCtc" value="28000" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Fresher Mix (%)</label>
+        <input type="number" id="fresherPct" value="50" min="0" max="100" oninput="syncExperiencePct(true)">
+      </div>
+
+      <div class="form-group">
+        <label>Experienced Mix (%)</label>
+        <input type="number" id="experiencedPct" value="50" min="0" max="100" oninput="syncExperiencePct(false)">
+      </div>
+
+      <div class="form-group">
+        <label>Versant 3 Extra Premium (Rs./mo)</label>
+        <input type="number" id="v3PremiumInput" value="0" placeholder="0 or 3000" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Versant 4 Extra Premium (Rs./mo)</label>
+        <input type="number" id="v4PremiumInput" value="3000" placeholder="3000 or 5000" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Blended Base Agent CTC (Exp. Weighted)</label>
+        <input type="text" id="baseWeightedCtc" class="readonly-input" readonly="" value="₹26,500">
+      </div>
+
+      <div class="form-group">
+        <label>Effective Versant 4 Agent CTC</label>
+        <input type="text" id="v4EffectiveCtcDisplay" class="readonly-input" readonly="" value="₹29,500">
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Support Staff Hierarchy (Span & CTC Table) -->
+  <div class="card">
+    <h2>
+      <span>4. Support Staff Hierarchy (Editable Span, CTC &amp; Seats)</span>
+      <div>
+        <button type="button" class="btn-action" onclick="addSupportRole()">+ Add Role</button>
+        <button type="button" class="btn-action" style="background:#64748b; margin-left:6px;" onclick="resetSupportRoles()">Reset CIS Defaults</button>
+      </div>
+    </h2>
+
+    <div class="grid" style="margin-bottom: 14px;">
+      <div class="form-group">
+        <label>Total Support Headcount</label>
+        <input type="text" id="totalSupportCountDisplay" class="readonly-input" readonly="" value="10.44 FTEs">
+      </div>
+
+      <div class="form-group">
+        <label>Total Support Physical Seats</label>
+        <input type="text" id="totalSupportSeatsDisplay" class="readonly-input" readonly="" value="7.85 Physical Seats">
+      </div>
+
+      <div class="form-group">
+        <label>Total Support Monthly Budget</label>
+        <input type="text" id="totalSupportCostDisplay" class="readonly-input" readonly="" value="₹3,21,005 / mo">
+      </div>
+
+      <div class="form-group">
+        <label>Support Staff Invoicing (When Billable)</label>
+        <input type="text" id="supportBillingDisplay" class="readonly-input" readonly="" value="₹4,37,933 / mo">
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 24%;">Support Role</th>
+          <th style="width: 15%;">Span Ratio (1:X)</th>
+          <th style="width: 17%;">Monthly CTC (Rs.)</th>
+          <th style="width: 14%;">FTE Count</th>
+          <th style="width: 14%;">Seats Req.</th>
+          <th style="width: 16%;">Monthly Budget (Rs.)</th>
+        </tr>
+      </thead>
+      <tbody id="supportRolesTbody"><tr>
+      <td><input type="text" class="table-input" value="Team Leader (TL)" onchange="updateRoleField(0, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="20" placeholder="0 = Inactive" oninput="updateRoleField(0, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="28800" oninput="updateRoleField(0, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>4.95</strong></td>
+      <td><strong>4.95</strong></td>
+      <td>₹1,42,435</td>
+    </tr><tr>
+      <td><input type="text" class="table-input" value="Assistant Manager (AM)" onchange="updateRoleField(1, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="100" placeholder="0 = Inactive" oninput="updateRoleField(1, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="43333" oninput="updateRoleField(1, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>0.99</strong></td>
+      <td><strong>0.99</strong></td>
+      <td>₹42,862</td>
+    </tr><tr>
+      <td><input type="text" class="table-input" value="Quality Analyst (QA)" onchange="updateRoleField(2, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="40" placeholder="0 = Inactive" oninput="updateRoleField(2, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="28800" oninput="updateRoleField(2, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>2.47</strong></td>
+      <td><strong>2.47</strong></td>
+      <td>₹71,217</td>
+    </tr><tr>
+      <td><input type="text" class="table-input" value="MIS Executive" onchange="updateRoleField(3, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="100" placeholder="0 = Inactive" oninput="updateRoleField(3, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="28000" oninput="updateRoleField(3, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>0.99</strong></td>
+      <td><strong>0.99</strong></td>
+      <td>₹27,696</td>
+    </tr><tr>
+      <td><input type="text" class="table-input" value="Trainer" onchange="updateRoleField(4, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="100" placeholder="0 = Inactive" oninput="updateRoleField(4, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="30000" oninput="updateRoleField(4, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>0.99</strong></td>
+      <td><strong>0.20</strong></td>
+      <td>₹29,674</td>
+    </tr><tr>
+      <td><input type="text" class="table-input" value="HOD / Management" onchange="updateRoleField(5, &#39;name&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="2000" placeholder="0 = Inactive" oninput="updateRoleField(5, &#39;span&#39;, this.value)"></td>
+      <td><input type="number" class="table-input" value="144000" oninput="updateRoleField(5, &#39;ctc&#39;, this.value)"></td>
+      <td><strong>0.05</strong></td>
+      <td><strong>0.05</strong></td>
+      <td>₹7,122</td>
+    </tr></tbody>
+    </table>
+  </div>
+
+  <!-- 5. Infrastructure, IT & CRM/Dialer Licensing -->
+  <div class="card">
+    <h2>
+      <span>5. Seat Infrastructure, IT &amp; CRM/Dialer Licensing</span>
+      <span class="badge" id="tierCostBadge">Tier B (Tier-2 Cities) Defaults</span>
+    </h2>
+    
+    <div class="grid" style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:14px;">
+      <div class="form-group">
+        <label>CRM &amp; Dialer Provided by Client?</label>
+        <select id="crmProvidedByClient" onchange="toggleCrmCost()">
+          <option value="no" selected="">No (Vendor Provided - License Cost Applies)</option>
+          <option value="yes">Yes (Client Provided - ₹0 Cost)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>CRM &amp; Dialer License Cost (Rs. / FTE / mo)</label>
+        <input type="number" id="crmLicenseCost" value="0" min="0" max="1000" placeholder="Max 1000" oninput="validateAndCalculateCrm()" disabled="">
+      </div>
+
+      <div class="form-group">
+        <label>Effective CRM &amp; Dialer Cost per FTE</label>
+        <input type="text" id="effectiveCrmDisplay" class="readonly-input" readonly="" value="₹0 / FTE">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="form-group">
+        <label>Infra Cost per Physical Seat (Rs./mo)</label>
+        <input type="number" id="infraPerSeat" value="3000" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>IT &amp; Tech Cost per Physical Seat (Rs./mo)</label>
+        <input type="number" id="itPerSeat" value="1800" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Target Gross Margin (%)</label>
+        <input type="number" id="targetGm" value="18" step="0.5" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Recruitment Cost per FTE (Rs./mo)</label>
+        <input type="number" id="recruitmentFte" value="441.72" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Overhead / Admin per FTE (Rs./mo)</label>
+        <input type="number" id="overheadFte" value="400" oninput="calculate()">
+      </div>
+
+      <div class="form-group">
+        <label>Transport &amp; Other Ops per FTE (Rs./mo)</label>
+        <input type="number" id="otherFte" value="500" oninput="calculate()">
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Margin Sensitivity Scenario Matrix -->
+  <div class="card">
+    <h2>
+      <span>6. Commercial Margin Sensitivity Scenario Matrix</span>
+      <span class="badge badge-success">P&amp;L Projections</span>
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Target GM Scenario</th>
+          <th>Versant 3 Rate / FTE</th>
+          <th>Versant 4 Rate / FTE</th>
+          <th>Versant 3 Rate / Seat</th>
+          <th>Versant 4 Rate / Seat</th>
+          <th>Monthly Gross Margin (V4)</th>
+        </tr>
+      </thead>
+      <tbody id="marginScenarioTable"><tr style="">
+      <td>12% Margin </td>
+      <td>₹27,150</td>
+      <td style="color:#7c3aed; font-weight:700;">₹30,522</td>
+      <td>₹27,448</td>
+      <td style="color:#7c3aed; font-weight:700;">₹30,857</td>
+      <td style="color:#166534;">₹4,16,376 / mo</td>
+    </tr><tr style="">
+      <td>15% Margin </td>
+      <td>₹28,108</td>
+      <td style="color:#7c3aed; font-weight:700;">₹31,599</td>
+      <td>₹28,417</td>
+      <td style="color:#7c3aed; font-weight:700;">₹31,946</td>
+      <td style="color:#166534;">₹5,38,840 / mo</td>
+    </tr><tr style="font-weight:700; background:#ecfdf5;">
+      <td>18% Margin (Active)</td>
+      <td>₹29,136</td>
+      <td style="color:#7c3aed; font-weight:700;">₹32,755</td>
+      <td>₹29,457</td>
+      <td style="color:#7c3aed; font-weight:700;">₹33,115</td>
+      <td style="color:#166534;">₹6,70,264 / mo</td>
+    </tr><tr style="">
+      <td>20% Margin </td>
+      <td>₹29,865</td>
+      <td style="color:#7c3aed; font-weight:700;">₹33,574</td>
+      <td>₹30,193</td>
+      <td style="color:#7c3aed; font-weight:700;">₹33,943</td>
+      <td style="color:#166534;">₹7,63,356 / mo</td>
+    </tr><tr style="">
+      <td>25% Margin </td>
+      <td>₹31,856</td>
+      <td style="color:#7c3aed; font-weight:700;">₹35,812</td>
+      <td>₹32,206</td>
+      <td style="color:#7c3aed; font-weight:700;">₹36,206</td>
+      <td style="color:#166534;">₹10,17,808 / mo</td>
+    </tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const stateCityMap = {
+  MH: [
+    { name: "Greater Mumbai (UA)", tier: "A" },
+    { name: "Navi Mumbai (UA)", tier: "A" },
+    { name: "Pune (UA)", tier: "A" },
+    { name: "Nagpur (UA)", tier: "A" },
+    { name: "Nasik (UA)", tier: "B" },
+    { name: "Aurangabad (UA)", tier: "B" },
+    { name: "Kolhapur / Solapur / Amravati", tier: "B" },
+    { name: "Rest of Maharashtra", tier: "C" }
+  ],
+  DL: [{ name: "Delhi (UA) - Entire NCT", tier: "A" }],
+  KA: [
+    { name: "Bangaluru (UA)", tier: "A" },
+    { name: "Mysore (UA)", tier: "B" },
+    { name: "Hubli-Dharwad / Belgaum / Mangalore", tier: "B" },
+    { name: "Rest of Karnataka", tier: "C" }
+  ],
+  TN: [
+    { name: "Chennai (UA)", tier: "A" },
+    { name: "Coimbatore (UA)", tier: "B" },
+    { name: "Madurai / Tiruchirappalli / Salem", tier: "B" },
+    { name: "Rest of Tamil Nadu", tier: "C" }
+  ],
+  TS: [
+    { name: "Hyderabad (UA)", tier: "A" },
+    { name: "Secunderabad", tier: "A" },
+    { name: "Warangal (UA)", tier: "B" },
+    { name: "Rest of Telangana", tier: "C" }
+  ],
+  UP: [
+    { name: "Kanpur (UA)", tier: "A" },
+    { name: "Lucknow (UA)", tier: "A" },
+    { name: "Ghaziabad (UA)", tier: "A" },
+    { name: "Noida", tier: "A" },
+    { name: "Agra / Varanasi / Prayagraj", tier: "B" },
+    { name: "Rest of Uttar Pradesh", tier: "C" }
+  ],
+  WB: [
+    { name: "Kolkata (UA)", tier: "A" },
+    { name: "Asansol / Durgapur / Siliguri", tier: "B" },
+    { name: "Rest of West Bengal", tier: "C" }
+  ],
+  GJ: [
+    { name: "Ahmedabad (UA)", tier: "A" },
+    { name: "Surat / Vadodara / Rajkot (UA)", tier: "B" },
+    { name: "Rest of Gujarat", tier: "C" }
+  ],
+  HR: [
+    { name: "Faridabad Complex (M. Corpn)", tier: "A" },
+    { name: "Gurgaon (M. Corpn)", tier: "A" },
+    { name: "Panchkula (UA)", tier: "B" },
+    { name: "Rest of Haryana", tier: "C" }
+  ],
+  RJ: [
+    { name: "Jaipur (M. Corpn)", tier: "B" },
+    { name: "Jodhpur / Kota / Bikaner / Ajmer", tier: "B" },
+    { name: "Rest of Rajasthan", tier: "C" }
+  ],
+  AP: [
+    { name: "Greater Visakhapatnam / Vijayawada", tier: "B" },
+    { name: "Guntur / Nellore", tier: "B" },
+    { name: "Rest of Andhra Pradesh", tier: "C" }
+  ],
+  KL: [
+    { name: "Kochi / Thiruvananthapuram (UA)", tier: "B" },
+    { name: "Kozhikode / Kannur / Thrissur", tier: "B" },
+    { name: "Rest of Kerala", tier: "C" }
+  ],
+  MP: [
+    { name: "Bhopal / Indore / Jabalpur / Gwalior", tier: "B" },
+    { name: "Rest of Madhya Pradesh", tier: "C" }
+  ],
+  PB: [
+    { name: "Ludhiana / Amritsar / Jalandhar", tier: "B" },
+    { name: "Rest of Punjab", tier: "C" }
+  ],
+  BR: [
+    { name: "Patna (UA)", tier: "B" },
+    { name: "Rest of Bihar", tier: "C" }
+  ],
+  OD: [
+    { name: "Bhubaneshwar / Cuttack / Raurkela", tier: "B" },
+    { name: "Rest of Odisha", tier: "C" }
+  ],
+  JH: [
+    { name: "Ranchi / Jamshedpur / Dhanbad", tier: "B" },
+    { name: "Rest of Jharkhand", tier: "C" }
+  ],
+  CT: [
+    { name: "Raipur / Durg-Bhilai Nagar", tier: "B" },
+    { name: "Rest of Chhattisgarh", tier: "C" }
+  ],
+  UK: [
+    { name: "Dehradun (UA)", tier: "B" },
+    { name: "Rest of Uttarakhand", tier: "C" }
+  ],
+  GA: [{ name: "Goa (Entire State Area B)", tier: "B" }],
+  AS: [{ name: "Guwahati (UA)", tier: "B" }, { name: "Rest of Assam", tier: "C" }],
+  JK: [{ name: "Srinagar / Jammu (UA)", tier: "B" }, { name: "Rest of J&K", tier: "C" }],
+  CH: [{ name: "Chandigarh (UA)", tier: "B" }],
+  PY: [{ name: "Puducherry (UA)", tier: "B" }],
+  OTHER: [
+    { name: "Tier A Urban Agglomeration", tier: "A" },
+    { name: "Tier B Classified City", tier: "B" },
+    { name: "Tier C Area / Non-Metro", tier: "C" }
+  ]
+};
+
+// Rates effective 01.04.2026 (per day in Rs.)
+const wageRateMatrix = {
+  watch_noarms: { A: 1008, B: 918, C: 781 },
+  watch_arms:   { A: 1094, B: 1008, C: 918 },
+  clerical_skilled: { A: 1008, B: 918, C: 781 },
+  semi_skilled: { A: 918, B: 781, C: 650 },
+  unskilled:    { A: 827, B: 693, C: 556 },
+  sweeping:     { A: 827, B: 693, C: 556 }
+};
+
+// Tier-based Infra and IT Cost Defaults (per physical seat in Rs./mo)
+const tierSeatCostMatrix = {
+  A: { infra: 3000, it: 1800, label: "Tier A (Metros / Tier-1)" },
+  B: { infra: 2200, it: 1500, label: "Tier B (Tier-2 Cities)" },
+  C: { infra: 1600, it: 1200, label: "Tier C (Tier-3 / Non-Metro)" }
+};
+
+// Default CIS Support Staff Matrix
+const defaultSupportRoles = [
+  { name: "Team Leader (TL)", span: 20, ctc: 28800, seatFactor: 0.758 },
+  { name: "Assistant Manager (AM)", span: 100, ctc: 43333, seatFactor: 1.0 },
+  { name: "Quality Analyst (QA)", span: 40, ctc: 28800, seatFactor: 0.758 },
+  { name: "MIS Executive", span: 100, ctc: 28000, seatFactor: 1.0 },
+  { name: "Trainer", span: 100, ctc: 30000, seatFactor: 0.2 },
+  { name: "HOD / Management", span: 2000, ctc: 144000, seatFactor: 1.0 }
+];
+
+let supportRoles = JSON.parse(JSON.stringify(defaultSupportRoles));
+
+function toggleCrmCost() {
+  const isClientProvided = document.getElementById('crmProvidedByClient').value === 'yes';
+  const crmInput = document.getElementById('crmLicenseCost');
+  if (isClientProvided) {
+    crmInput.value = 0;
+    crmInput.disabled = true;
+    document.getElementById('effectiveCrmDisplay').value = '₹0 / FTE (Client Provided)';
+  } else {
+    crmInput.disabled = false;
+    crmInput.value = 0;
+    document.getElementById('effectiveCrmDisplay').value = '₹0 / FTE';
+  }
+  calculate();
+}
+
+function validateAndCalculateCrm() {
+  const isClientProvided = document.getElementById('crmProvidedByClient').value === 'yes';
+  if (isClientProvided) {
+    document.getElementById('crmLicenseCost').value = 0;
+  }
+  const val = parseFloat(document.getElementById('crmLicenseCost').value) || 0;
+  document.getElementById('effectiveCrmDisplay').value = `₹${Math.round(val).toLocaleString('en-IN')} / FTE`;
+  calculate();
+}
+
+function renderSupportTable(csaCount, csaSeats) {
+  const tbody = document.getElementById('supportRolesTbody');
+  let html = '';
+
+  supportRoles.forEach((role, idx) => {
+    const spanVal = parseFloat(role.span) || 0;
+    const ctcVal = parseFloat(role.ctc) || 0;
+    const count = spanVal > 0 ? (csaCount / spanVal) : 0;
+    
+    let seatFactor = role.seatFactor || 1.0;
+    if (role.name.includes("TL") || role.name.includes("QA")) {
+      seatFactor = csaCount > 0 ? (csaSeats / csaCount) : 0.758;
+    }
+    const seats = count * seatFactor;
+    const monthlyCost = count * ctcVal;
+
+    html += `<tr>
+      <td><input type="text" class="table-input" value="${role.name}" onchange="updateRoleField(${idx}, 'name', this.value)"></td>
+      <td><input type="number" class="table-input" value="${role.span}" placeholder="0 = Inactive" oninput="updateRoleField(${idx}, 'span', this.value)"></td>
+      <td><input type="number" class="table-input" value="${role.ctc}" oninput="updateRoleField(${idx}, 'ctc', this.value)"></td>
+      <td><strong>${count.toFixed(2)}</strong></td>
+      <td><strong>${seats.toFixed(2)}</strong></td>
+      <td>₹${Math.round(monthlyCost).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function updateRoleField(index, field, value) {
+  if (field === 'name') {
+    supportRoles[index].name = value;
+  } else {
+    supportRoles[index][field] = parseFloat(value) || 0;
+  }
+  calculate();
+}
+
+function addSupportRole() {
+  supportRoles.push({ name: "New Support Role", span: 50, ctc: 30000, seatFactor: 1.0 });
+  calculate();
+}
+
+function resetSupportRoles() {
+  supportRoles = JSON.parse(JSON.stringify(defaultSupportRoles));
+  calculate();
+}
+
+function handleStateChange() {
+  const state = document.getElementById('stateSelect').value;
+  const cities = stateCityMap[state] || stateCityMap['OTHER'];
+  const citySelect = document.getElementById('citySelect');
+  citySelect.innerHTML = '';
+
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.tier;
+    opt.innerText = `${c.name} [Area ${c.tier}]`;
+    citySelect.appendChild(opt);
+  });
+
+  handleCityChange();
+}
+
+function handleCityChange() {
+  const cityTier = document.getElementById('citySelect').value;
+  document.getElementById('areaTier').value = cityTier;
+  applyLocationAndWage(true);
+}
+
+function applyLocationAndWage(updateTierCosts = false) {
+  const tier = document.getElementById('areaTier').value;
+  const cat = document.getElementById('workerCategory').value;
+  const days = parseFloat(document.getElementById('workingDays').value) || 26;
+
+  if (updateTierCosts && tierSeatCostMatrix[tier]) {
+    document.getElementById('infraPerSeat').value = tierSeatCostMatrix[tier].infra;
+    document.getElementById('itPerSeat').value = tierSeatCostMatrix[tier].it;
+    document.getElementById('tierCostBadge').innerText = `${tierSeatCostMatrix[tier].label} Defaults`;
+  }
+
+  if (cat !== 'custom' && wageRateMatrix[cat]) {
+    const perDay = wageRateMatrix[cat][tier];
+    const monthlyFloor = Math.round(perDay * days);
+    document.getElementById('statutoryFloorDisplay').value = `Rs. ${perDay} / day (₹${monthlyFloor.toLocaleString('en-IN')}/mo)`;
+    document.getElementById('fresherCtc').value = monthlyFloor;
+    document.getElementById('experiencedCtc').value = Math.round(monthlyFloor * 1.12);
+  } else if (cat === 'custom') {
+    document.getElementById('statutoryFloorDisplay').value = "Custom Rate Applied";
+  }
+  calculate();
+}
+
+function syncExperiencePct(fromFresher) {
+  let fPct = parseFloat(document.getElementById('fresherPct').value) || 0;
+  let ePct = parseFloat(document.getElementById('experiencedPct').value) || 0;
+
+  if (fromFresher) {
+    fPct = Math.max(0, Math.min(100, fPct));
+    document.getElementById('fresherPct').value = fPct;
+    document.getElementById('experiencedPct').value = (100 - fPct).toFixed(0);
+  } else {
+    ePct = Math.max(0, Math.min(100, ePct));
+    document.getElementById('experiencedPct').value = ePct;
+    document.getElementById('fresherPct').value = (100 - ePct).toFixed(0);
+  }
+  calculate();
+}
+
+function calculate() {
+  const billableFte = parseFloat(document.getElementById('billableFte').value) || 0;
+  const targetGm = (parseFloat(document.getElementById('targetGm').value) || 0) / 100;
+  const modelChoice = document.getElementById('commercialModelSelect').value;
+
+  // Update target GM text display
+  document.querySelectorAll('.targetGmDisplay').forEach(el => {
+    el.innerText = (targetGm * 100).toFixed(0);
+  });
+
+  // Operational Loading: Attrition & Training Buffer
+  const attrition = (parseFloat(document.getElementById('attritionPct').value) || 0) / 100;
+  const throughput = (parseFloat(document.getElementById('throughputPct').value) || 85) / 100;
+  const trainingDays = parseFloat(document.getElementById('trainingDays').value) || 0;
+  const isTrainingBillable = document.getElementById('trainingBillable').value === 'yes';
+  const fteHrs = parseFloat(document.getElementById('fteHrsDefn').value) || 182;
+  const workingDays = parseFloat(document.getElementById('workingDays').value) || 26;
+
+  // Seat Utilization (%) & Sizing
+  const seatUtilPct = (parseFloat(document.getElementById('seatUtilizationPct').value) || 131.87) / 100;
+  const baseCsaCount = billableFte * (fteHrs / 184); // 98.913 in CIS
+  let trainingBufferCount = 0;
+  if (!isTrainingBillable && throughput > 0 && workingDays > 0 && trainingDays > 0) {
+    trainingBufferCount = ((billableFte * attrition) / throughput) * (trainingDays / 30);
+  }
+
+  const totalCsaCount = baseCsaCount + trainingBufferCount;
+  
+  // Production Seats based on Seat Utilization factor
+  const csaSeats = seatUtilPct > 0 ? (baseCsaCount / seatUtilPct) : baseCsaCount; // 75.009 seats at 131.87%
+
+  renderSupportTable(totalCsaCount, csaSeats);
+
+  document.getElementById('csaSeatsDisplay').value = `${csaSeats.toFixed(2)} Physical Seats`;
+
+  // Agent Salary Calculation
+  const fresherCtc = parseFloat(document.getElementById('fresherCtc').value) || 0;
+  const experiencedCtc = parseFloat(document.getElementById('experiencedCtc').value) || 0;
+  const fresherPct = (parseFloat(document.getElementById('fresherPct').value) || 0) / 100;
+  const experiencedPct = (parseFloat(document.getElementById('experiencedPct').value) || 0) / 100;
+  
+  const v3Extra = parseFloat(document.getElementById('v3PremiumInput').value) || 0;
+  const v4Extra = parseFloat(document.getElementById('v4PremiumInput').value) || 0;
+
+  const baseWeightedCtc = (fresherCtc * fresherPct) + (experiencedCtc * experiencedPct);
+  document.getElementById('baseWeightedCtc').value = '₹' + Math.round(baseWeightedCtc).toLocaleString('en-IN');
+  document.getElementById('v4EffectiveCtcDisplay').value = '₹' + Math.round(baseWeightedCtc + v4Extra).toLocaleString('en-IN');
+
+  // Support Staff Calculation from Editable Table
+  let totalSupportHeadcount = 0;
+  let totalSupportSeats = 0;
+  let totalSupportMonthlyBudget = 0;
+
+  supportRoles.forEach(r => {
+    const s = parseFloat(r.span) || 0;
+    const c = parseFloat(r.ctc) || 0;
+    if (s > 0 && billableFte > 0) {
+      const count = totalCsaCount / s;
+      let seatFactor = r.seatFactor || 1.0;
+      if (r.name.includes("TL") || r.name.includes("QA")) {
+        seatFactor = totalCsaCount > 0 ? (csaSeats / totalCsaCount) : (1 / seatUtilPct);
+      }
+      const seats = count * seatFactor;
+      totalSupportHeadcount += count;
+      totalSupportSeats += seats;
+      totalSupportMonthlyBudget += count * c;
+    }
+  });
+
+  const totalPhysicalSeats = csaSeats + totalSupportSeats; // 82.86 in CIS
+  document.getElementById('totalPhysicalSeatsDisplay').value = `${totalPhysicalSeats.toFixed(2)} Physical Seats (${(seatUtilPct*100).toFixed(1)}% Util)`;
+  document.getElementById('totalSupportCountDisplay').value = `${totalSupportHeadcount.toFixed(2)} FTEs`;
+  document.getElementById('totalSupportSeatsDisplay').value = `${totalSupportSeats.toFixed(2)} Physical Seats`;
+  document.getElementById('totalSupportCostDisplay').value = '₹' + Math.round(totalSupportMonthlyBudget).toLocaleString('en-IN') + ' / mo';
+
+  // Overheads & Seat Cost Allocations
+  const infraPerSeat = parseFloat(document.getElementById('infraPerSeat').value) || 0;
+  const itPerSeat = parseFloat(document.getElementById('itPerSeat').value) || 0;
+  const recruitmentFte = parseFloat(document.getElementById('recruitmentFte').value) || 0;
+  const overheadFte = parseFloat(document.getElementById('overheadFte').value) || 0;
+  const otherFte = parseFloat(document.getElementById('otherFte').value) || 0;
+  const isClientCrm = document.getElementById('crmProvidedByClient').value === 'yes';
+  const crmCostPerFte = isClientCrm ? 0 : (parseFloat(document.getElementById('crmLicenseCost').value) || 0);
+
+  // Seat costs
+  const csaSeatCostTotal = (infraPerSeat + itPerSeat) * csaSeats;
+  const supportSeatCostTotal = (infraPerSeat + itPerSeat) * totalSupportSeats;
+  const totalFacilitySeatCost = csaSeatCostTotal + supportSeatCostTotal;
+
+  // Support Separate Invoicing (for Model 3)
+  const supportSeparateMonthlyCost = totalSupportMonthlyBudget + (2.11 * billableFte) + supportSeatCostTotal;
+  const supportSeparateBillingMonthly = targetGm < 1 ? supportSeparateMonthlyCost / (1 - targetGm) : 0;
+  document.getElementById('supportBillingDisplay').value = '₹' + Math.round(supportSeparateBillingMonthly).toLocaleString('en-IN') + ' / mo';
+
+  // Model Banner & Rule Descriptions
+  let modelBannerText = "";
+  let modelBannerClass = "";
+  let modelRuleDesc = "";
+  let rateLabelText = "";
+
+  if (modelChoice === 'support_non_billable') {
+    modelBannerClass = "model-banner model-nonbillable";
+    modelBannerText = "<b>Model 1: Support Non-Billable Rate (Bundled in Agent FTE)</b> — Support staff costs (TL, QA, AM, MIS, Trainer) and facility overheads are 100% bundled into the Billable Agent FTE rate. The client is invoiced per Billable Agent FTE.";
+    modelRuleDesc = "Support staff is non-billable. All support compensation & seat costs are absorbed directly into the 100 Billable Agent FTE rate.";
+    rateLabelText = "Billed Rate per Billable Agent FTE / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
+  } else if (modelChoice === 'bundled_agent_parity') {
+    modelBannerClass = "model-banner model-parity";
+    modelBannerText = "<b>Model 2: Bundled with Agent Rate Parity (Uniform Parity Billing)</b> — Total project revenue is pooled across all billable headcount units (100 Agents + " + totalSupportHeadcount.toFixed(2) + " Support = " + (billableFte + totalSupportHeadcount).toFixed(2) + " Headcount). Every resource is billed at the exact same uniform parity rate.";
+    modelRuleDesc = "Support staff and agents are billed as equal commercial headcount units at uniform rate parity across the total resource pool.";
+    rateLabelText = "Uniform Parity Billed Rate per Headcount Unit / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
+  } else if (modelChoice === 'support_billable') {
+    modelBannerClass = "model-banner model-billable";
+    modelBannerText = "<b>Model 3: Support Billable (Unbundled Direct Line Items)</b> — Agent FTE rate excludes support staff burden (billed as pure standalone agent rate). Support staff are invoiced separately as direct billable line items at ₹" + Math.round(supportSeparateBillingMonthly).toLocaleString('en-IN') + " / mo.";
+    modelRuleDesc = "Support staff are billed separately as dedicated line items. Agent FTE rate includes only agent CTC, direct overheads, and agent production seats.";
+    rateLabelText = "Standalone Agent Billed Rate per FTE / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
+  }
+
+  const bannerEl = document.getElementById('modelBanner');
+  bannerEl.className = modelBannerClass;
+  bannerEl.innerHTML = modelBannerText;
+  document.getElementById('modelRuleDescription').value = modelRuleDesc;
+  document.getElementById('v3RateUnitLabel').innerText = rateLabelText;
+  document.getElementById('v4RateUnitLabel').innerText = rateLabelText;
+
+  // Helper Function for Commercial Rate Computation for the 3 Models
+  function computeThreeModelRate(versantExtra) {
+    const totalAgentCtc = baseWeightedCtc + versantExtra;
+    const csaSalaryTotal = totalAgentCtc * totalCsaCount;
+    const csaSalaryPerFte = billableFte > 0 ? (csaSalaryTotal / billableFte) : 0;
+    const supportCostPerFte = billableFte > 0 ? (totalSupportMonthlyBudget / billableFte) : 0;
+
+    let billedRateFte = 0;
+    let billedRateSeat = 0;
+    let monthlyInvoiceTotal = 0;
+    let totalBaseCostPerFte = 0;
+    let supportLineItemBilled = 0;
+
+    if (modelChoice === 'support_non_billable') {
+      // 1. SUPPORT NON-BILLABLE (Bundled in Agent FTE Rate)
+      const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + totalFacilitySeatCost;
+      totalBaseCostPerFte = billableFte > 0 ? (projectMonthlyCost / billableFte) : 0;
+      billedRateFte = targetGm < 1 ? totalBaseCostPerFte / (1 - targetGm) : 0;
+      monthlyInvoiceTotal = billedRateFte * billableFte;
+      billedRateSeat = totalPhysicalSeats > 0 ? monthlyInvoiceTotal / totalPhysicalSeats : 0;
+    } else if (modelChoice === 'bundled_agent_parity') {
+      // 2. BUNDLED WITH AGENT RATE PARITY (Uniform Parity Across 110.44 Units)
+      const totalPooledUnits = billableFte + totalSupportHeadcount;
+      const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + totalFacilitySeatCost;
+      const costPerPooledUnit = totalPooledUnits > 0 ? (projectMonthlyCost / totalPooledUnits) : 0;
+      billedRateFte = targetGm < 1 ? costPerPooledUnit / (1 - targetGm) : 0;
+      monthlyInvoiceTotal = billedRateFte * totalPooledUnits;
+      billedRateSeat = totalPhysicalSeats > 0 ? monthlyInvoiceTotal / totalPhysicalSeats : 0;
+      totalBaseCostPerFte = costPerPooledUnit;
+    } else if (modelChoice === 'support_billable') {
+      // 3. SUPPORT BILLABLE (Unbundled Standalone Agent + Support Line Items)
+      const agentStandaloneCostMonthly = csaSalaryTotal + (439.61 * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + csaSeatCostTotal;
+      const agentCostPerFte = billableFte > 0 ? (agentStandaloneCostMonthly / billableFte) : 0;
+      billedRateFte = targetGm < 1 ? agentCostPerFte / (1 - targetGm) : 0;
+      const agentMonthlyInvoice = billedRateFte * billableFte;
+      billedRateSeat = csaSeats > 0 ? agentMonthlyInvoice / csaSeats : 0;
+      supportLineItemBilled = supportSeparateBillingMonthly;
+      monthlyInvoiceTotal = agentMonthlyInvoice + supportLineItemBilled;
+      totalBaseCostPerFte = agentCostPerFte;
+    }
+
+    const monthlyGrossMargin = monthlyInvoiceTotal * targetGm;
+    const acv = monthlyInvoiceTotal * 12;
+
+    return {
+      agentCtc: totalAgentCtc,
+      csaSalaryPerFte: csaSalaryPerFte,
+      supportCostPerFte: supportCostPerFte,
+      totalBaseCostPerFte: totalBaseCostPerFte,
+      billedRateFte: billedRateFte,
+      billedRateSeat: billedRateSeat,
+      monthlyInvoiceTotal: monthlyInvoiceTotal,
+      monthlyGrossMargin: monthlyGrossMargin,
+      supportLineItemBilled: supportLineItemBilled,
+      acv: acv
+    };
+  }
+
+  const v3 = computeThreeModelRate(v3Extra);
+  const v4 = computeThreeModelRate(v4Extra);
+
+  // Update Versant Proposal Highlight Cards
+  document.getElementById('v3PremiumTag').innerText = v3Extra === 0 ? '+₹0 Premium' : `+₹${v3Extra.toLocaleString('en-IN')} Extra`;
+  document.getElementById('v4PremiumTag').innerText = `+₹${v4Extra.toLocaleString('en-IN')} Extra`;
+
+  document.getElementById('v3BilledFte').innerText = '₹' + Math.round(v3.billedRateFte).toLocaleString('en-IN');
+  document.getElementById('v3BilledSeat').innerText = '₹' + Math.round(v3.billedRateSeat).toLocaleString('en-IN') + ' / seat / mo';
+  document.getElementById('v3MonthlyTcv').innerText = '₹' + Math.round(v3.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
+  document.getElementById('v3MarginMonthly').innerText = '₹' + Math.round(v3.monthlyGrossMargin).toLocaleString('en-IN') + ' / mo';
+  document.getElementById('v3Acv').innerText = '₹' + Math.round(v3.acv).toLocaleString('en-IN');
+
+  document.getElementById('v4BilledFte').innerText = '₹' + Math.round(v4.billedRateFte).toLocaleString('en-IN');
+  document.getElementById('v4BilledSeat').innerText = '₹' + Math.round(v4.billedRateSeat).toLocaleString('en-IN') + ' / seat / mo';
+  document.getElementById('v4MonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
+  document.getElementById('v4MarginMonthly').innerText = '₹' + Math.round(v4.monthlyGrossMargin).toLocaleString('en-IN') + ' / mo';
+  document.getElementById('v4Acv').innerText = '₹' + Math.round(v4.acv).toLocaleString('en-IN');
+
+  // Render Detailed Comparison Table
+  const comparisonItems = [
+    { label: "Effective Agent Base CTC", v3: v3.agentCtc, v4: v4.agentCtc, prefix: "₹" },
+    { label: "Agent Direct Salary per FTE (Loaded)", v3: v3.csaSalaryPerFte, v4: v4.csaSalaryPerFte, prefix: "₹" },
+    { 
+      label: modelChoice === 'support_billable' ? "Support Staff Billing (Invoiced Separately)" : (modelChoice === 'bundled_agent_parity' ? "Support Staff Cost (Uniform Parity Pooled)" : "Support Staff Cost Allocation (Bundled in FTE)"), 
+      v3: modelChoice === 'support_billable' ? `₹${Math.round(v3.supportLineItemBilled).toLocaleString('en-IN')} / mo` : `₹${Math.round(v3.supportCostPerFte).toLocaleString('en-IN')}`, 
+      v4: modelChoice === 'support_billable' ? `₹${Math.round(v4.supportLineItemBilled).toLocaleString('en-IN')} / mo` : `₹${Math.round(v4.supportCostPerFte).toLocaleString('en-IN')}`, 
+      isText: true 
+    },
+    { 
+      label: modelChoice === 'support_billable' ? "Agent Production Seat Infra+IT Cost" : "Total Facility Seat Infra+IT Cost / FTE", 
+      v3: modelChoice === 'support_billable' ? csaSeatCostTotal / (billableFte || 1) : totalFacilitySeatCost / (billableFte || 1), 
+      v4: modelChoice === 'support_billable' ? csaSeatCostTotal / (billableFte || 1) : totalFacilitySeatCost / (billableFte || 1), 
+      prefix: "₹" 
+    },
+    { label: "Target Gross Margin (%)", v3: `${(targetGm * 100).toFixed(0)}%`, v4: `${(targetGm * 100).toFixed(0)}%`, isText: true },
+    { 
+      label: modelChoice === 'support_non_billable' ? "FINAL BILLED RATE / AGENT FTE" : (modelChoice === 'bundled_agent_parity' ? "FINAL UNIFORM PARITY RATE / HEADCOUNT" : "STANDALONE AGENT BILLED RATE / FTE"), 
+      v3: v3.billedRateFte, 
+      v4: v4.billedRateFte, 
+      prefix: "₹", 
+      isBold: true, 
+      highlight: true 
+    },
+    { 
+      label: modelChoice === 'support_billable' ? "AGENT PRODUCTION SEAT RATE (75 Seats)" : "FINAL BILLED RATE / PHYSICAL SEAT (83 Seats)", 
+      v3: v3.billedRateSeat, 
+      v4: v4.billedRateSeat, 
+      prefix: "₹", 
+      isBold: true, 
+      seatHighlight: true 
+    },
+    { label: "TOTAL MONTHLY INVOICE VALUE", v3: v3.monthlyInvoiceTotal, v4: v4.monthlyInvoiceTotal, prefix: "₹", isBold: true },
+    { label: "Monthly Gross Margin Realized", v3: v3.monthlyGrossMargin, v4: v4.monthlyGrossMargin, prefix: "₹", isMargin: true }
+  ];
+
+  let compHtml = '';
+  comparisonItems.forEach(item => {
+    let v3Display = item.isText ? item.v3 : `₹${Math.round(item.v3).toLocaleString('en-IN')}`;
+    let v4Display = item.isText ? item.v4 : `₹${Math.round(item.v4).toLocaleString('en-IN')}`;
+    let deltaDisplay = item.isText ? '-' : `+₹${Math.round(item.v4 - item.v3).toLocaleString('en-IN')}`;
+
+    let rowStyle = item.highlight ? 'background:#ecfdf5; font-weight:800; font-size:14px; border:2px solid #10b981;' : (item.seatHighlight ? 'background:#f0f9ff; font-weight:800; font-size:13.5px; border:2px solid #0284c7;' : (item.isBold ? 'font-weight:700;' : ''));
+    let marginStyle = item.isMargin ? 'color:#166534; font-weight:700;' : '';
+
+    compHtml += `<tr style="${rowStyle}">
+      <td>${item.label}</td>
+      <td style="${marginStyle}">${v3Display}</td>
+      <td style="${marginStyle}">${v4Display}</td>
+      <td style="color:#2563eb; font-weight:600;">${deltaDisplay}</td>
+    </tr>`;
+  });
+  document.getElementById('versantComparisonTbody').innerHTML = compHtml;
+
+  // Render Margin Scenario Table
+  const scenarioGMs = [0.12, 0.15, 0.18, 0.20, 0.25];
+  let scenarioRows = '';
+  scenarioGMs.forEach(gm => {
+    const scV3Rate = v3.totalBaseCostPerFte / (1 - gm);
+    const scV4Rate = v4.totalBaseCostPerFte / (1 - gm);
+    
+    let scV3Seat = 0;
+    let scV4Seat = 0;
+    let scV4Margin = 0;
+
+    if (modelChoice === 'support_non_billable') {
+      scV3Seat = totalPhysicalSeats > 0 ? (scV3Rate * billableFte) / totalPhysicalSeats : 0;
+      scV4Seat = totalPhysicalSeats > 0 ? (scV4Rate * billableFte) / totalPhysicalSeats : 0;
+      scV4Margin = (scV4Rate * billableFte) * gm;
+    } else if (modelChoice === 'bundled_agent_parity') {
+      const totalUnits = billableFte + totalSupportHeadcount;
+      scV3Seat = totalPhysicalSeats > 0 ? (scV3Rate * totalUnits) / totalPhysicalSeats : 0;
+      scV4Seat = totalPhysicalSeats > 0 ? (scV4Rate * totalUnits) / totalPhysicalSeats : 0;
+      scV4Margin = (scV4Rate * totalUnits) * gm;
+    } else if (modelChoice === 'support_billable') {
+      scV3Seat = csaSeats > 0 ? (scV3Rate * billableFte) / csaSeats : 0;
+      scV4Seat = csaSeats > 0 ? (scV4Rate * billableFte) / csaSeats : 0;
+      const suppBilled = supportSeparateMonthlyCost / (1 - gm);
+      scV4Margin = ((scV4Rate * billableFte) + suppBilled) * gm;
+    }
+
+    const isCurrent = Math.abs(gm - targetGm) < 0.001;
+
+    scenarioRows += `<tr style="${isCurrent ? 'font-weight:700; background:#ecfdf5;' : ''}">
+      <td>${(gm * 100).toFixed(0)}% Margin ${isCurrent ? '(Active)' : ''}</td>
+      <td>₹${Math.round(scV3Rate).toLocaleString('en-IN')}</td>
+      <td style="color:#7c3aed; font-weight:700;">₹${Math.round(scV4Rate).toLocaleString('en-IN')}</td>
+      <td>₹${Math.round(scV3Seat).toLocaleString('en-IN')}</td>
+      <td style="color:#7c3aed; font-weight:700;">₹${Math.round(scV4Seat).toLocaleString('en-IN')}</td>
+      <td style="color:#166534;">₹${Math.round(scV4Margin).toLocaleString('en-IN')} / mo</td>
+    </tr>`;
+  });
+  document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
+}
+
+window.onload = function() {
+  handleStateChange();
+};
+</script>
+
+</body></html>
