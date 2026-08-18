@@ -23,7 +23,7 @@
   }
   * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); }
-  .container { max-width: 1320px; margin: 0 auto; }
+  .container { max-width: 1340px; margin: 0 auto; }
   .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
   h1 { font-size: 22px; color: var(--primary); margin-top: 0; margin-bottom: 16px; }
   h2 { font-size: 15px; margin-top: 0; margin-bottom: 14px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
@@ -38,7 +38,6 @@
   .badge-v3 { background: #e0f2fe; color: #0369a1; }
   .badge-v4 { background: #ede9fe; color: #6d28d9; }
   
-  /* Top Email Action Bar */
   .email-actions-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .btn-email { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   .btn-mgmt { background: #0f766e; color: #ffffff; }
@@ -46,7 +45,6 @@
   .btn-client { background: #4338ca; color: #ffffff; }
   .btn-client:hover { background: #3730a3; }
 
-  /* Proposal Comparison Highlight Cards */
   .proposal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; margin-bottom: 16px; }
   @media (max-width: 820px) { .proposal-grid { grid-template-columns: 1fr; } }
   .proposal-card { border-radius: 8px; padding: 18px; border: 2px solid; }
@@ -78,14 +76,16 @@
   .btn-action { padding: 6px 12px; background: var(--accent); color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
   .btn-action:hover { background: #1d4ed8; }
 
-  /* Modal Styles */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
-  .modal-box { background: #ffffff; border-radius: 10px; max-width: 820px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); overflow: hidden; }
+  .modal-box { background: #ffffff; border-radius: 10px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); overflow: hidden; }
   .modal-header { padding: 16px 20px; background: var(--primary); color: #fff; display: flex; justify-content: space-between; align-items: center; }
   .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700; }
   .modal-close { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; line-height: 1; }
   .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-  .email-preview { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; white-space: pre-wrap; color: #1e293b; line-height: 1.5; }
+  .email-preview { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 16px; font-size: 13px; color: #1e293b; line-height: 1.5; }
+  .email-preview table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+  .email-preview th, .email-preview td { border: 1px solid #cbd5e1; padding: 6px 8px; }
+  .email-preview th { background: #e2e8f0; color: #0f172a; }
   .modal-footer { padding: 14px 20px; background: #f1f5f9; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
 </style>
 </head>
@@ -102,30 +102,30 @@
 
     <div class="email-actions-bar">
       <button type="button" class="btn-email btn-mgmt" onclick="openEmailModal('mgmt')">
-        📧 Share Approval Mail to Management (All Cost & Margin Details)
+        📧 Share Approval Mail to Management (Tabular P&L & Cost Breakdown)
       </button>
       <button type="button" class="btn-email btn-client" onclick="openEmailModal('client')">
-        💼 Share Proposal with Client (Versant 3 & 4 Commercial Offer)
+        💼 Share Proposal with Client (Tabular Rate Schedule)
       </button>
     </div>
 
     <div class="grid" style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:14px;">
       <div class="form-group" style="grid-column: span 2;">
-        <label style="font-size: 13px; color: #0f2756;">Select Commercial Billing Model (Choose 1 of 3)</label>
+        <label style="font-size: 13px; color: #0f2756;">Select Commercial Billing Model</label>
         <select id="commercialModelSelect" style="font-weight:600; font-size:13.5px; border-color:#2563eb;" onchange="calculate()">
-          <option value="support_non_billable" selected>1. Support Non-Billable Rate (Support Cost Bundled into Billable Agent FTE Rate)</option>
-          <option value="bundled_agent_parity">2. Bundled with Agent Rate Parity (Support & Agents Billed at Same Parity FTE Rate)</option>
-          <option value="support_billable">3. Support Billable (Unbundled Direct Line Items — Agent Standalone + Support Invoicing)</option>
+          <option value="support_non_billable">1. Support Non-Billable Rate (Support Cost Bundled into Billable Agent FTE Rate)</option>
+          <option value="bundled_agent_parity" selected>2. Bundled with Agent Rate Parity (All Agents & Billable Support Billed at One Common Parity Rate)</option>
+          <option value="support_billable">3. Support Billable (Unbundled Direct Line Items — Standalone Agent + Support Invoicing)</option>
         </select>
       </div>
 
       <div class="form-group" style="grid-column: span 2;">
         <label>Selected Model Commercial Governance Rule</label>
-        <input type="text" id="modelRuleDescription" class="readonly-input" readonly value="Support staff (TL, QA, AM, MIS, Trainer) is non-billable to the client. All support overhead is absorbed into the Billable Agent FTE rate.">
+        <input type="text" id="modelRuleDescription" class="readonly-input" readonly value="All agents and billable support staff are billed at one common uniform parity FTE rate.">
       </div>
     </div>
 
-    <div id="modelBanner" class="model-banner model-nonbillable"></div>
+    <div id="modelBanner" class="model-banner model-parity"></div>
 
     <div class="proposal-grid">
       <div class="proposal-card v3-card">
@@ -133,24 +133,24 @@
           <span class="rate-title">Versant 3 Proposal (Baseline Voice)</span>
           <span class="badge badge-v3" id="v3PremiumTag">+₹0 Premium</span>
         </div>
-        <div class="big-rate" id="v3BilledFte">₹42,370</div>
-        <div class="rate-sub" id="v3RateUnitLabel">Billed Rate per Billable Agent FTE / Month (@ <span class="targetGmDisplay">18</span>% GM)</div>
+        <div class="big-rate" id="v3BilledFte">₹0</div>
+        <div class="rate-sub" id="v3RateUnitLabel">Uniform Parity Rate per Billable FTE / Month (@ <span class="targetGmDisplay">18</span>% GM)</div>
         
         <div class="stat-row">
           <span>Billed Rate per Physical Seat:</span>
-          <strong class="highlight-val" id="v3BilledSeat" style="color:#0369a1;">₹51,134 / seat / mo</strong>
+          <strong class="highlight-val" id="v3BilledSeat" style="color:#0369a1;">₹0 / seat / mo</strong>
         </div>
         <div class="stat-row">
           <span>Total Monthly Invoicing:</span>
-          <strong id="v3MonthlyTcv">₹42,36,958 / mo</strong>
+          <strong id="v3MonthlyTcv">₹0 / mo</strong>
         </div>
         <div class="stat-row">
           <span>Monthly Gross Margin:</span>
-          <strong id="v3MarginMonthly" style="color:#166534;">₹7,62,652 / mo</strong>
+          <strong id="v3MarginMonthly" style="color:#166534;">₹0 / mo</strong>
         </div>
         <div class="stat-row">
           <span>Annual Contract Value (ACV):</span>
-          <strong id="v3Acv">₹5,08,43,496</strong>
+          <strong id="v3Acv">₹0</strong>
         </div>
       </div>
 
@@ -159,24 +159,24 @@
           <span class="rate-title">Versant 4 Proposal (Enhanced Voice)</span>
           <span class="badge badge-v4" id="v4PremiumTag">+₹3,000 Extra</span>
         </div>
-        <div class="big-rate" id="v4BilledFte">₹45,988</div>
-        <div class="rate-sub" id="v4RateUnitLabel">Billed Rate per Billable Agent FTE / Month (@ <span class="targetGmDisplay">18</span>% GM)</div>
+        <div class="big-rate" id="v4BilledFte">₹0</div>
+        <div class="rate-sub" id="v4RateUnitLabel">Uniform Parity Rate per Billable FTE / Month (@ <span class="targetGmDisplay">18</span>% GM)</div>
         
         <div class="stat-row">
           <span>Billed Rate per Physical Seat:</span>
-          <strong class="highlight-val" id="v4BilledSeat" style="color:#6d28d9;">₹55,501 / seat / mo</strong>
+          <strong class="highlight-val" id="v4BilledSeat" style="color:#6d28d9;">₹0 / seat / mo</strong>
         </div>
         <div class="stat-row">
           <span>Total Monthly Invoicing:</span>
-          <strong id="v4MonthlyTcv">₹45,98,835 / mo</strong>
+          <strong id="v4MonthlyTcv">₹0 / mo</strong>
         </div>
         <div class="stat-row">
           <span>Monthly Gross Margin:</span>
-          <strong id="v4MarginMonthly" style="color:#166534;">₹8,27,790 / mo</strong>
+          <strong id="v4MarginMonthly" style="color:#166534;">₹0 / mo</strong>
         </div>
         <div class="stat-row">
           <span>Annual Contract Value (ACV):</span>
-          <strong id="v4Acv">₹5,51,86,020</strong>
+          <strong id="v4Acv">₹0</strong>
         </div>
       </div>
     </div>
@@ -239,7 +239,7 @@
       </div>
 
       <div class="form-group">
-        <label>Gazette Area Tier (Auto Updates Wage, Infra & IT)</label>
+        <label>Gazette Area Tier</label>
         <select id="areaTier" onchange="applyLocationAndWage(true)">
           <option value="A" selected>Area A (Metros / Major Urban)</option>
           <option value="B">Area B (Tier-2 Agglomerations)</option>
@@ -312,7 +312,7 @@
         <label>Is Training Billable to Client?</label>
         <select id="trainingBillable" onchange="calculate()">
           <option value="no" selected>No (Non-Billable — Loaded into FTE Cost & Buffers)</option>
-          <option value="yes">Yes (Billable — Trainees Billed Separately by Client)</option>
+          <option value="yes">Yes (Billable — Trainees Billed Separately)</option>
         </select>
       </div>
 
@@ -378,7 +378,7 @@
 
   <div class="card">
     <h2>
-      <span>4. Support Staff Hierarchy (Editable Span, CTC & Seats)</span>
+      <span>4. Support Staff Hierarchy (Span, CTC, Seats & Billable Parity Status)</span>
       <div>
         <button type="button" class="btn-action" onclick="addSupportRole()">+ Add Role</button>
         <button type="button" class="btn-action" style="background:#64748b; margin-left:6px;" onclick="resetSupportRoles()">Reset CIS Defaults</button>
@@ -392,30 +392,31 @@
       </div>
 
       <div class="form-group">
-        <label>Total Support Physical Seats</label>
-        <input type="text" id="totalSupportSeatsDisplay" class="readonly-input" readonly value="7.85 Physical Seats">
+        <label>Billable Support Headcount (Billed at Parity Rate)</label>
+        <input type="text" id="billableSupportCountDisplay" class="readonly-input" readonly value="0.00 FTEs">
+      </div>
+
+      <div class="form-group">
+        <label>Non-Billable Support Headcount (Absorbed Overhead)</label>
+        <input type="text" id="nonBillableSupportCountDisplay" class="readonly-input" readonly value="10.44 FTEs">
       </div>
 
       <div class="form-group">
         <label>Total Support Monthly Budget</label>
         <input type="text" id="totalSupportCostDisplay" class="readonly-input" readonly value="₹3,21,005 / mo">
       </div>
-
-      <div class="form-group">
-        <label>Support Staff Invoicing (When Billable)</label>
-        <input type="text" id="supportBillingDisplay" class="readonly-input" readonly value="₹4,37,933 / mo">
-      </div>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th style="width: 24%;">Support Role</th>
-          <th style="width: 15%;">Span Ratio (1:X)</th>
-          <th style="width: 17%;">Monthly CTC (Rs.)</th>
-          <th style="width: 14%;">FTE Count</th>
-          <th style="width: 14%;">Seats Req.</th>
-          <th style="width: 16%;">Monthly Budget (Rs.)</th>
+          <th style="width: 22%;">Support Role</th>
+          <th style="width: 13%;">Span (1:X)</th>
+          <th style="width: 15%;">Monthly CTC</th>
+          <th style="width: 11%;">FTE Count</th>
+          <th style="width: 11%;">Seats Req.</th>
+          <th style="width: 14%;">Monthly Budget</th>
+          <th style="width: 14%;">Billable at Parity?</th>
         </tr>
       </thead>
       <tbody id="supportRolesTbody">
@@ -425,7 +426,7 @@
 
   <div class="card">
     <h2>
-      <span>5. Seat Infrastructure, IT & CRM/Dialer Licensing</span>
+      <span>5. Seat Infrastructure, IT & CRM Licensing</span>
       <span class="badge" id="tierCostBadge">Tier A Defaults (Editable)</span>
     </h2>
     
@@ -633,7 +634,6 @@ const stateCityMap = {
   ]
 };
 
-// Rates effective 01.04.2026 (per day in Rs.)
 const wageRateMatrix = {
   watch_noarms: { A: 1008, B: 918, C: 781 },
   watch_arms:   { A: 1094, B: 1008, C: 918 },
@@ -643,21 +643,19 @@ const wageRateMatrix = {
   sweeping:     { A: 827, B: 693, C: 556 }
 };
 
-// Tier-based Infra and IT Cost Defaults (per physical seat in Rs./mo)
 const tierSeatCostMatrix = {
   A: { infra: 3000, it: 1800, label: "Tier A (Metros / Tier-1)" },
   B: { infra: 2200, it: 1500, label: "Tier B (Tier-2 Cities)" },
   C: { infra: 1600, it: 1200, label: "Tier C (Tier-3 / Non-Metro)" }
 };
 
-// Default CIS Support Staff Matrix
 const defaultSupportRoles = [
-  { name: "Team Leader (TL)", span: 20, ctc: 28800, seatFactor: 0.758 },
-  { name: "Assistant Manager (AM)", span: 100, ctc: 43333, seatFactor: 1.0 },
-  { name: "Quality Analyst (QA)", span: 40, ctc: 28800, seatFactor: 0.758 },
-  { name: "MIS Executive", span: 100, ctc: 28000, seatFactor: 1.0 },
-  { name: "Trainer", span: 100, ctc: 30000, seatFactor: 0.2 },
-  { name: "HOD / Management", span: 2000, ctc: 144000, seatFactor: 1.0 }
+  { name: "Team Leader (TL)", span: 20, ctc: 28800, seatFactor: 0.758, billable: "no" },
+  { name: "Assistant Manager (AM)", span: 100, ctc: 43333, seatFactor: 1.0, billable: "no" },
+  { name: "Quality Analyst (QA)", span: 40, ctc: 28800, seatFactor: 0.758, billable: "no" },
+  { name: "MIS Executive", span: 100, ctc: 28000, seatFactor: 1.0, billable: "no" },
+  { name: "Trainer", span: 100, ctc: 30000, seatFactor: 0.2, billable: "no" },
+  { name: "HOD / Management", span: 2000, ctc: 144000, seatFactor: 1.0, billable: "no" }
 ];
 
 let supportRoles = JSON.parse(JSON.stringify(defaultSupportRoles));
@@ -680,10 +678,11 @@ function toggleCrmCost() {
 
 function validateAndCalculateCrm() {
   const isClientProvided = document.getElementById('crmProvidedByClient').value === 'yes';
+  const crmInput = document.getElementById('crmLicenseCost');
   if (isClientProvided) {
-    document.getElementById('crmLicenseCost').value = 0;
+    crmInput.value = 0;
   }
-  const val = parseFloat(document.getElementById('crmLicenseCost').value) || 0;
+  const val = parseFloat(crmInput.value) || 0;
   document.getElementById('effectiveCrmDisplay').value = `₹${Math.round(val).toLocaleString('en-IN')} / FTE`;
   calculate();
 }
@@ -703,6 +702,7 @@ function renderSupportTable(csaCount, csaSeats) {
     }
     const seats = count * seatFactor;
     const monthlyCost = count * ctcVal;
+    const isBillable = role.billable === 'yes';
 
     html += `<tr>
       <td><input type="text" class="table-input" value="${role.name}" onchange="updateRoleField(${idx}, 'name', this.value)"></td>
@@ -711,6 +711,12 @@ function renderSupportTable(csaCount, csaSeats) {
       <td><strong>${count.toFixed(2)}</strong></td>
       <td><strong>${seats.toFixed(2)}</strong></td>
       <td>₹${Math.round(monthlyCost).toLocaleString('en-IN')}</td>
+      <td>
+        <select class="table-input" style="font-weight:600; color:${isBillable ? '#166534' : '#1e40af'}; background:${isBillable ? '#f0fdf4' : '#eff6ff'};" onchange="updateRoleField(${idx}, 'billable', this.value)">
+          <option value="no" ${!isBillable ? 'selected' : ''}>No (Absorbed Overhead)</option>
+          <option value="yes" ${isBillable ? 'selected' : ''}>Yes (Billable at Parity)</option>
+        </select>
+      </td>
     </tr>`;
   });
 
@@ -718,8 +724,8 @@ function renderSupportTable(csaCount, csaSeats) {
 }
 
 function updateRoleField(index, field, value) {
-  if (field === 'name') {
-    supportRoles[index].name = value;
+  if (field === 'name' || field === 'billable') {
+    supportRoles[index][field] = value;
   } else {
     supportRoles[index][field] = parseFloat(value) || 0;
   }
@@ -727,7 +733,7 @@ function updateRoleField(index, field, value) {
 }
 
 function addSupportRole() {
-  supportRoles.push({ name: "New Support Role", span: 50, ctc: 30000, seatFactor: 1.0 });
+  supportRoles.push({ name: "New Support Role", span: 50, ctc: 30000, seatFactor: 1.0, billable: "no" });
   calculate();
 }
 
@@ -802,12 +808,10 @@ function calculate() {
   const targetGm = (parseFloat(document.getElementById('targetGm').value) || 0) / 100;
   const modelChoice = document.getElementById('commercialModelSelect').value;
 
-  // Update target GM text display
   document.querySelectorAll('.targetGmDisplay').forEach(el => {
     el.innerText = (targetGm * 100).toFixed(0);
   });
 
-  // Operational Loading: Attrition & Training Buffer
   const attrition = (parseFloat(document.getElementById('attritionPct').value) || 0) / 100;
   const throughput = (parseFloat(document.getElementById('throughputPct').value) || 85) / 100;
   const trainingDays = parseFloat(document.getElementById('trainingDays').value) || 0;
@@ -815,24 +819,20 @@ function calculate() {
   const fteHrs = parseFloat(document.getElementById('fteHrsDefn').value) || 182;
   const workingDays = parseFloat(document.getElementById('workingDays').value) || 26;
 
-  // Seat Utilization (%) & Sizing
   const seatUtilPct = (parseFloat(document.getElementById('seatUtilizationPct').value) || 131.87) / 100;
-  const baseCsaCount = billableFte * (fteHrs / 184); // 98.913 in CIS
+  const baseCsaCount = billableFte * (fteHrs / 184);
   let trainingBufferCount = 0;
   if (!isTrainingBillable && throughput > 0 && workingDays > 0 && trainingDays > 0) {
     trainingBufferCount = ((billableFte * attrition) / throughput) * (trainingDays / 30);
   }
 
   const totalCsaCount = baseCsaCount + trainingBufferCount;
-  
-  // Production Seats based on Seat Utilization factor
-  const csaSeats = seatUtilPct > 0 ? (baseCsaCount / seatUtilPct) : baseCsaCount; // 75.009 seats at 131.87%
+  const csaSeats = seatUtilPct > 0 ? (baseCsaCount / seatUtilPct) : baseCsaCount;
 
   renderSupportTable(totalCsaCount, csaSeats);
 
   document.getElementById('csaSeatsDisplay').value = `${csaSeats.toFixed(2)} Physical Seats`;
 
-  // Agent Salary Calculation
   const fresherCtc = parseFloat(document.getElementById('fresherCtc').value) || 0;
   const experiencedCtc = parseFloat(document.getElementById('experiencedCtc').value) || 0;
   const fresherPct = (parseFloat(document.getElementById('fresherPct').value) || 0) / 100;
@@ -845,10 +845,14 @@ function calculate() {
   document.getElementById('baseWeightedCtc').value = '₹' + Math.round(baseWeightedCtc).toLocaleString('en-IN');
   document.getElementById('v4EffectiveCtcDisplay').value = '₹' + Math.round(baseWeightedCtc + v4Extra).toLocaleString('en-IN');
 
-  // Support Staff Calculation from Editable Table
   let totalSupportHeadcount = 0;
   let totalSupportSeats = 0;
   let totalSupportMonthlyBudget = 0;
+  let nonBillableSupportBudget = 0;
+  let nonBillableSupportHeadcount = 0;
+  let billableSupportBudget = 0;
+  let billableSupportHeadcount = 0;
+  let billableSupportSeats = 0;
 
   supportRoles.forEach(r => {
     const s = parseFloat(r.span) || 0;
@@ -860,19 +864,30 @@ function calculate() {
         seatFactor = totalCsaCount > 0 ? (csaSeats / totalCsaCount) : (1 / seatUtilPct);
       }
       const seats = count * seatFactor;
+      const roleBudget = count * c;
+
       totalSupportHeadcount += count;
       totalSupportSeats += seats;
-      totalSupportMonthlyBudget += count * c;
+      totalSupportMonthlyBudget += roleBudget;
+
+      if (r.billable === 'yes') {
+        billableSupportHeadcount += count;
+        billableSupportBudget += roleBudget;
+        billableSupportSeats += seats;
+      } else {
+        nonBillableSupportHeadcount += count;
+        nonBillableSupportBudget += roleBudget;
+      }
     }
   });
 
-  const totalPhysicalSeats = csaSeats + totalSupportSeats; // 82.86 in CIS
+  const totalPhysicalSeats = csaSeats + totalSupportSeats;
   document.getElementById('totalPhysicalSeatsDisplay').value = `${totalPhysicalSeats.toFixed(2)} Physical Seats (${(seatUtilPct*100).toFixed(1)}% Util)`;
   document.getElementById('totalSupportCountDisplay').value = `${totalSupportHeadcount.toFixed(2)} FTEs`;
-  document.getElementById('totalSupportSeatsDisplay').value = `${totalSupportSeats.toFixed(2)} Physical Seats`;
+  document.getElementById('billableSupportCountDisplay').value = `${billableSupportHeadcount.toFixed(2)} FTEs`;
+  document.getElementById('nonBillableSupportCountDisplay').value = `${nonBillableSupportHeadcount.toFixed(2)} FTEs`;
   document.getElementById('totalSupportCostDisplay').value = '₹' + Math.round(totalSupportMonthlyBudget).toLocaleString('en-IN') + ' / mo';
 
-  // Overheads & Seat Cost Allocations
   const infraPerSeat = parseFloat(document.getElementById('infraPerSeat').value) || 0;
   const itPerSeat = parseFloat(document.getElementById('itPerSeat').value) || 0;
   const recruitmentFte = parseFloat(document.getElementById('recruitmentFte').value) || 0;
@@ -881,36 +896,36 @@ function calculate() {
   const isClientCrm = document.getElementById('crmProvidedByClient').value === 'yes';
   const crmCostPerFte = isClientCrm ? 0 : (parseFloat(document.getElementById('crmLicenseCost').value) || 0);
 
-  // Seat costs
   const csaSeatCostTotal = (infraPerSeat + itPerSeat) * csaSeats;
   const supportSeatCostTotal = (infraPerSeat + itPerSeat) * totalSupportSeats;
   const totalFacilitySeatCost = csaSeatCostTotal + supportSeatCostTotal;
 
-  // Support Separate Invoicing (for Model 3)
-  const supportSeparateMonthlyCost = totalSupportMonthlyBudget + (2.11 * billableFte) + supportSeatCostTotal;
+  // Separate Support Invoicing calculation (Model 3 & explicitly billable support under Model 1)
+  const billableSupportSeatCost = (infraPerSeat + itPerSeat) * billableSupportSeats;
+  const supportSeparateMonthlyCost = billableSupportBudget + (billableSupportHeadcount > 0 ? (overheadFte * billableSupportHeadcount) : 0) + billableSupportSeatCost;
   const supportSeparateBillingMonthly = targetGm < 1 ? supportSeparateMonthlyCost / (1 - targetGm) : 0;
-  document.getElementById('supportBillingDisplay').value = '₹' + Math.round(supportSeparateBillingMonthly).toLocaleString('en-IN') + ' / mo';
 
-  // Model Banner & Rule Descriptions
   let modelBannerText = "";
   let modelBannerClass = "";
   let modelRuleDesc = "";
   let rateLabelText = "";
 
+  const totalBillableParityUnits = billableFte + billableSupportHeadcount;
+
   if (modelChoice === 'support_non_billable') {
     modelBannerClass = "model-banner model-nonbillable";
-    modelBannerText = "<b>Model 1: Support Non-Billable Rate (Bundled in Agent FTE)</b> — Support staff costs (TL, QA, AM, MIS, Trainer) and facility overheads are 100% bundled into the Billable Agent FTE rate. The client is invoiced per Billable Agent FTE.";
-    modelRuleDesc = "Support staff is non-billable. All support compensation & seat costs are absorbed directly into the 100 Billable Agent FTE rate.";
+    modelBannerText = "<b>Model 1: Support Non-Billable Rate (Bundled in Agent FTE)</b> — Non-billable support staff costs and facility overheads are 100% bundled into the Billable Agent FTE rate. Explicitly billable support staff are invoiced separately.";
+    modelRuleDesc = "Non-billable support staff are absorbed directly into the Billable Agent FTE rate. Billable support staff are invoiced separately.";
     rateLabelText = "Billed Rate per Billable Agent FTE / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
   } else if (modelChoice === 'bundled_agent_parity') {
     modelBannerClass = "model-banner model-parity";
-    modelBannerText = "<b>Model 2: Bundled with Agent Rate Parity (Uniform Parity Billing)</b> — Total project revenue is pooled across all billable headcount units (100 Agents + " + totalSupportHeadcount.toFixed(2) + " Support = " + (billableFte + totalSupportHeadcount).toFixed(2) + " Headcount). Every resource is billed at the exact same uniform parity rate.";
-    modelRuleDesc = "Support staff and agents are billed as equal commercial headcount units at uniform rate parity across the total resource pool.";
-    rateLabelText = "Uniform Parity Billed Rate per Headcount Unit / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
+    modelBannerText = `<b>Model 2: Bundled with Agent Rate Parity (Uniform Parity Billing)</b> — All <b>${billableFte} Agent FTEs</b> and <b>${billableSupportHeadcount.toFixed(2)} Billable Support FTEs</b> (Total <b>${totalBillableParityUnits.toFixed(2)} Billable FTEs</b>) are billed at the <b>exact same uniform common rate</b>. All non-billable support overheads, seats, and ops costs are absorbed evenly across this billable pool.`;
+    modelRuleDesc = `All agents (${billableFte} FTEs) and billable support staff (${billableSupportHeadcount.toFixed(2)} FTEs) are billed at one common parity rate across the ${totalBillableParityUnits.toFixed(2)} billable FTE pool.`;
+    rateLabelText = "Uniform Parity Billed Rate per Billable FTE (Agent & Support) / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
   } else if (modelChoice === 'support_billable') {
     modelBannerClass = "model-banner model-billable";
-    modelBannerText = "<b>Model 3: Support Billable (Unbundled Direct Line Items)</b> — Agent FTE rate excludes support staff burden (billed as pure standalone agent rate). Support staff are invoiced separately as direct billable line items at ₹" + Math.round(supportSeparateBillingMonthly).toLocaleString('en-IN') + " / mo.";
-    modelRuleDesc = "Support staff are billed separately as dedicated line items. Agent FTE rate includes only agent CTC, direct overheads, and agent production seats.";
+    modelBannerText = "<b>Model 3: Support Billable (Unbundled Direct Line Items)</b> — Agent FTE rate excludes all support staff burden (billed as pure standalone agent rate). Support staff are invoiced separately as direct billable line items at ₹" + Math.round(supportSeparateBillingMonthly).toLocaleString('en-IN') + " / mo.";
+    modelRuleDesc = "All support staff are billed separately as dedicated line items. Agent FTE rate includes only agent CTC, direct overheads, and agent production seats.";
     rateLabelText = "Standalone Agent Billed Rate per FTE / Month (@ " + (targetGm * 100).toFixed(0) + "% GM)";
   }
 
@@ -921,12 +936,11 @@ function calculate() {
   document.getElementById('v3RateUnitLabel').innerText = rateLabelText;
   document.getElementById('v4RateUnitLabel').innerText = rateLabelText;
 
-  // Helper Function for Commercial Rate Computation for the 3 Models
   function computeThreeModelRate(versantExtra) {
     const totalAgentCtc = baseWeightedCtc + versantExtra;
     const csaSalaryTotal = totalAgentCtc * totalCsaCount;
     const csaSalaryPerFte = billableFte > 0 ? (csaSalaryTotal / billableFte) : 0;
-    const supportCostPerFte = billableFte > 0 ? (totalSupportMonthlyBudget / billableFte) : 0;
+    const nonBillableSupportCostPerFte = billableFte > 0 ? (nonBillableSupportBudget / billableFte) : 0;
 
     let billedRateFte = 0;
     let billedRateSeat = 0;
@@ -935,29 +949,43 @@ function calculate() {
     let supportLineItemBilled = 0;
 
     if (modelChoice === 'support_non_billable') {
-      // 1. SUPPORT NON-BILLABLE (Bundled in Agent FTE Rate)
-      const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + totalFacilitySeatCost;
+      // 1. SUPPORT NON-BILLABLE: Bundled into Agent FTE (excluding explicitly billable support)
+      const nonBillableSeatCost = (infraPerSeat + itPerSeat) * (csaSeats + (totalSupportSeats - billableSupportSeats));
+      const projectMonthlyCost = csaSalaryTotal + nonBillableSupportBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + nonBillableSeatCost;
       totalBaseCostPerFte = billableFte > 0 ? (projectMonthlyCost / billableFte) : 0;
       billedRateFte = targetGm < 1 ? totalBaseCostPerFte / (1 - targetGm) : 0;
-      monthlyInvoiceTotal = billedRateFte * billableFte;
-      billedRateSeat = totalPhysicalSeats > 0 ? monthlyInvoiceTotal / totalPhysicalSeats : 0;
+      const agentMonthlyInvoice = billedRateFte * billableFte;
+      supportLineItemBilled = supportSeparateBillingMonthly;
+      monthlyInvoiceTotal = agentMonthlyInvoice + supportLineItemBilled;
+      billedRateSeat = csaSeats > 0 ? (monthlyInvoiceTotal - supportLineItemBilled) / csaSeats : 0;
+
     } else if (modelChoice === 'bundled_agent_parity') {
-      // 2. BUNDLED WITH AGENT RATE PARITY (Uniform Parity Across 110.44 Units)
-      const totalPooledUnits = billableFte + totalSupportHeadcount;
-      const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + totalFacilitySeatCost;
-      const costPerPooledUnit = totalPooledUnits > 0 ? (projectMonthlyCost / totalPooledUnits) : 0;
-      billedRateFte = targetGm < 1 ? costPerPooledUnit / (1 - targetGm) : 0;
-      monthlyInvoiceTotal = billedRateFte * totalPooledUnits;
+      // 2. BUNDLED WITH AGENT RATE PARITY: All Agents & Billable Support Billed at One Common Rate
+      const totalBillableUnits = billableFte + billableSupportHeadcount;
+      
+      // Total project monthly cost covers: Agent salary + ALL support salaries + Direct agent overheads + Support overheads + Total facility seat costs
+      const supportOpsCost = (overheadFte + otherFte) * totalSupportHeadcount;
+      const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + supportOpsCost + totalFacilitySeatCost;
+      
+      const totalProjectRevenueRequired = targetGm < 1 ? projectMonthlyCost / (1 - targetGm) : 0;
+      
+      // Common Parity Billed Rate per Billable FTE
+      billedRateFte = totalBillableUnits > 0 ? (totalProjectRevenueRequired / totalBillableUnits) : 0;
+      totalBaseCostPerFte = totalBillableUnits > 0 ? (projectMonthlyCost / totalBillableUnits) : 0;
+      
+      monthlyInvoiceTotal = billedRateFte * totalBillableUnits;
+      supportLineItemBilled = 0; // Integrated into common parity billing
       billedRateSeat = totalPhysicalSeats > 0 ? monthlyInvoiceTotal / totalPhysicalSeats : 0;
-      totalBaseCostPerFte = costPerPooledUnit;
+
     } else if (modelChoice === 'support_billable') {
-      // 3. SUPPORT BILLABLE (Unbundled Standalone Agent + Support Line Items)
-      const agentStandaloneCostMonthly = csaSalaryTotal + (439.61 * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + csaSeatCostTotal;
+      // 3. SUPPORT BILLABLE: Standalone Agent Rate + Separate Support Invoicing
+      const agentStandaloneCostMonthly = csaSalaryTotal + (recruitmentFte * billableFte) + ((otherFte + overheadFte + crmCostPerFte) * billableFte) + csaSeatCostTotal;
       const agentCostPerFte = billableFte > 0 ? (agentStandaloneCostMonthly / billableFte) : 0;
       billedRateFte = targetGm < 1 ? agentCostPerFte / (1 - targetGm) : 0;
       const agentMonthlyInvoice = billedRateFte * billableFte;
       billedRateSeat = csaSeats > 0 ? agentMonthlyInvoice / csaSeats : 0;
-      supportLineItemBilled = supportSeparateBillingMonthly;
+      
+      supportLineItemBilled = targetGm < 1 ? (totalSupportMonthlyBudget + supportSeatCostTotal + ((overheadFte + otherFte) * totalSupportHeadcount)) / (1 - targetGm) : 0;
       monthlyInvoiceTotal = agentMonthlyInvoice + supportLineItemBilled;
       totalBaseCostPerFte = agentCostPerFte;
     }
@@ -968,7 +996,7 @@ function calculate() {
     return {
       agentCtc: totalAgentCtc,
       csaSalaryPerFte: csaSalaryPerFte,
-      supportCostPerFte: supportCostPerFte,
+      nonBillableSupportCostPerFte: nonBillableSupportCostPerFte,
       totalBaseCostPerFte: totalBaseCostPerFte,
       billedRateFte: billedRateFte,
       billedRateSeat: billedRateSeat,
@@ -982,10 +1010,10 @@ function calculate() {
   const v3 = computeThreeModelRate(v3Extra);
   const v4 = computeThreeModelRate(v4Extra);
 
-  // Store for email generation
-  const stateVal = document.getElementById('stateSelect').value;
-  const stateText = document.getElementById('stateSelect').options[document.getElementById('stateSelect').selectedIndex].text;
-  const cityText = document.getElementById('citySelect').options[document.getElementById('citySelect').selectedIndex]?.text || "Metropolitan Urban Area";
+  const stateSelectEl = document.getElementById('stateSelect');
+  const stateText = stateSelectEl.options[stateSelectEl.selectedIndex]?.text || "Delhi (NCT)";
+  const citySelectEl = document.getElementById('citySelect');
+  const cityText = citySelectEl.options[citySelectEl.selectedIndex]?.text || "Delhi (NCR)";
   const tierVal = document.getElementById('areaTier').value;
 
   currentCalcData = {
@@ -1000,8 +1028,13 @@ function calculate() {
     csaSeats,
     totalPhysicalSeats,
     totalSupportHeadcount,
-    totalSupportSeats,
+    nonBillableSupportHeadcount,
+    billableSupportHeadcount,
+    totalBillableParityUnits,
     totalSupportMonthlyBudget,
+    nonBillableSupportBudget,
+    billableSupportBudget,
+    supportSeparateBillingMonthly,
     infraPerSeat,
     itPerSeat,
     recruitmentFte,
@@ -1015,7 +1048,6 @@ function calculate() {
     v4
   };
 
-  // Update Versant Proposal Highlight Cards
   document.getElementById('v3PremiumTag').innerText = v3Extra === 0 ? '+₹0 Premium' : `+₹${v3Extra.toLocaleString('en-IN')} Extra`;
   document.getElementById('v4PremiumTag').innerText = `+₹${v4Extra.toLocaleString('en-IN')} Extra`;
 
@@ -1031,25 +1063,24 @@ function calculate() {
   document.getElementById('v4MarginMonthly').innerText = '₹' + Math.round(v4.monthlyGrossMargin).toLocaleString('en-IN') + ' / mo';
   document.getElementById('v4Acv').innerText = '₹' + Math.round(v4.acv).toLocaleString('en-IN');
 
-  // Render Detailed Comparison Table
   const comparisonItems = [
     { label: "Effective Agent Base CTC", v3: v3.agentCtc, v4: v4.agentCtc, prefix: "₹" },
     { label: "Agent Direct Salary per FTE (Loaded)", v3: v3.csaSalaryPerFte, v4: v4.csaSalaryPerFte, prefix: "₹" },
     { 
-      label: modelChoice === 'support_billable' ? "Support Staff Billing (Invoiced Separately)" : (modelChoice === 'bundled_agent_parity' ? "Support Staff Cost (Uniform Parity Pooled)" : "Support Staff Cost Allocation (Bundled in FTE)"), 
-      v3: modelChoice === 'support_billable' ? `₹${Math.round(v3.supportLineItemBilled).toLocaleString('en-IN')} / mo` : `₹${Math.round(v3.supportCostPerFte).toLocaleString('en-IN')}`, 
-      v4: modelChoice === 'support_billable' ? `₹${Math.round(v4.supportLineItemBilled).toLocaleString('en-IN')} / mo` : `₹${Math.round(v4.supportCostPerFte).toLocaleString('en-IN')}`, 
+      label: modelChoice === 'bundled_agent_parity' ? "Total Billable Parity Headcount (Agents + Support)" : "Support Staff Non-Billable Cost", 
+      v3: modelChoice === 'bundled_agent_parity' ? `${totalBillableParityUnits.toFixed(2)} Billable FTEs` : `₹${Math.round(v3.nonBillableSupportCostPerFte).toLocaleString('en-IN')}`, 
+      v4: modelChoice === 'bundled_agent_parity' ? `${totalBillableParityUnits.toFixed(2)} Billable FTEs` : `₹${Math.round(v4.nonBillableSupportCostPerFte).toLocaleString('en-IN')}`, 
       isText: true 
     },
     { 
-      label: modelChoice === 'support_billable' ? "Agent Production Seat Infra+IT Cost" : "Total Facility Seat Infra+IT Cost / FTE", 
-      v3: modelChoice === 'support_billable' ? csaSeatCostTotal / (billableFte || 1) : totalFacilitySeatCost / (billableFte || 1), 
-      v4: modelChoice === 'support_billable' ? csaSeatCostTotal / (billableFte || 1) : totalFacilitySeatCost / (billableFte || 1), 
-      prefix: "₹" 
+      label: "Support Staff Invoicing (Standalone Line Item)", 
+      v3: modelChoice === 'bundled_agent_parity' ? "₹0 (Included in Parity Rate)" : `₹${Math.round(v3.supportLineItemBilled).toLocaleString('en-IN')} / mo`, 
+      v4: modelChoice === 'bundled_agent_parity' ? "₹0 (Included in Parity Rate)" : `₹${Math.round(v4.supportLineItemBilled).toLocaleString('en-IN')} / mo`, 
+      isText: true 
     },
     { label: "Target Gross Margin (%)", v3: `${(targetGm * 100).toFixed(0)}%`, v4: `${(targetGm * 100).toFixed(0)}%`, isText: true },
     { 
-      label: modelChoice === 'support_non_billable' ? "FINAL BILLED RATE / AGENT FTE" : (modelChoice === 'bundled_agent_parity' ? "FINAL UNIFORM PARITY RATE / HEADCOUNT" : "STANDALONE AGENT BILLED RATE / FTE"), 
+      label: modelChoice === 'support_non_billable' ? "FINAL BILLED RATE / AGENT FTE" : (modelChoice === 'bundled_agent_parity' ? "FINAL UNIFORM PARITY RATE / BILLABLE FTE (AGENTS & SUPPORT)" : "STANDALONE AGENT BILLED RATE / FTE"), 
       v3: v3.billedRateFte, 
       v4: v4.billedRateFte, 
       prefix: "₹", 
@@ -1057,7 +1088,7 @@ function calculate() {
       highlight: true 
     },
     { 
-      label: modelChoice === 'support_billable' ? "AGENT PRODUCTION SEAT RATE (75 Seats)" : "FINAL BILLED RATE / PHYSICAL SEAT (83 Seats)", 
+      label: "FINAL BILLED RATE / PHYSICAL SEAT", 
       v3: v3.billedRateSeat, 
       v4: v4.billedRateSeat, 
       prefix: "₹", 
@@ -1086,33 +1117,16 @@ function calculate() {
   });
   document.getElementById('versantComparisonTbody').innerHTML = compHtml;
 
-  // Render Margin Scenario Table
   const scenarioGMs = [0.12, 0.15, 0.18, 0.20, 0.25];
   let scenarioRows = '';
   scenarioGMs.forEach(gm => {
     const scV3Rate = v3.totalBaseCostPerFte / (1 - gm);
     const scV4Rate = v4.totalBaseCostPerFte / (1 - gm);
     
-    let scV3Seat = 0;
-    let scV4Seat = 0;
-    let scV4Margin = 0;
-
-    if (modelChoice === 'support_non_billable') {
-      scV3Seat = totalPhysicalSeats > 0 ? (scV3Rate * billableFte) / totalPhysicalSeats : 0;
-      scV4Seat = totalPhysicalSeats > 0 ? (scV4Rate * billableFte) / totalPhysicalSeats : 0;
-      scV4Margin = (scV4Rate * billableFte) * gm;
-    } else if (modelChoice === 'bundled_agent_parity') {
-      const totalUnits = billableFte + totalSupportHeadcount;
-      scV3Seat = totalPhysicalSeats > 0 ? (scV3Rate * totalUnits) / totalPhysicalSeats : 0;
-      scV4Seat = totalPhysicalSeats > 0 ? (scV4Rate * totalUnits) / totalPhysicalSeats : 0;
-      scV4Margin = (scV4Rate * totalUnits) * gm;
-    } else if (modelChoice === 'support_billable') {
-      scV3Seat = csaSeats > 0 ? (scV3Rate * billableFte) / csaSeats : 0;
-      scV4Seat = csaSeats > 0 ? (scV4Rate * billableFte) / csaSeats : 0;
-      const suppBilled = supportSeparateMonthlyCost / (1 - gm);
-      scV4Margin = ((scV4Rate * billableFte) + suppBilled) * gm;
-    }
-
+    const billingUnits = (modelChoice === 'bundled_agent_parity') ? totalBillableParityUnits : billableFte;
+    const scV3Seat = csaSeats > 0 ? (scV3Rate * billingUnits) / csaSeats : 0;
+    const scV4Seat = csaSeats > 0 ? (scV4Rate * billingUnits) / csaSeats : 0;
+    const scV4Margin = (scV4Rate * billingUnits) * gm;
     const isCurrent = Math.abs(gm - targetGm) < 0.001;
 
     scenarioRows += `<tr style="${isCurrent ? 'font-weight:700; background:#ecfdf5;' : ''}">
@@ -1127,105 +1141,101 @@ function calculate() {
   document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
 }
 
-// EMAIL GENERATION & MODAL LOGIC
 function openEmailModal(type) {
   const d = currentCalcData;
   if (!d.billableFte) return;
 
   const gmPct = (d.targetGm * 100).toFixed(0);
-  const isV3 = d.v3Extra === 0;
   let subject = "";
-  let body = "";
+  let bodyHtml = "";
+
+  const isParity = d.modelChoice === 'bundled_agent_parity';
+  const effectiveBilledFtes = isParity ? d.totalBillableParityUnits : d.billableFte;
 
   if (type === 'mgmt') {
-    // Management Approval Email Draft
-    subject = `[APPROVAL REQUEST] Commercial Cost Sheet & Seat Rate Proposal - ${d.stateText} (Area ${d.tierVal}) - ${d.billableFte} FTEs`;
+    subject = `[APPROVAL REQUEST] Commercial Cost Sheet & Seat Rate Proposal - ${d.stateText} (Area ${d.tierVal}) - ${effectiveBilledFtes.toFixed(2)} Billable FTEs`;
     
-    body = `Dear Management & Finance Team,\n\n` +
-      `Please review and approve the commercial costing and rate proposal structured for the upcoming ${d.billableFte} FTE client engagement.\n\n` +
-      `========================================================================\n` +
-      `1. PROGRAM ARCHITECTURE & RESOURCE SIZING\n` +
-      `========================================================================\n` +
-      `• Location: ${d.cityText}, ${d.stateText} [Gazette Area ${d.tierVal}]\n` +
-      `• Billable Agent Headcount: ${d.billableFte} FTEs\n` +
-      `• Seat Utilization Factor: ${(d.seatUtilPct * 100).toFixed(1)}% (${d.csaSeats.toFixed(2)} Agent Production Seats)\n` +
-      `• Support Staff Headcount: ${d.totalSupportHeadcount.toFixed(2)} FTEs (${d.totalSupportSeats.toFixed(2)} Dedicated Support Seats)\n` +
-      `• Total Facility Physical Seats Required: ${d.totalPhysicalSeats.toFixed(2)} Seats\n` +
-      `• Selected Commercial Model: ${d.modelChoice.toUpperCase().replace(/_/g, ' ')}\n` +
-      `• Commercial Model Rule: ${d.modelRuleDesc}\n\n` +
-      `========================================================================\n` +
-      `2. COST COMPONENT BREAKDOWN (PER FTE & MONTHLY)\n` +
-      `========================================================================\n` +
-      `• Base Agent CTC (50/50 Fresher-Exp Blend): ₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} / mo\n` +
-      `• Support Staff Budget (TL, QA, AM, MIS, Trainer): ₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo (₹${Math.round(d.v3.supportCostPerFte).toLocaleString('en-IN')}/FTE)\n` +
-      `• Seat Infrastructure Cost: ₹${d.infraPerSeat.toLocaleString('en-IN')} / physical seat / mo\n` +
-      `• Seat IT & Tech Setup: ₹${d.itPerSeat.toLocaleString('en-IN')} / physical seat / mo\n` +
-      `• Recruitment & Training Amortization: ₹${d.recruitmentFte.toLocaleString('en-IN')} / FTE / mo\n` +
-      `• Operations & Admin Overhead: ₹${(d.overheadFte + d.otherFte).toLocaleString('en-IN')} / FTE / mo\n` +
-      `• CRM & Dialer Software: ${d.isClientCrm ? '₹0 (Client Provided)' : '₹' + d.crmCostPerFte.toLocaleString('en-IN') + ' / FTE'}\n\n` +
-      `========================================================================\n` +
-      `3. COMMERCIAL PRICING & P&L SUMMARY (@ ${gmPct}% GROSS MARGIN)\n` +
-      `========================================================================\n` +
-      `OPTION A: VERSANT 3 PROPOSAL (Baseline Voice / Chat - ₹0 Premium)\n` +
-      `  - Billed Rate per FTE: ₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / month\n` +
-      `  - Billed Rate per Physical Seat: ₹${Math.round(d.v3.billedRateSeat).toLocaleString('en-IN')} / seat / month\n` +
-      `  - Total Monthly Invoicing: ₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / month\n` +
-      `  - Monthly Gross Margin: ₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / month\n` +
-      `  - Annual Contract Value (ACV): ₹${Math.round(d.v3.acv).toLocaleString('en-IN')}\n\n` +
-      `OPTION B: VERSANT 4 PROPOSAL (Enhanced Global Voice - +₹${d.v4Extra.toLocaleString('en-IN')} Extra)\n` +
-      `  - Billed Rate per FTE: ₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / month\n` +
-      `  - Billed Rate per Physical Seat: ₹${Math.round(d.v4.billedRateSeat).toLocaleString('en-IN')} / seat / month\n` +
-      `  - Total Monthly Invoicing: ₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / month\n` +
-      `  - Monthly Gross Margin: ₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / month\n` +
-      `  - Annual Contract Value (ACV): ₹${Math.round(d.v4.acv).toLocaleString('en-IN')}\n\n` +
-      `Kindly review and provide commercial sign-off so we can release the formal proposal to the client.\n\n` +
-      `Best regards,\nCommercial & Pricing Team`;
+    bodyHtml = `<p>Dear Management & Finance Team,</p>` +
+      `<p>Please review and approve the commercial costing and rate proposal structured for the upcoming <strong>${effectiveBilledFtes.toFixed(2)} Billable FTE</strong> engagement.</p>` +
+      `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
+      `<strong>1. PROGRAM ARCHITECTURE & RESOURCE SIZING</strong>` +
+      `<ul>` +
+      `<li>Location: <strong>${d.cityText}, ${d.stateText} [Gazette Area ${d.tierVal}]</strong></li>` +
+      `<li>Billable Headcount Scope: <strong>${d.billableFte} Agent FTEs + ${d.billableSupportHeadcount.toFixed(2)} Billable Support FTEs = ${d.totalBillableParityUnits.toFixed(2)} Total Billable FTEs</strong></li>` +
+      `<li>Seat Utilization Factor: <strong>${(d.seatUtilPct * 100).toFixed(1)}% (${d.csaSeats.toFixed(2)} Agent Production Seats)</strong></li>` +
+      `<li>Support Staff Headcount: <strong>${d.totalSupportHeadcount.toFixed(2)} FTEs (${d.billableSupportHeadcount.toFixed(2)} Billable at Parity / ${d.nonBillableSupportHeadcount.toFixed(2)} Non-Billable Overhead)</strong></li>` +
+      `<li>Total Facility Physical Seats Required: <strong>${d.totalPhysicalSeats.toFixed(2)} Seats</strong></li>` +
+      `<li>Commercial Billing Model: <strong>${isParity ? "BUNDLED WITH AGENT RATE PARITY (UNIFORM PARITY BILLING)" : d.modelChoice.toUpperCase().replace(/_/g, ' ')}</strong></li>` +
+      `</ul>` +
+      `<strong>2. ITEMIZED COST COMPONENT BREAKDOWN</strong>` +
+      `<table>` +
+      `<thead><tr><th>Cost Component</th><th>Unit Cost Basis</th><th>Monthly Project Cost</th><th>Cost / Billable Unit</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td>Agent Base Salary (50/50 Fresher-Exp)</td><td>₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} CTC / mo</td><td>₹${Math.round(d.v3.agentCtc * d.csaSeats * (d.seatUtilPct || 1.3187)).toLocaleString('en-IN')}</td><td>₹${Math.round((d.v3.agentCtc * d.csaSeats * (d.seatUtilPct || 1.3187)) / effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td>Support Staff Allocation (All Roles)</td><td>Hierarchy Budget</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')}</td><td>₹${Math.round(d.totalSupportMonthlyBudget / effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td>Facility Infrastructure Setup</td><td>₹${d.infraPerSeat.toLocaleString('en-IN')} / physical seat</td><td>₹${Math.round(d.infraPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td>₹${Math.round((d.infraPerSeat * d.totalPhysicalSeats)/effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td>IT & Technology Infrastructure</td><td>₹${d.itPerSeat.toLocaleString('en-IN')} / physical seat</td><td>₹${Math.round(d.itPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td>₹${Math.round((d.itPerSeat * d.totalPhysicalSeats)/effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td>Recruitment & Training Amortization</td><td>₹${d.recruitmentFte.toLocaleString('en-IN')} / FTE</td><td>₹${Math.round(d.recruitmentFte * d.billableFte).toLocaleString('en-IN')}</td><td>₹${Math.round((d.recruitmentFte * d.billableFte)/effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td>Operations, Admin & Transport</td><td>₹${(d.overheadFte + d.otherFte).toLocaleString('en-IN')} / FTE</td><td>₹${Math.round((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount)).toLocaleString('en-IN')}</td><td>₹${Math.round(((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount))/effectiveBilledFtes).toLocaleString('en-IN')}</td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<strong>3. COMMERCIAL PRICING & P&L SUMMARY (@ ${gmPct}% GROSS MARGIN)</strong>` +
+      `<table>` +
+      `<thead><tr><th>Financial Metric</th><th>Versant 3 Proposal</th><th>Versant 4 Proposal</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td><strong>${isParity ? "Uniform Parity Rate / FTE (Agents & Support)" : "Billed Rate per FTE"}</strong></td><td><strong>₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</strong></td></tr>` +
+      `<tr><td><strong>Billed Rate per Physical Seat</strong></td><td><strong>₹${Math.round(d.v3.billedRateSeat).toLocaleString('en-IN')} / seat</strong></td><td><strong>₹${Math.round(d.v4.billedRateSeat).toLocaleString('en-IN')} / seat</strong></td></tr>` +
+      `<tr><td><strong>Total Monthly Invoicing</strong></td><td>₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
+      `<tr><td><strong>Monthly Gross Margin Realized</strong></td><td style="color:#166534;"><strong>₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / mo</strong></td><td style="color:#166534;"><strong>₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / mo</strong></td></tr>` +
+      `<tr><td><strong>Annual Contract Value (ACV)</strong></td><td>₹${Math.round(d.v3.acv).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.acv).toLocaleString('en-IN')}</td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<p>Kindly review and provide commercial sign-off.</p>` +
+      `<p>Best regards,<br>Commercial & Pricing Team</p>`;
       
-    document.getElementById('modalTitle').innerText = "📧 Management Approval Email Draft (Internal P&L)";
+    document.getElementById('modalTitle').innerText = "📧 Management Approval Email Draft (Tabular P&L)";
   } else {
-    // Client Commercial Proposal Email Draft
-    subject = `Commercial Proposal & Seat Rate Pricing - ${d.billableFte} FTE Engagement - ${d.cityText}`;
+    subject = `Commercial Proposal & Seat Rate Pricing - ${effectiveBilledFtes.toFixed(2)} Billable FTE Engagement - ${d.cityText}`;
     
-    body = `Dear Client Team,\n\n` +
-      `Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal for the ${d.billableFte} FTE engagement in ${d.cityText}, ${d.stateText}.\n\n` +
-      `========================================================================\n` +
-      `1. PROGRAM SCOPE & RESOURCE SIZING\n` +
-      `========================================================================\n` +
-      `• Primary Billable Headcount: ${d.billableFte} Operational Agent FTEs\n` +
-      `• Seat Utilization Factor: ${(d.seatUtilPct * 100).toFixed(1)}% (${d.csaSeats.toFixed(2)} dedicated production workstations)\n` +
-      `• Dedicated Operational Leadership: Team Leaders (1:20 span), Quality Analysts (1:40 span), Assistant Manager, MIS Lead & Dedicated Trainer\n` +
-      `• Infrastructure & Facility: Enterprise facility seating, ergonomic workstations, high-speed redundant bandwidth, dual power backup, and 24x7 security\n` +
-      `• Technology Setup: Managed IT terminals, headsets, secure LAN infrastructure, and CRM telephony connectivity\n\n` +
-      `========================================================================\n` +
-      `2. COMMERCIAL PRICING SCHEDULE (MONTHLY RATES)\n` +
-      `========================================================================\n` +
-      `OPTION A: VERSANT LEVEL 3 (Standard Voice / Non-Voice / Chat)\n` +
-      `  • Monthly Billed Rate per FTE: ₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')}\n` +
-      `  • Monthly Rate per Physical Seat: ₹${Math.round(d.v3.billedRateSeat).toLocaleString('en-IN')} / seat\n` +
-      `  • Total Monthly Program Value: ₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / month\n\n` +
-      `OPTION B: VERSANT LEVEL 4 (Enhanced Global Voice / Advanced English)\n` +
-      `  • Monthly Billed Rate per FTE: ₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')}\n` +
-      `  • Monthly Rate per Physical Seat: ₹${Math.round(d.v4.billedRateSeat).toLocaleString('en-IN')} / seat\n` +
-      `  • Total Monthly Program Value: ₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / month\n\n` +
-      `========================================================================\n` +
-      `3. COMMERCIAL GOVERNANCE & STATUTORY COMPLIANCE\n` +
-      `========================================================================\n` +
-      `• Pricing Model: ${d.modelRuleDesc}\n` +
-      `• Statutory Compliance: 100% compliant with Central / State Gazette Minimum Wages, PF, ESIC, and statutory gratuity baselines\n` +
-      `• Taxes: Goods & Services Tax (GST) applicable at statutory rates (18%)\n` +
-      `• Payment Terms: Net 30 days from date of invoice submission\n` +
-      `• Commercial Validity: 30 days from date of issuance\n\n` +
-      `We look forward to formalizing this engagement and transitioning the program smoothly.\n\n` +
-      `Warm regards,\nClient Solutions & Commercial Team`;
+    bodyHtml = `<p>Dear Client Team,</p>` +
+      `<p>Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal for the <strong>${effectiveBilledFtes.toFixed(2)} Billable FTE</strong> engagement in <strong>${d.cityText}, ${d.stateText}</strong>.</p>` +
+      `<hr style="border:0; border-top:1px solid #cbd5f1; margin:14px 0;">` +
+      `<strong>1. PROGRAM SCOPE & RESOURCE DELIVERY</strong>` +
+      `<ul>` +
+      `<li>Billed Resource Scope: <strong>${d.billableFte} Dedicated Agent FTEs</strong> + <strong>${d.billableSupportHeadcount.toFixed(2)} Dedicated Billable Support FTEs</strong> (Total <strong>${effectiveBilledFtes.toFixed(2)} Billable FTEs billed at uniform rate parity</strong>)</li>` +
+      `<li>Seat Sizing & Infrastructure: <strong>${d.csaSeats.toFixed(2)} dedicated agent workstations optimized at ${(d.seatUtilPct*100).toFixed(1)}% shift utilization</strong></li>` +
+      `<li>Dedicated Support Governance: Team Leaders, Quality Analysts, Assistant Manager, MIS Lead & Voice Trainer fully aligned</li>` +
+      `<li>Facility Enablement: Ergonomic workstations, 100% dual UPS/DG power backup, enterprise leased line bandwidth, managed IT assets, and 24x7 facility security</li>` +
+      `</ul>` +
+      `<strong>2. COMMERCIAL RATE SCHEDULE (UNIFORM PARITY PRICING)</strong>` +
+      `<table>` +
+      `<thead><tr><th>Engagement Profile</th><th>Common Rate per Billable FTE (Agent & Support)</th><th>Monthly Rate per Physical Seat</th><th>Total Monthly Invoicing</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td><strong>Option A: Versant Level 3</strong><br><span style="font-size:11px; color:#64748b;">Standard Voice / Chat Profile</span></td><td><strong>₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / FTE</strong></td><td><strong>₹${Math.round(d.v3.billedRateSeat).toLocaleString('en-IN')} / seat</strong></td><td><strong>₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</strong></td></tr>` +
+      `<tr><td><strong>Option B: Versant Level 4</strong><br><span style="font-size:11px; color:#64748b;">Enhanced Global Voice Profile</span></td><td><strong>₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / FTE</strong></td><td><strong>₹${Math.round(d.v4.billedRateSeat).toLocaleString('en-IN')} / seat</strong></td><td><strong>₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</strong></td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<strong>3. COMMERCIAL GOVERNANCE & STATUTORY TERMS</strong>` +
+      `<ul>` +
+      `<li>Pricing Inclusions: All agent salaries, dedicated billable & supervisory staff, facility seating, workstation IT, recruitment, and management overheads.</li>` +
+      `<li>Statutory Compliance: 100% compliant with Central Gazette minimum wage baselines, PF, ESIC, and statutory gratuity regulations.</li>` +
+      `<li>Taxes: Goods & Services Tax (GST) applicable at statutory rates (18%).</li>` +
+      `<li>Payment Terms: Net 30 days from date of invoice submission.</li>` +
+      `</ul>` +
+      `<p>We look forward to partnering with your team on this engagement.</p>` +
+      `<p>Warm regards,<br>Client Solutions & Commercial Delivery</p>`;
       
-    document.getElementById('modalTitle').innerText = "💼 Client Commercial Proposal Email Draft";
+    document.getElementById('modalTitle').innerText = "💼 Client Commercial Proposal Email Draft (Tabular Schedule)";
   }
 
   document.getElementById('modalSubject').innerText = subject;
-  document.getElementById('modalEmailBody').innerText = body;
+  document.getElementById('modalEmailBody').innerHTML = bodyHtml;
   
-  // Set mailto link
-  const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = bodyHtml;
+  window.currentEmailRawText = `Subject: ${subject}\n\n` + tempDiv.innerText;
+
+  const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(tempDiv.innerText)}`;
   document.getElementById('modalMailtoLink').href = mailtoUrl;
 
   document.getElementById('emailModal').style.display = 'flex';
@@ -1236,14 +1246,10 @@ function closeEmailModal() {
 }
 
 function copyEmailText() {
-  const subject = document.getElementById('modalSubject').innerText;
-  const body = document.getElementById('modalEmailBody').innerText;
-  const fullText = `Subject: ${subject}\n\n${body}`;
-  
-  navigator.clipboard.writeText(fullText).then(() => {
-    alert("✅ Email draft successfully copied to clipboard!");
+  navigator.clipboard.writeText(window.currentEmailRawText).then(() => {
+    alert("✅ Formatted email draft successfully copied to clipboard!");
   }).catch(err => {
-    alert("Could not copy automatically. Please manually copy the text from the preview box.");
+    alert("Could not copy automatically.");
   });
 }
 
