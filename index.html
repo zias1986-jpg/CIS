@@ -10,11 +10,6 @@
   --primary-light: #f0f6ff;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
-  --mgmt-purple: #7c3aed;
-  --mgmt-purple-light: #f5f3ff;
-  --mgmt-purple-hover: #6d28d9;
-  --teal: #0891b2;
-  --teal-light: #ecfeff;
   --green: #059669;
   --green-light: #f0fdf4;
   --amber: #d97706;
@@ -22,15 +17,12 @@
   --purple: #7c3aed;
   --purple-light: #faf5ff;
   --coral: #dc2626;
-  --coral-light: #fef2f2;
   --slate: #475569;
   --dark: #0f172a;
   --card: #ffffff;
   --bg: #f8fafc;
   --border: #e2e8f0;
-  --border-focus: #2563eb;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
   --radius: 12px;
   --radius-sm: 8px;
 }
@@ -47,32 +39,9 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
   border-radius: var(--radius);
   margin-bottom: 24px;
   box-shadow: var(--shadow);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
 }
 .app-header h1 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; }
 .app-header p { font-size: 0.88rem; color: #cbd5e1; margin-top: 4px; }
-.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn-header {
-  font-weight: 700;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.88rem;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-.btn-header-mgmt { background: #c084fc; color: #3b0764; }
-.btn-header-mgmt:hover { background: #d8b4fe; transform: translateY(-1px); }
-.btn-header-client { background: #38bdf8; color: #082f49; }
-.btn-header-client:hover { background: #7dd3fc; transform: translateY(-1px); }
 
 /* Global Controls Bar */
 .control-bar {
@@ -113,7 +82,7 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
   justify-content: space-between;
   align-items: center;
 }
-.card-header h2 { font-size: 1.05rem; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+.card-header h2 { font-size: 1.05rem; font-weight: 600; color: var(--primary); }
 .badge { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.05em; }
 .badge-blue { background: var(--primary-light); color: var(--accent); }
 .badge-green { background: var(--green-light); color: var(--green); }
@@ -166,62 +135,14 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
 .model-card.m-fixed { border-top-color: var(--amber); }
 .model-price { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 12px 0 4px 0; }
 .model-sub { font-size: 0.8rem; color: var(--slate); margin-bottom: 14px; }
-
-.model-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
-.btn-action-sm { padding: 8px 6px; border: 1px solid var(--border); border-radius: 6px; font-weight: 600; font-size: 0.76rem; cursor: pointer; text-align: center; transition: all 0.2s; background: #fff; }
-.btn-action-sm.client { color: var(--accent); }
-.btn-action-sm.client:hover { background: var(--primary-light); border-color: var(--accent); }
-.btn-action-sm.mgmt { color: var(--mgmt-purple); }
-.btn-action-sm.mgmt:hover { background: var(--mgmt-purple-light); border-color: var(--mgmt-purple); }
-
-/* Modal */
-.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
-.modal-backdrop.active { display: flex; }
-.modal { background: #fff; border-radius: 12px; width: 100%; max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); overflow: hidden; animation: modalIn 0.2s ease-out; }
-@keyframes modalIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
-.modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
-.modal-close { background: none; border: none; font-size: 1.4rem; color: var(--slate); cursor: pointer; line-height: 1; }
-
-.modal-tabs { display: flex; background: #e2e8f0; padding: 4px; gap: 4px; border-bottom: 1px solid var(--border); }
-.modal-tab-btn { flex: 1; padding: 9px 12px; border: none; background: transparent; font-weight: 600; font-size: 0.85rem; border-radius: 6px; cursor: pointer; color: var(--slate); transition: all 0.2s; }
-.modal-tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.modal-tab-btn.tab-mgmt.active { color: var(--mgmt-purple); }
-
-.modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-@media(max-width: 768px) { .modal-body { grid-template-columns: 1fr; } }
-
-.email-preview-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 380px; overflow-y: auto; color: #1e293b; }
-
-.modal-footer { padding: 12px 24px; border-top: 1px solid var(--border); background: var(--bg); display: flex; justify-content: flex-end; gap: 10px; }
-.btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-.btn-secondary { background: #e2e8f0; color: var(--dark); }
-.btn-secondary:hover { background: #cbd5e1; }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent-hover); }
-.btn-purple { background: var(--mgmt-purple); color: #fff; }
-.btn-purple:hover { background: var(--mgmt-purple-hover); }
-
-.toast { position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 1000; display: none; }
 </style>
 </head>
 <body>
 
 <div class="container">
   <div class="app-header">
-    <div>
-      <h1>Commercial Seat Rate &amp; 3-Model Billing Calculator</h1>
-      <p>Delivery cost benchmarking, internal management approval &amp; client quotation generator</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn-header btn-header-mgmt" onclick="openApprovalModal('mgmt')">
-        👔 Management Approval Draft
-      </button>
-      <button class="btn-header btn-header-client" onclick="openApprovalModal('client')">
-        ✉️ Client Quotation Draft
-      </button>
-    </div>
+    <h1>Commercial Seat Rate &amp; 3-Model Billing Calculator</h1>
+    <p>Real-time fully loaded delivery cost benchmarking, utilization capacity &amp; multi-model pricing</p>
   </div>
 
   <div class="control-bar">
@@ -391,195 +312,88 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
   <div class="grid-3">
     
     <div class="card model-card m-fte">
-      <div>
-        <div class="card-header">
-          <h2>Dedicated FTE Retainer</h2>
-          <span class="badge badge-blue">Model A</span>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--slate);">Fixed monthly billing per full-time dedicated engineer/consultant.</p>
-        
-        <div class="model-price" id="modelFtePrice">-</div>
-        <div class="model-sub">per seat / month (monthly retainer)</div>
+      <div class="card-header">
+        <h2>Dedicated FTE Retainer</h2>
+        <span class="badge badge-blue">Model A</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--slate);">Fixed monthly billing per full-time dedicated engineer/consultant.</p>
+      
+      <div class="model-price" id="modelFtePrice">-</div>
+      <div class="model-sub">per seat / month (monthly retainer)</div>
 
-        <table class="calc-table">
-          <tr>
-            <td class="label">Effective Rate / Hour</td>
-            <td class="value" id="modelFteEffHourly">-</td>
-          </tr>
-          <tr>
-            <td class="label">Gross Profit / Month</td>
-            <td class="value" id="modelFteProfit">-</td>
-          </tr>
-          <tr>
-            <td class="label">Target Gross Margin</td>
-            <td class="value" id="modelFteMargin">-</td>
-          </tr>
-        </table>
-      </div>
-      <div class="model-actions">
-        <button class="btn-action-sm mgmt" onclick="openApprovalWithModel('mgmt', 'fte')">👔 Request Approval</button>
-        <button class="btn-action-sm client" onclick="openApprovalWithModel('client', 'fte')">✉️ Client Quote</button>
-      </div>
+      <table class="calc-table">
+        <tr>
+          <td class="label">Effective Rate / Hour</td>
+          <td class="value" id="modelFteEffHourly">-</td>
+        </tr>
+        <tr>
+          <td class="label">Gross Profit / Month</td>
+          <td class="value" id="modelFteProfit">-</td>
+        </tr>
+        <tr>
+          <td class="label">Target Gross Margin</td>
+          <td class="value" id="modelFteMargin">-</td>
+        </tr>
+      </table>
     </div>
 
     <div class="card model-card m-hourly">
-      <div>
-        <div class="card-header">
-          <h2>Time &amp; Material (T&amp;M)</h2>
-          <span class="badge badge-green">Model B</span>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--slate);">Flexible pay-as-you-go hourly rate with +15% risk buffer.</p>
-        
-        <div class="model-price" id="modelHourlyPrice">-</div>
-        <div class="model-sub">per tracked billable hour</div>
+      <div class="card-header">
+        <h2>Time &amp; Material (T&amp;M)</h2>
+        <span class="badge badge-green">Model B</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--slate);">Flexible pay-as-you-go hourly rate with +15% risk buffer.</p>
+      
+      <div class="model-price" id="modelHourlyPrice">-</div>
+      <div class="model-sub">per tracked billable hour</div>
 
-        <table class="calc-table">
-          <tr>
-            <td class="label">Est. Monthly (100 hrs)</td>
-            <td class="value" id="modelHourly100">-</td>
-          </tr>
-          <tr>
-            <td class="label">Est. Monthly (Full Cap)</td>
-            <td class="value" id="modelHourlyFull">-</td>
-          </tr>
-          <tr>
-            <td class="label">T&amp;M Risk Premium</td>
-            <td class="value">+15% over Retainer</td>
-          </tr>
-        </table>
-      </div>
-      <div class="model-actions">
-        <button class="btn-action-sm mgmt" onclick="openApprovalWithModel('mgmt', 'hourly')">👔 Request Approval</button>
-        <button class="btn-action-sm client" onclick="openApprovalWithModel('client', 'hourly')">✉️ Client Quote</button>
-      </div>
+      <table class="calc-table">
+        <tr>
+          <td class="label">Est. Monthly (100 hrs)</td>
+          <td class="value" id="modelHourly100">-</td>
+        </tr>
+        <tr>
+          <td class="label">Est. Monthly (Full Cap)</td>
+          <td class="value" id="modelHourlyFull">-</td>
+        </tr>
+        <tr>
+          <td class="label">T&amp;M Risk Premium</td>
+          <td class="value">+15% over Retainer</td>
+        </tr>
+      </table>
     </div>
 
     <div class="card model-card m-fixed">
-      <div>
-        <div class="card-header">
-          <h2>Milestone / Fixed Scope</h2>
-          <span class="badge badge-amber">Model C</span>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--slate);">Deliverable-based sprints with +25% scope contingency buffer.</p>
-        
-        <div class="model-price" id="modelFixedPrice">-</div>
-        <div class="model-sub">estimated sprint / milestone</div>
+      <div class="card-header">
+        <h2>Milestone / Fixed Scope</h2>
+        <span class="badge badge-amber">Model C</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--slate);">Deliverable-based sprints with +25% scope contingency buffer.</p>
+      
+      <div class="model-price" id="modelFixedPrice">-</div>
+      <div class="model-sub">estimated sprint / milestone</div>
 
-        <table class="calc-table">
-          <tr>
-            <td class="label">Included Capacity</td>
-            <td class="value">80 hrs/sprint</td>
-          </tr>
-          <tr>
-            <td class="label">Contingency Premium</td>
-            <td class="value">+25% Scope Risk</td>
-          </tr>
-          <tr>
-            <td class="label">Net Realized Margin</td>
-            <td class="value" id="modelFixedMargin">-</td>
-          </tr>
-        </table>
-      </div>
-      <div class="model-actions">
-        <button class="btn-action-sm mgmt" onclick="openApprovalWithModel('mgmt', 'fixed')">👔 Request Approval</button>
-        <button class="btn-action-sm client" onclick="openApprovalWithModel('client', 'fixed')">✉️ Client Quote</button>
-      </div>
+      <table class="calc-table">
+        <tr>
+          <td class="label">Included Capacity</td>
+          <td class="value">80 hrs/sprint</td>
+        </tr>
+        <tr>
+          <td class="label">Contingency Premium</td>
+          <td class="value">+25% Scope Risk</td>
+        </tr>
+        <tr>
+          <td class="label">Net Realized Margin</td>
+          <td class="value" id="modelFixedMargin">-</td>
+        </tr>
+      </table>
     </div>
 
   </div>
 </div>
-
-<div class="modal-backdrop" id="emailModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">📧 Draft Email Generator</h3>
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-    </div>
-
-    <div class="modal-tabs">
-      <button class="modal-tab-btn tab-mgmt" id="tabMgmt" onclick="switchTab('mgmt')">👔 1. Management Approval Draft (Cost Breakup)</button>
-      <button class="modal-tab-btn" id="tabClient" onclick="switchTab('client')">✉️ 2. Client Quotation Draft (Proposal Ready)</button>
-    </div>
-
-    <div class="modal-body">
-      <div>
-        <div class="form-group">
-          <label>Quotation Model</label>
-          <select id="propModel" class="form-control" onchange="generateEmailPreview()">
-            <option value="fte">Model A: Dedicated FTE Retainer (Monthly)</option>
-            <option value="hourly">Model B: Time &amp; Material (T&amp;M Hourly)</option>
-            <option value="fixed">Model C: Milestone / Fixed Scope Sprints</option>
-            <option value="all">Comprehensive (All 3 Models Comparison)</option>
-          </select>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div class="form-group">
-            <label>Client Name / Organization</label>
-            <input type="text" id="propClientOrg" class="form-control" value="Acme Technologies" oninput="generateEmailPreview()">
-          </div>
-          <div class="form-group">
-            <label>Attention / Recipient Name</label>
-            <input type="text" id="propRecipientName" class="form-control" value="Leadership & Finance Team" oninput="generateEmailPreview()">
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div class="form-group">
-            <label>Project / Engagement Name</label>
-            <input type="text" id="propProject" class="form-control" value="Enterprise Platform Engineering" oninput="generateEmailPreview()">
-          </div>
-          <div class="form-group">
-            <label>Number of Headcount / Seats</label>
-            <input type="number" id="propSeats" class="form-control" value="1" min="1" oninput="generateEmailPreview()">
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div class="form-group">
-            <label>Payment Terms</label>
-            <input type="text" id="propTerms" class="form-control" value="Net 15 Days / Monthly in Advance" oninput="generateEmailPreview()">
-          </div>
-          <div class="form-group">
-            <label>Proposal Validity</label>
-            <input type="text" id="propValidity" class="form-control" value="15 Business Days" oninput="generateEmailPreview()">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Your Name / Designation</label>
-          <input type="text" id="propSender" class="form-control" value="Commercial Delivery Lead" oninput="generateEmailPreview()">
-        </div>
-      </div>
-
-      <div>
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--slate); margin-bottom: 6px;">Live Draft Email Preview</label>
-        <div class="email-preview-box" id="emailPreviewBox"></div>
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" id="btnCopy" onclick="copyDraft()">📋 Copy Draft</button>
-      <button class="btn btn-purple" id="btnMail" onclick="openInMailClient()">🚀 Open in Mail App</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toastMessage">Draft copied to clipboard!</div>
 
 <script>
-  let currentMode = 'mgmt'; // 'mgmt' or 'client'
   let gSym = '₹';
-  let gTotalDirect = 0;
-  let gTotalOverhead = 0;
-  let gTotalLoaded = 0;
-  let gMinSeatMonthly = 0;
-  let gMinHourlyRate = 0;
-  let gHourlyTmRate = 0;
-  let gFixedSprintPrice = 0;
-  let gEffectiveHours = 0;
-  let gInternalHourlyCost = 0;
 
   function fmt(val) {
     return gSym + ' ' + Math.round(val).toLocaleString();
@@ -593,17 +407,17 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
     const baseSalary = parseFloat(document.getElementById('baseSalary').value) || 0;
     const statutoryBenefits = parseFloat(document.getElementById('statutoryBenefits').value) || 0;
     const retentionReserve = parseFloat(document.getElementById('retentionReserve').value) || 0;
-    gTotalDirect = baseSalary + statutoryBenefits + retentionReserve;
+    const totalDirect = baseSalary + statutoryBenefits + retentionReserve;
 
     // Overhead Costs
     const seatFacility = parseFloat(document.getElementById('seatFacility').value) || 0;
     const itEquipment = parseFloat(document.getElementById('itEquipment').value) || 0;
     const cloudTools = parseFloat(document.getElementById('cloudTools').value) || 0;
     const mgmtGovernance = parseFloat(document.getElementById('mgmtGovernance').value) || 0;
-    gTotalOverhead = seatFacility + itEquipment + cloudTools + mgmtGovernance;
+    const totalOverhead = seatFacility + itEquipment + cloudTools + mgmtGovernance;
 
-    // Fully Loaded
-    gTotalLoaded = gTotalDirect + gTotalOverhead;
+    // Fully Loaded Cost
+    const totalLoaded = totalDirect + totalOverhead;
 
     // Capacity & Margin Drivers
     const workingDays = parseFloat(document.getElementById('workingDays').value) || 21;
@@ -612,174 +426,65 @@ body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-heigh
     const targetMargin = (parseFloat(document.getElementById('targetMargin').value) || 35) / 100;
 
     const totalAvailHours = workingDays * dailyHours;
-    gEffectiveHours = totalAvailHours * utilization;
-    gInternalHourlyCost = gEffectiveHours > 0 ? (gTotalLoaded / gEffectiveHours) : 0;
+    const effectiveHours = totalAvailHours * utilization;
+    const internalHourlyCost = effectiveHours > 0 ? (totalLoaded / effectiveHours) : 0;
 
     // Pricing Minimums (Price = Cost / (1 - Margin))
     const marginDivisor = Math.max(0.05, 1 - targetMargin);
-    gMinSeatMonthly = gTotalLoaded / marginDivisor;
-    gMinHourlyRate = gMinSeatMonthly / (gEffectiveHours > 0 ? gEffectiveHours : 1);
+    const minSeatMonthly = totalLoaded / marginDivisor;
+    const minHourlyRate = minSeatMonthly / (effectiveHours > 0 ? effectiveHours : 1);
 
     // Model 1: Retainer
-    const fteMonthly = gMinSeatMonthly;
-    const fteProfit = fteMonthly - gTotalLoaded;
+    const fteMonthly = minSeatMonthly;
+    const fteProfit = fteMonthly - totalLoaded;
     const fteMargin = (fteProfit / fteMonthly) * 100;
 
     // Model 2: Hourly T&M (+15% buffer)
-    gHourlyTmRate = gMinHourlyRate * 1.15;
-    const tmMonthly100 = gHourlyTmRate * 100;
-    const tmMonthlyFull = gHourlyTmRate * gEffectiveHours;
+    const hourlyTmRate = minHourlyRate * 1.15;
+    const tmMonthly100 = hourlyTmRate * 100;
+    const tmMonthlyFull = hourlyTmRate * effectiveHours;
 
     // Model 3: Fixed Sprint (80 hrs + 25% contingency)
-    gFixedSprintPrice = (gHourlyTmRate * 80) * 1.25;
-    const fixedCostSprint = gInternalHourlyCost * 80;
-    const fixedMargin = ((gFixedSprintPrice - fixedCostSprint) / gFixedSprintPrice) * 100;
+    const fixedSprintPrice = (hourlyTmRate * 80) * 1.25;
+    const fixedCostSprint = internalHourlyCost * 80;
+    const fixedMargin = ((fixedSprintPrice - fixedCostSprint) / fixedSprintPrice) * 100;
 
     // Update Top Overview Stats
-    document.getElementById('statLoadedCost').innerText = fmt(gTotalLoaded);
-    document.getElementById('statCostPerHr').innerText = `${fmt(gInternalHourlyCost)}/hr`;
-    document.getElementById('statRetainerPrice').innerText = fmt(gMinSeatMonthly);
-    document.getElementById('statHourlyRate').innerText = `${fmt(gMinHourlyRate)}/hr`;
+    document.getElementById('statLoadedCost').innerText = fmt(totalLoaded);
+    document.getElementById('statCostPerHr').innerText = `${fmt(internalHourlyCost)}/hr`;
+    document.getElementById('statRetainerPrice').innerText = fmt(minSeatMonthly);
+    document.getElementById('statHourlyRate').innerText = `${fmt(minHourlyRate)}/hr`;
 
     // Update Section 1 Tables
-    document.getElementById('outTotalDirect').innerText = fmt(gTotalDirect);
-    document.getElementById('outTotalOverhead').innerText = fmt(gTotalOverhead);
+    document.getElementById('outTotalDirect').innerText = fmt(totalDirect);
+    document.getElementById('outTotalOverhead').innerText = fmt(totalOverhead);
 
     // Update Section 2 Baseline Summary
-    document.getElementById('summaryDirect').innerText = fmt(gTotalDirect);
-    document.getElementById('summaryOverhead').innerText = fmt(gTotalOverhead);
-    document.getElementById('summaryLoaded').innerText = fmt(gTotalLoaded);
+    document.getElementById('summaryDirect').innerText = fmt(totalDirect);
+    document.getElementById('summaryOverhead').innerText = fmt(totalOverhead);
+    document.getElementById('summaryLoaded').innerText = fmt(totalLoaded);
     document.getElementById('summaryAvailHrs').innerText = `${totalAvailHours} hrs`;
-    document.getElementById('summaryEffectiveHrs').innerText = `${Math.round(gEffectiveHours)} hrs/seat`;
-    document.getElementById('summaryInternalHrCost').innerText = `${fmt(gInternalHourlyCost)} / hr`;
+    document.getElementById('summaryEffectiveHrs').innerText = `${Math.round(effectiveHours)} hrs/seat`;
+    document.getElementById('summaryInternalHrCost').innerText = `${fmt(internalHourlyCost)} / hr`;
 
     // Update Section 3 Model Cards
     document.getElementById('modelFtePrice').innerText = fmt(fteMonthly);
-    document.getElementById('modelFteEffHourly').innerText = `${fmt(fteMonthly / gEffectiveHours)} / hr`;
+    document.getElementById('modelFteEffHourly').innerText = `${fmt(fteMonthly / effectiveHours)} / hr`;
     document.getElementById('modelFteProfit').innerText = fmt(fteProfit);
     document.getElementById('modelFteMargin').innerText = `${fteMargin.toFixed(1)}%`;
 
-    document.getElementById('modelHourlyPrice').innerText = `${fmt(gHourlyTmRate)} / hr`;
+    document.getElementById('modelHourlyPrice').innerText = `${fmt(hourlyTmRate)} / hr`;
     document.getElementById('modelHourly100').innerText = fmt(tmMonthly100);
     document.getElementById('modelHourlyFull').innerText = fmt(tmMonthlyFull);
 
-    document.getElementById('modelFixedPrice').innerText = fmt(gFixedSprintPrice);
+    document.getElementById('modelFixedPrice').innerText = fmt(fixedSprintPrice);
     document.getElementById('modelFixedMargin').innerText = `${fixedMargin.toFixed(1)}%`;
-
-    // Re-render modal preview
-    generateEmailPreview();
   }
 
-  function getManagementEmailText() {
-    const model = document.getElementById('propModel').value;
-    const client = document.getElementById('propClientOrg').value || 'Client Organization';
-    const recipient = document.getElementById('propRecipientName').value || 'Leadership & Finance Team';
-    const project = document.getElementById('propProject').value || 'New Engagement';
-    const seats = parseInt(document.getElementById('propSeats').value) || 1;
-    const terms = document.getElementById('propTerms').value || 'Net 15 Days';
-    const validity = document.getElementById('propValidity').value || '15 Days';
-    const sender = document.getElementById('propSender').value || 'Commercial Delivery Lead';
-
-    const totalDirect = gTotalDirect * seats;
-    const totalOverhead = gTotalOverhead * seats;
-    const totalLoaded = gTotalLoaded * seats;
-    const proposedQuoteMonthly = gMinSeatMonthly * seats;
-    const grossProfitMonthly = proposedQuoteMonthly - totalLoaded;
-    const marginPct = ((grossProfitMonthly / proposedQuoteMonthly) * 100).toFixed(1);
-
-    let proposedModelText = '';
-    if (model === 'fte') {
-      proposedModelText = `PROPOSED COMMERCIAL QUOTATION:
-• Model: Dedicated FTE Retainer (Monthly)
-• Proposed Billing Rate: ${fmt(gMinSeatMonthly)} / seat / month
-• Total Revenue Proposed: ${fmt(proposedQuoteMonthly)} / month
-• Target Monthly Gross Profit: ${fmt(grossProfitMonthly)} (${marginPct}% Gross Margin)`;
-    } else if (model === 'hourly') {
-      proposedModelText = `PROPOSED COMMERCIAL QUOTATION:
-• Model: Time & Material (T&M Hourly)
-• Internal Cost / Billable Hr: ${fmt(gInternalHourlyCost)}
-• Proposed Billing Rate: ${fmt(gHourlyTmRate)} / tracked hour
-• Est. Gross Margin on Billed Hours: ~${((gHourlyTmRate - gInternalHourlyCost) / gHourlyTmRate * 100).toFixed(1)}%`;
-    } else if (model === 'fixed') {
-      proposedModelText = `PROPOSED COMMERCIAL QUOTATION:
-• Model: Milestone / Fixed Scope Sprints (80 hrs included)
-• Estimated Delivery Cost / Sprint: ${fmt(gInternalHourlyCost * 80 * seats)}
-• Proposed Quote / Sprint: ${fmt(gFixedSprintPrice * seats)}
-• Est. Gross Margin on Milestone: ~${(((gFixedSprintPrice * seats) - (gInternalHourlyCost * 80 * seats)) / (gFixedSprintPrice * seats) * 100).toFixed(1)}% (includes +25% contingency buffer)`;
-    } else {
-      proposedModelText = `PROPOSED COMMERCIAL QUOTATION (MULTI-MODEL):
-1. Dedicated FTE: ${fmt(gMinSeatMonthly)}/seat/mo (${marginPct}\% Gross Margin) 2. T&M Hourly:${fmt(gHourlyTmRate)}/hr
-3. Milestone Sprint: ${fmt(gFixedSprintPrice)}/80-hr block`;
-    }
-
-    return `Subject: [APPROVAL REQUEST] Commercial Quotation & Cost Breakup - ${project} \vert{}${client}
-
-Dear ${recipient},
-
-I request your commercial and financial approval to issue a formal proposal to "${client}" for the "${project}" engagement.
-
-Please find the detailed cost component breakdown and proposed commercial model below:
-
-============================================================
-1. INTERNAL COST COMPONENT BREAKDOWN (${seats} Seat${seats > 1 ? 's' : ''})
-============================================================
-• Direct Resource CTC & Benefits:   ${fmt(totalDirect)} / month (${fmt(gTotalDirect)} / seat)
-• Seat, Infra, Tools & Overhead:    ${fmt(totalOverhead)} / month (${fmt(gTotalOverhead)} / seat)
-------------------------------------------------------------
-• TOTAL FULLY LOADED INTERNAL COST: ${fmt(totalLoaded)} / month (${fmt(gTotalLoaded)} / seat)
-• Internal Cost / Billable Hour:    ${fmt(gInternalHourlyCost)} / hour
-
-============================================================
-2. COMMERCIAL PROPOSAL & MARGIN SUMMARY
-============================================================
-${proposedModelText}
-
-• Proposed Payment Terms:  ${terms}
-• Proposed Quote Validity: ${validity}
-• Dedicated Capacity:      ${seats} Headcount (~${Math.round(gEffectiveHours * seats)} net billable hrs/mo)
-
-============================================================
-3. JUSTIFICATION & GOVERNANCE
-============================================================
-• The proposed pricing maintains our company benchmark of ≥30% Gross Margin.
-• Standard contingency buffer and non-billable overheads are accounted for.
-
-Kindly review and provide your approval to dispatch the quotation to the client.
-
-Best regards,
-
-${sender}
-Commercial & Delivery Operations
-`;
-  }
-
-  function getClientEmailText() {
-    const model = document.getElementById('propModel').value;
-    const client = document.getElementById('propClientOrg').value || 'Valued Client';
-    const recipient = document.getElementById('propRecipientName').value || 'Sir/Madam';
-    const project = document.getElementById('propProject').value || 'Software Development';
-    const seats = parseInt(document.getElementById('propSeats').value) || 1;
-    const terms = document.getElementById('propTerms').value || 'Net 15 Days';
-    const validity = document.getElementById('propValidity').value || '15 Days';
-    const sender = document.getElementById('propSender').value || 'Commercial Operations Team';
-
-    const fteTotal = gMinSeatMonthly * seats;
-    const fteSingle = gMinSeatMonthly;
-
-    let modelSection = '';
-    if (model === 'fte') {
-      modelSection = `ENGAGEMENT COMMERCIALS (DEDICATED FTE MODEL):
-------------------------------------------------------------
-• Structure: Dedicated Full-Time Resource Allocation
-• Dedicated Capacity: ${seats} Resource(s) (~${Math.round(gEffectiveHours * seats)} Billable Hours/mo)
-• Monthly Retainer Rate: ${fmt(fteSingle)} per seat / month
-• Total Monthly Commercials: ${fmt(fteTotal)} / month (+ applicable taxes)
-• Billing Cycle: Monthly in Advance / 30-day notice period`;
-    } else if (model === 'hourly') {
-      modelSection = `ENGAGEMENT COMMERCIALS (TIME & MATERIAL - T&M):
-------------------------------------------------------------
-• Structure: Flexible Time & Material Billing
-• Standard Hourly Rate: ${fmt(gHourlyTmRate)} / billable hour
-• Invoicing: Bi-weekly / Monthly based on logged timesheets
-• Resource Headcount: ${seats} Consultant(s) allocated
-• Overtime/Weekend (if applicable): Standard 1.5
+  // Initialize on load
+  window.onload = function() {
+    calculateAll();
+  };
+</script>
+</body>
+</html>
