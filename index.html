@@ -3,274 +3,400 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Commercial Seat Rate &amp; Approval System</title>
+<title>Commercial Seat Rate &amp; 3-Model Billing Calculator</title>
 <style>
-  :root {
-    --primary: #0f2756;
-    --primary-light: #f0f6ff;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --mgmt-purple: #7c3aed;
-    --mgmt-purple-light: #f5f3ff;
-    --mgmt-purple-hover: #6d28d9;
-    --success: #16a34a;
-    --success-bg: #f0fdf4;
-    --warning: #d97706;
-    --warning-bg: #fffbeb;
-    --danger: #dc2626;
-    --border: #e2e8f0;
-    --card-bg: #ffffff;
-    --text-dark: #0f172a;
-    --text-muted: #64748b;
-    --bg-page: #f8fafc;
-    --radius: 10px;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-  }
+:root {
+  --primary: #0f2756;
+  --primary-light: #f0f6ff;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --mgmt-purple: #7c3aed;
+  --mgmt-purple-light: #f5f3ff;
+  --mgmt-purple-hover: #6d28d9;
+  --teal: #0891b2;
+  --teal-light: #ecfeff;
+  --green: #059669;
+  --green-light: #f0fdf4;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --purple: #7c3aed;
+  --purple-light: #faf5ff;
+  --coral: #dc2626;
+  --coral-light: #fef2f2;
+  --slate: #475569;
+  --dark: #0f172a;
+  --card: #ffffff;
+  --bg: #f8fafc;
+  --border: #e2e8f0;
+  --border-focus: #2563eb;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  body { background-color: var(--bg-page); color: var(--text-dark); padding: 24px 16px; line-height: 1.5; }
-  .container { max-width: 1240px; margin: 0 auto; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+body { background: var(--bg); color: var(--dark); padding: 24px 16px; line-height: 1.5; }
+.container { max-width: 1240px; margin: 0 auto; }
 
-  /* Header */
-  header { background: var(--primary); color: #fff; padding: 22px 28px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; }
-  header p { font-size: 0.85rem; color: #cbd5e1; margin-top: 3px; }
-  
-  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn-mgmt-top { background: #c084fc; color: #3b0764; font-weight: 700; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.88rem; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
-  .btn-mgmt-top:hover { background: #d8b4fe; transform: translateY(-1px); }
-  .btn-quote-top { background: #38bdf8; color: #082f49; font-weight: 700; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.88rem; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
-  .btn-quote-top:hover { background: #7dd3fc; transform: translateY(-1px); }
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+  color: #fff;
+  padding: 24px 30px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.app-header h1 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; }
+.app-header p { font-size: 0.88rem; color: #cbd5e1; margin-top: 4px; }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-header {
+  font-weight: 700;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.btn-header-mgmt { background: #c084fc; color: #3b0764; }
+.btn-header-mgmt:hover { background: #d8b4fe; transform: translateY(-1px); }
+.btn-header-client { background: #38bdf8; color: #082f49; }
+.btn-header-client:hover { background: #7dd3fc; transform: translateY(-1px); }
 
-  /* Grid Layouts */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+/* Global Controls Bar */
+.control-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
 
-  @media (max-width: 900px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  }
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
 
-  /* Cards */
-  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
-  .card-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-  .card-header h2 { font-size: 1.05rem; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-  .badge { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.05em; }
-  .badge-primary { background: var(--primary-light); color: var(--accent); }
-  .badge-success { background: var(--success-bg); color: var(--success); }
+@media (max-width: 960px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
 
-  /* Forms & Inputs */
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
-  .input-wrap { position: relative; display: flex; align-items: center; }
-  .input-wrap span.suffix { position: absolute; font-size: 0.85rem; color: var(--text-muted); pointer-events: none; right: 10px; }
-  .form-control { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 0.9rem; color: var(--text-dark); background: #fff; outline: none; transition: border-color 0.2s; }
-  .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
-  .form-control.suffixed { padding-right: 28px; }
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.card-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-header h2 { font-size: 1.05rem; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+.badge { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.05em; }
+.badge-blue { background: var(--primary-light); color: var(--accent); }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-purple { background: var(--purple-light); color: var(--purple); }
 
-  /* Output Tables */
-  .calc-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-  .calc-table tr { border-bottom: 1px solid #f1f5f9; }
-  .calc-table tr:last-child { border-bottom: none; }
-  .calc-table td { padding: 9px 4px; }
-  .calc-table td.label { color: var(--text-muted); }
-  .calc-table td.value { text-align: right; font-weight: 600; color: var(--text-dark); }
-  .calc-table tr.highlight td { background: var(--primary-light); color: var(--primary); font-weight: 700; border-radius: 4px; padding: 10px 6px; }
+/* Forms & Inputs */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--slate); margin-bottom: 4px; }
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap span.suffix { position: absolute; font-size: 0.85rem; color: var(--slate); pointer-events: none; right: 10px; }
+.form-control {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  color: var(--dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+.form-control.suffixed { padding-right: 28px; }
 
-  /* Model Card Accents */
-  .model-card { border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between; }
-  .model-card.m-fte { border-top-color: #2563eb; }
-  .model-card.m-hourly { border-top-color: #059669; }
-  .model-card.m-fixed { border-top-color: #d97706; }
-  .model-price { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 12px 0 4px 0; }
-  .model-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; }
-  
-  .model-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
-  .btn-action-sm { padding: 8px 6px; border: 1px solid var(--border); border-radius: 6px; font-weight: 600; font-size: 0.76rem; cursor: pointer; text-align: center; transition: all 0.2s; background: #fff; }
-  .btn-action-sm.client { color: var(--accent); }
-  .btn-action-sm.client:hover { background: var(--primary-light); border-color: var(--accent); }
-  .btn-action-sm.mgmt { color: var(--mgmt-purple); }
-  .btn-action-sm.mgmt:hover { background: var(--mgmt-purple-light); border-color: var(--mgmt-purple); }
+/* Table Styles */
+.calc-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.calc-table tr { border-bottom: 1px solid #f1f5f9; }
+.calc-table tr:last-child { border-bottom: none; }
+.calc-table td { padding: 9px 4px; }
+.calc-table td.label { color: var(--slate); }
+.calc-table td.value { text-align: right; font-weight: 600; color: var(--dark); }
+.calc-table tr.highlight td { background: var(--primary-light); color: var(--primary); font-weight: 700; border-radius: 4px; padding: 10px 6px; }
 
-  /* Modal */
-  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
-  .modal-backdrop.active { display: flex; }
-  .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); overflow: hidden; animation: modalIn 0.2s ease-out; }
-  @keyframes modalIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+/* Summary Stat Blocks */
+.stat-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+}
+.stat-box .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate); letter-spacing: 0.05em; }
+.stat-box .stat-val { font-size: 1.35rem; font-weight: 800; color: var(--primary); margin-top: 4px; }
 
-  .modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-page); }
-  .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
-  .modal-close { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; line-height: 1; }
-  
-  /* Tabs */
-  .modal-tabs { display: flex; background: #e2e8f0; padding: 4px; gap: 4px; border-bottom: 1px solid var(--border); }
-  .modal-tab-btn { flex: 1; padding: 9px 12px; border: none; background: transparent; font-weight: 600; font-size: 0.85rem; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
-  .modal-tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .modal-tab-btn.tab-mgmt.active { color: var(--mgmt-purple); }
+/* Billing Model Cards */
+.model-card { border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between; }
+.model-card.m-fte { border-top-color: var(--accent); }
+.model-card.m-hourly { border-top-color: var(--green); }
+.model-card.m-fixed { border-top-color: var(--amber); }
+.model-price { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 12px 0 4px 0; }
+.model-sub { font-size: 0.8rem; color: var(--slate); margin-bottom: 14px; }
 
-  .modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media(max-width: 768px) { .modal-body { grid-template-columns: 1fr; } }
-  
-  .email-preview-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 380px; overflow-y: auto; color: #1e293b; }
-  
-  .modal-footer { padding: 12px 24px; border-top: 1px solid var(--border); background: var(--bg-page); display: flex; justify-content: flex-end; gap: 10px; }
-  .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-  .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
-  .btn-secondary:hover { background: #cbd5e1; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: var(--accent-hover); }
-  .btn-purple { background: var(--mgmt-purple); color: #fff; }
-  .btn-purple:hover { background: var(--mgmt-purple-hover); }
-  .btn-success { background: var(--success); color: #fff; }
-  .btn-success:hover { background: #15803d; }
-  
-  .toast { position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 1000; display: none; }
+.model-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.btn-action-sm { padding: 8px 6px; border: 1px solid var(--border); border-radius: 6px; font-weight: 600; font-size: 0.76rem; cursor: pointer; text-align: center; transition: all 0.2s; background: #fff; }
+.btn-action-sm.client { color: var(--accent); }
+.btn-action-sm.client:hover { background: var(--primary-light); border-color: var(--accent); }
+.btn-action-sm.mgmt { color: var(--mgmt-purple); }
+.btn-action-sm.mgmt:hover { background: var(--mgmt-purple-light); border-color: var(--mgmt-purple); }
+
+/* Modal */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
+.modal-backdrop.active { display: flex; }
+.modal { background: #fff; border-radius: 12px; width: 100%; max-width: 860px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); overflow: hidden; animation: modalIn 0.2s ease-out; }
+@keyframes modalIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
+.modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+.modal-close { background: none; border: none; font-size: 1.4rem; color: var(--slate); cursor: pointer; line-height: 1; }
+
+.modal-tabs { display: flex; background: #e2e8f0; padding: 4px; gap: 4px; border-bottom: 1px solid var(--border); }
+.modal-tab-btn { flex: 1; padding: 9px 12px; border: none; background: transparent; font-weight: 600; font-size: 0.85rem; border-radius: 6px; cursor: pointer; color: var(--slate); transition: all 0.2s; }
+.modal-tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.modal-tab-btn.tab-mgmt.active { color: var(--mgmt-purple); }
+
+.modal-body { padding: 20px 24px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width: 768px) { .modal-body { grid-template-columns: 1fr; } }
+
+.email-preview-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 380px; overflow-y: auto; color: #1e293b; }
+
+.modal-footer { padding: 12px 24px; border-top: 1px solid var(--border); background: var(--bg); display: flex; justify-content: flex-end; gap: 10px; }
+.btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-secondary { background: #e2e8f0; color: var(--dark); }
+.btn-secondary:hover { background: #cbd5e1; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-purple { background: var(--mgmt-purple); color: #fff; }
+.btn-purple:hover { background: var(--mgmt-purple-hover); }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 1000; display: none; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
+  <div class="app-header">
     <div>
-      <h1>Commercial Seat Rate &amp; Approval System</h1>
-      <p>Delivery cost benchmarking, internal management approval &amp; client proposal generation</p>
+      <h1>Commercial Seat Rate &amp; 3-Model Billing Calculator</h1>
+      <p>Delivery cost benchmarking, internal management approval &amp; client quotation generator</p>
     </div>
     <div class="header-actions">
-      <button class="btn-mgmt-top" onclick="openApprovalModal('mgmt')">
+      <button class="btn-header btn-header-mgmt" onclick="openApprovalModal('mgmt')">
         👔 Management Approval Draft
       </button>
-      <button class="btn-quote-top" onclick="openApprovalModal('client')">
+      <button class="btn-header btn-header-client" onclick="openApprovalModal('client')">
         ✉️ Client Quotation Draft
       </button>
     </div>
-  </header>
+  </div>
+
+  <div class="control-bar">
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Currency &amp; Symbol</label>
+      <select id="currency" class="form-control" onchange="calculateAll()">
+        <option value="INR|₹" selected>INR (₹)</option>
+        <option value="USD|$">USD ($)</option>
+        <option value="EUR|€">EUR (€)</option>
+        <option value="GBP|£">GBP (£)</option>
+        <option value="AED|AED ">AED (AED)</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Target Gross Margin (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="targetMargin" class="form-control suffixed" value="35" max="95" oninput="calculateAll()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Target Utilization Rate (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="utilization" class="form-control suffixed" value="85" max="100" oninput="calculateAll()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Working Days / Month</label>
+      <input type="number" id="workingDays" class="form-control" value="21" oninput="calculateAll()">
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="stat-box">
+      <div class="stat-label">Fully Loaded Cost / Mo</div>
+      <div class="stat-val" id="statLoadedCost">-</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Internal Cost / Billable Hr</div>
+      <div class="stat-val" id="statCostPerHr">-</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Target Monthly Retainer</div>
+      <div class="stat-val" id="statRetainerPrice" style="color:var(--accent);">-</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Target Billable Hourly Rate</div>
+      <div class="stat-val" id="statHourlyRate" style="color:var(--green);">-</div>
+    </div>
+  </div>
 
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
-        <h2>1. Internal Cost Components</h2>
-        <span class="badge badge-primary">Base Cost Breakdown</span>
-      </div>
-
-      <div class="form-group">
-        <label>Currency</label>
-        <select id="currency" class="form-control" onchange="calculateAll()">
-          <option value="USD|$">USD ($)</option>
-          <option value="INR|₹" selected>INR (₹)</option>
-          <option value="EUR|€">EUR (€)</option>
-          <option value="GBP|£">GBP (£)</option>
-          <option value="AED|AED ">AED (AED)</option>
-        </select>
+        <h2>1. Direct Resource Compensation (CTC)</h2>
+        <span class="badge badge-blue">Direct Cost</span>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div class="form-group">
-          <label>Direct Resource Salary / CTC (Monthly)</label>
-          <div class="input-wrap">
-            <input type="number" id="baseSalary" class="form-control" value="85000" oninput="calculateAll()">
-          </div>
+          <label>Base Monthly CTC Salary</label>
+          <input type="number" id="baseSalary" class="form-control" value="75000" oninput="calculateAll()">
         </div>
         <div class="form-group">
-          <label>Seat/Infra/Facility Overhead (Monthly)</label>
-          <div class="input-wrap">
-            <input type="number" id="infraCost" class="form-control" value="18000" oninput="calculateAll()">
-          </div>
+          <label>Employer Statutory &amp; Benefits</label>
+          <input type="number" id="statutoryBenefits" class="form-control" value="10000" oninput="calculateAll()">
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div class="form-group">
-          <label>Shared Mgmt, HR &amp; Tools (Monthly)</label>
-          <div class="input-wrap">
-            <input type="number" id="mgmtCost" class="form-control" value="12000" oninput="calculateAll()">
-          </div>
+          <label>Annual Bonus / Retention Reserve</label>
+          <input type="number" id="retentionReserve" class="form-control" value="5000" oninput="calculateAll()">
         </div>
         <div class="form-group">
-          <label>Working Days / Month</label>
-          <input type="number" id="workingDays" class="form-control" value="21" oninput="calculateAll()">
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <div class="form-group">
-          <label>Billable Hours / Day</label>
+          <label>Hours per Working Day</label>
           <input type="number" id="dailyHours" class="form-control" value="8" step="0.5" oninput="calculateAll()">
         </div>
-        <div class="form-group">
-          <label>Target Utilization Rate (%)</label>
-          <div class="input-wrap">
-            <input type="number" id="utilization" class="form-control suffixed" value="85" max="100" oninput="calculateAll()">
-            <span class="suffix">%</span>
-          </div>
-        </div>
       </div>
 
-      <div class="form-group">
-        <label>Target Gross Margin (%)</label>
-        <div class="input-wrap">
-          <input type="number" id="targetMargin" class="form-control suffixed" value="35" max="95" oninput="calculateAll()">
-          <span class="suffix">%</span>
-        </div>
-      </div>
+      <table class="calc-table" style="margin-top:8px;">
+        <tr class="highlight">
+          <td class="label">Total Direct Resource Cost (Monthly)</td>
+          <td class="value" id="outTotalDirect">-</td>
+        </tr>
+      </table>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h2>2. Fully Loaded Seat Rate &amp; Margin Summary</h2>
-        <span class="badge badge-success">Commercial Summary</span>
+        <h2>2. Infrastructure, Seat &amp; Operational Overhead</h2>
+        <span class="badge badge-purple">Indirect Overhead</span>
       </div>
 
-      <table class="calc-table">
-        <tr>
-          <td class="label">• Direct Salary (CTC)</td>
-          <td class="value" id="outDirectSalary">-</td>
-        </tr>
-        <tr>
-          <td class="label">• Seat/Infra Overhead</td>
-          <td class="value" id="outInfraCost">-</td>
-        </tr>
-        <tr>
-          <td class="label">• Shared Management &amp; Tools</td>
-          <td class="value" id="outMgmtCost">-</td>
-        </tr>
-        <tr style="border-top: 2px solid var(--border);">
-          <td class="label"><strong>Total Fully Loaded Cost / Seat</strong></td>
-          <td class="value" id="outTotalCost" style="color:var(--danger); font-weight:700;">-</td>
-        </tr>
-        <tr>
-          <td class="label">Net Billable Hours (at Utilization)</td>
-          <td class="value" id="outEffectiveHours">-</td>
-        </tr>
-        <tr>
-          <td class="label">Internal Cost / Billable Hour</td>
-          <td class="value" id="outInternalHourlyCost">-</td>
-        </tr>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label>Seat/Real Estate &amp; Facility Rent</label>
+          <input type="number" id="seatFacility" class="form-control" value="10000" oninput="calculateAll()">
+        </div>
+        <div class="form-group">
+          <label>Hardware &amp; IT Equipment Lease</label>
+          <input type="number" id="itEquipment" class="form-control" value="4000" oninput="calculateAll()">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label>Software Licenses &amp; Cloud Tools</label>
+          <input type="number" id="cloudTools" class="form-control" value="4000" oninput="calculateAll()">
+        </div>
+        <div class="form-group">
+          <label>Shared Mgmt, HR &amp; Governance</label>
+          <input type="number" id="mgmtGovernance" class="form-control" value="12000" oninput="calculateAll()">
+        </div>
+      </div>
+
+      <table class="calc-table" style="margin-top:8px;">
         <tr class="highlight">
-          <td class="label">Target Monthly Retainer Selling Price</td>
-          <td class="value" id="outMinSeatPrice">-</td>
-        </tr>
-        <tr class="highlight">
-          <td class="label">Target Minimum Billable Hourly Rate</td>
-          <td class="value" id="outMinHourlyRate">-</td>
+          <td class="label">Total Overhead per Seat (Monthly)</td>
+          <td class="value" id="outTotalOverhead">-</td>
         </tr>
       </table>
-
-      <div style="margin-top: 14px; padding: 10px 12px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; font-size: 0.78rem; color: #92400e;">
-        💡 <strong>Management Policy:</strong> Any quotation with Gross Margin below <strong>30%</strong> requires explicit Finance &amp; Leadership written approval before sending to the client.
-      </div>
     </div>
   </div>
 
-  <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 14px;">3. Multi-Model Commercial Quotations</h2>
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="card-header">
+      <h2>3. Fully Loaded Seat Rate &amp; Capacity Analysis</h2>
+      <span class="badge badge-green">Baseline Economics</span>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:0;">
+      <table class="calc-table">
+        <tr>
+          <td class="label">Total Direct Resource CTC Cost</td>
+          <td class="value" id="summaryDirect">-</td>
+        </tr>
+        <tr>
+          <td class="label">Total Seat &amp; Operational Overhead</td>
+          <td class="value" id="summaryOverhead">-</td>
+        </tr>
+        <tr style="border-top: 2px solid var(--border);">
+          <td class="label"><strong>TOTAL FULLY LOADED COST / SEAT</strong></td>
+          <td class="value" id="summaryLoaded" style="color:var(--coral); font-weight:700;">-</td>
+        </tr>
+      </table>
+
+      <table class="calc-table">
+        <tr>
+          <td class="label">Total Available Hours / Month</td>
+          <td class="value" id="summaryAvailHrs">-</td>
+        </tr>
+        <tr>
+          <td class="label">Net Billable Hours (at Target Utilization)</td>
+          <td class="value" id="summaryEffectiveHrs">-</td>
+        </tr>
+        <tr class="highlight">
+          <td class="label">Internal Cost per Effective Billable Hour</td>
+          <td class="value" id="summaryInternalHrCost">-</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 14px;">4. Multi-Model Commercial Quotations</h2>
   <div class="grid-3">
     
     <div class="card model-card m-fte">
       <div>
         <div class="card-header">
           <h2>Dedicated FTE Retainer</h2>
-          <span class="badge" style="background:#dbeafe; color:#1d4ed8;">Model A</span>
+          <span class="badge badge-blue">Model A</span>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Fixed monthly billing per full-time dedicated engineer/consultant.</p>
+        <p style="font-size: 0.8rem; color: var(--slate);">Fixed monthly billing per full-time dedicated engineer/consultant.</p>
         
         <div class="model-price" id="modelFtePrice">-</div>
         <div class="model-sub">per seat / month (monthly retainer)</div>
@@ -285,7 +411,7 @@
             <td class="value" id="modelFteProfit">-</td>
           </tr>
           <tr>
-            <td class="label">Net Margin</td>
+            <td class="label">Target Gross Margin</td>
             <td class="value" id="modelFteMargin">-</td>
           </tr>
         </table>
@@ -300,9 +426,9 @@
       <div>
         <div class="card-header">
           <h2>Time &amp; Material (T&amp;M)</h2>
-          <span class="badge" style="background:#dcfce7; color:#15803d;">Model B</span>
+          <span class="badge badge-green">Model B</span>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Flexible pay-as-you-go hourly rate with +15% risk/bench buffer.</p>
+        <p style="font-size: 0.8rem; color: var(--slate);">Flexible pay-as-you-go hourly rate with +15% risk buffer.</p>
         
         <div class="model-price" id="modelHourlyPrice">-</div>
         <div class="model-sub">per tracked billable hour</div>
@@ -317,8 +443,8 @@
             <td class="value" id="modelHourlyFull">-</td>
           </tr>
           <tr>
-            <td class="label">T&amp;M Premium Buffer</td>
-            <td class="value">+15% vs Retainer</td>
+            <td class="label">T&amp;M Risk Premium</td>
+            <td class="value">+15% over Retainer</td>
           </tr>
         </table>
       </div>
@@ -332,9 +458,9 @@
       <div>
         <div class="card-header">
           <h2>Milestone / Fixed Scope</h2>
-          <span class="badge" style="background:#fef3c7; color:#b45309;">Model C</span>
+          <span class="badge badge-amber">Model C</span>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Deliverable-based sprints with +25% scope contingency buffer.</p>
+        <p style="font-size: 0.8rem; color: var(--slate);">Deliverable-based sprints with +25% scope contingency buffer.</p>
         
         <div class="model-price" id="modelFixedPrice">-</div>
         <div class="model-sub">estimated sprint / milestone</div>
@@ -371,7 +497,7 @@
     </div>
 
     <div class="modal-tabs">
-      <button class="modal-tab-btn tab-mgmt" id="tabMgmt" onclick="switchTab('mgmt')">👔 1. Internal Management Approval Draft (With Cost Breakup)</button>
+      <button class="modal-tab-btn tab-mgmt" id="tabMgmt" onclick="switchTab('mgmt')">👔 1. Management Approval Draft (Cost Breakup)</button>
       <button class="modal-tab-btn" id="tabClient" onclick="switchTab('client')">✉️ 2. Client Quotation Draft (Proposal Ready)</button>
     </div>
 
@@ -427,7 +553,7 @@
       </div>
 
       <div>
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Live Draft Email Preview</label>
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--slate); margin-bottom: 6px;">Live Draft Email Preview</label>
         <div class="email-preview-box" id="emailPreviewBox"></div>
       </div>
     </div>
@@ -445,16 +571,14 @@
 <script>
   let currentMode = 'mgmt'; // 'mgmt' or 'client'
   let gSym = '₹';
-  let gBaseSalary = 85000;
-  let gInfraCost = 18000;
-  let gMgmtCost = 12000;
-  let gTotalCost = 115000;
+  let gTotalDirect = 0;
+  let gTotalOverhead = 0;
+  let gTotalLoaded = 0;
   let gMinSeatMonthly = 0;
   let gMinHourlyRate = 0;
   let gHourlyTmRate = 0;
   let gFixedSprintPrice = 0;
   let gEffectiveHours = 0;
-  let gTargetMargin = 35;
   let gInternalHourlyCost = 0;
 
   function fmt(val) {
@@ -465,52 +589,71 @@
     const curParts = document.getElementById('currency').value.split('|');
     gSym = curParts[1];
 
-    gBaseSalary = parseFloat(document.getElementById('baseSalary').value) || 0;
-    gInfraCost = parseFloat(document.getElementById('infraCost').value) || 0;
-    gMgmtCost = parseFloat(document.getElementById('mgmtCost').value) || 0;
+    // Direct Costs
+    const baseSalary = parseFloat(document.getElementById('baseSalary').value) || 0;
+    const statutoryBenefits = parseFloat(document.getElementById('statutoryBenefits').value) || 0;
+    const retentionReserve = parseFloat(document.getElementById('retentionReserve').value) || 0;
+    gTotalDirect = baseSalary + statutoryBenefits + retentionReserve;
+
+    // Overhead Costs
+    const seatFacility = parseFloat(document.getElementById('seatFacility').value) || 0;
+    const itEquipment = parseFloat(document.getElementById('itEquipment').value) || 0;
+    const cloudTools = parseFloat(document.getElementById('cloudTools').value) || 0;
+    const mgmtGovernance = parseFloat(document.getElementById('mgmtGovernance').value) || 0;
+    gTotalOverhead = seatFacility + itEquipment + cloudTools + mgmtGovernance;
+
+    // Fully Loaded
+    gTotalLoaded = gTotalDirect + gTotalOverhead;
+
+    // Capacity & Margin Drivers
     const workingDays = parseFloat(document.getElementById('workingDays').value) || 21;
     const dailyHours = parseFloat(document.getElementById('dailyHours').value) || 8;
     const utilization = (parseFloat(document.getElementById('utilization').value) || 85) / 100;
-    gTargetMargin = parseFloat(document.getElementById('targetMargin').value) || 35;
-    const targetMarginDec = gTargetMargin / 100;
+    const targetMargin = (parseFloat(document.getElementById('targetMargin').value) || 35) / 100;
 
-    // Baseline Costs
-    gTotalCost = gBaseSalary + gInfraCost + gMgmtCost;
     const totalAvailHours = workingDays * dailyHours;
     gEffectiveHours = totalAvailHours * utilization;
-    gInternalHourlyCost = gEffectiveHours > 0 ? (gTotalCost / gEffectiveHours) : 0;
+    gInternalHourlyCost = gEffectiveHours > 0 ? (gTotalLoaded / gEffectiveHours) : 0;
 
-    // Pricing Target: Price = Cost / (1 - Margin)
-    const marginDivisor = Math.max(0.05, 1 - targetMarginDec);
-    gMinSeatMonthly = gTotalCost / marginDivisor;
+    // Pricing Minimums (Price = Cost / (1 - Margin))
+    const marginDivisor = Math.max(0.05, 1 - targetMargin);
+    gMinSeatMonthly = gTotalLoaded / marginDivisor;
     gMinHourlyRate = gMinSeatMonthly / (gEffectiveHours > 0 ? gEffectiveHours : 1);
 
     // Model 1: Retainer
     const fteMonthly = gMinSeatMonthly;
-    const fteProfit = fteMonthly - gTotalCost;
+    const fteProfit = fteMonthly - gTotalLoaded;
     const fteMargin = (fteProfit / fteMonthly) * 100;
 
-    // Model 2: Hourly T&M (15% risk buffer)
+    // Model 2: Hourly T&M (+15% buffer)
     gHourlyTmRate = gMinHourlyRate * 1.15;
     const tmMonthly100 = gHourlyTmRate * 100;
     const tmMonthlyFull = gHourlyTmRate * gEffectiveHours;
 
-    // Model 3: Fixed Sprint (80-hour sprint base + 25% contingency)
+    // Model 3: Fixed Sprint (80 hrs + 25% contingency)
     gFixedSprintPrice = (gHourlyTmRate * 80) * 1.25;
     const fixedCostSprint = gInternalHourlyCost * 80;
     const fixedMargin = ((gFixedSprintPrice - fixedCostSprint) / gFixedSprintPrice) * 100;
 
-    // Update Live Baseline Displays
-    document.getElementById('outDirectSalary').innerText = fmt(gBaseSalary);
-    document.getElementById('outInfraCost').innerText = fmt(gInfraCost);
-    document.getElementById('outMgmtCost').innerText = fmt(gMgmtCost);
-    document.getElementById('outTotalCost').innerText = fmt(gTotalCost);
-    document.getElementById('outEffectiveHours').innerText = `${Math.round(gEffectiveHours)} hrs/seat`;
-    document.getElementById('outInternalHourlyCost').innerText = `${fmt(gInternalHourlyCost)} / hr`;
-    document.getElementById('outMinSeatPrice').innerText = `${fmt(gMinSeatMonthly)} / mo`;
-    document.getElementById('outMinHourlyRate').innerText = `${fmt(gMinHourlyRate)} / hr`;
+    // Update Top Overview Stats
+    document.getElementById('statLoadedCost').innerText = fmt(gTotalLoaded);
+    document.getElementById('statCostPerHr').innerText = `${fmt(gInternalHourlyCost)}/hr`;
+    document.getElementById('statRetainerPrice').innerText = fmt(gMinSeatMonthly);
+    document.getElementById('statHourlyRate').innerText = `${fmt(gMinHourlyRate)}/hr`;
 
-    // Update Model Displays
+    // Update Section 1 Tables
+    document.getElementById('outTotalDirect').innerText = fmt(gTotalDirect);
+    document.getElementById('outTotalOverhead').innerText = fmt(gTotalOverhead);
+
+    // Update Section 2 Baseline Summary
+    document.getElementById('summaryDirect').innerText = fmt(gTotalDirect);
+    document.getElementById('summaryOverhead').innerText = fmt(gTotalOverhead);
+    document.getElementById('summaryLoaded').innerText = fmt(gTotalLoaded);
+    document.getElementById('summaryAvailHrs').innerText = `${totalAvailHours} hrs`;
+    document.getElementById('summaryEffectiveHrs').innerText = `${Math.round(gEffectiveHours)} hrs/seat`;
+    document.getElementById('summaryInternalHrCost').innerText = `${fmt(gInternalHourlyCost)} / hr`;
+
+    // Update Section 3 Model Cards
     document.getElementById('modelFtePrice').innerText = fmt(fteMonthly);
     document.getElementById('modelFteEffHourly').innerText = `${fmt(fteMonthly / gEffectiveHours)} / hr`;
     document.getElementById('modelFteProfit').innerText = fmt(fteProfit);
@@ -523,7 +666,7 @@
     document.getElementById('modelFixedPrice').innerText = fmt(gFixedSprintPrice);
     document.getElementById('modelFixedMargin').innerText = `${fixedMargin.toFixed(1)}%`;
 
-    // Re-render preview
+    // Re-render modal preview
     generateEmailPreview();
   }
 
@@ -537,10 +680,9 @@
     const validity = document.getElementById('propValidity').value || '15 Days';
     const sender = document.getElementById('propSender').value || 'Commercial Delivery Lead';
 
-    const totalDirect = gBaseSalary * seats;
-    const totalInfra = gInfraCost * seats;
-    const totalMgmt = gMgmtCost * seats;
-    const totalLoaded = gTotalCost * seats;
+    const totalDirect = gTotalDirect * seats;
+    const totalOverhead = gTotalOverhead * seats;
+    const totalLoaded = gTotalLoaded * seats;
     const proposedQuoteMonthly = gMinSeatMonthly * seats;
     const grossProfitMonthly = proposedQuoteMonthly - totalLoaded;
     const marginPct = ((grossProfitMonthly / proposedQuoteMonthly) * 100).toFixed(1);
@@ -566,12 +708,11 @@
 • Est. Gross Margin on Milestone: ~${(((gFixedSprintPrice * seats) - (gInternalHourlyCost * 80 * seats)) / (gFixedSprintPrice * seats) * 100).toFixed(1)}% (includes +25% contingency buffer)`;
     } else {
       proposedModelText = `PROPOSED COMMERCIAL QUOTATION (MULTI-MODEL):
-1. Dedicated FTE: ${fmt(gMinSeatMonthly)}/seat/mo (${marginPct}% Gross Margin)
-2. T&M Hourly: ${fmt(gHourlyTmRate)}/hr
+1. Dedicated FTE: ${fmt(gMinSeatMonthly)}/seat/mo (${marginPct}\% Gross Margin) 2. T&M Hourly:${fmt(gHourlyTmRate)}/hr
 3. Milestone Sprint: ${fmt(gFixedSprintPrice)}/80-hr block`;
     }
 
-    return `Subject: [APPROVAL REQUEST] Commercial Quotation & Cost Breakup - ${project} | ${client}
+    return `Subject: [APPROVAL REQUEST] Commercial Quotation & Cost Breakup - ${project} \vert{}${client}
 
 Dear ${recipient},
 
@@ -582,11 +723,10 @@ Please find the detailed cost component breakdown and proposed commercial model 
 ============================================================
 1. INTERNAL COST COMPONENT BREAKDOWN (${seats} Seat${seats > 1 ? 's' : ''})
 ============================================================
-• Direct Resource Salary (CTC):     ${fmt(totalDirect)} / month (${fmt(gBaseSalary)} / seat)
-• Seat, Infra & IT Overhead:        ${fmt(totalInfra)} / month (${fmt(gInfraCost)} / seat)
-• Shared Mgmt, Tools & HR:          ${fmt(totalMgmt)} / month (${fmt(gMgmtCost)} / seat)
+• Direct Resource CTC & Benefits:   ${fmt(totalDirect)} / month (${fmt(gTotalDirect)} / seat)
+• Seat, Infra, Tools & Overhead:    ${fmt(totalOverhead)} / month (${fmt(gTotalOverhead)} / seat)
 ------------------------------------------------------------
-• TOTAL FULLY LOADED INTERNAL COST: ${fmt(totalLoaded)} / month (${fmt(gTotalCost)} / seat)
+• TOTAL FULLY LOADED INTERNAL COST: ${fmt(totalLoaded)} / month (${fmt(gTotalLoaded)} / seat)
 • Internal Cost / Billable Hour:    ${fmt(gInternalHourlyCost)} / hour
 
 ============================================================
@@ -642,140 +782,4 @@ Commercial & Delivery Operations
 • Standard Hourly Rate: ${fmt(gHourlyTmRate)} / billable hour
 • Invoicing: Bi-weekly / Monthly based on logged timesheets
 • Resource Headcount: ${seats} Consultant(s) allocated
-• Overtime/Weekend (if applicable): Standard 1.5x on approval`;
-    } else if (model === 'fixed') {
-      modelSection = `ENGAGEMENT COMMERCIALS (FIXED SCOPE / MILESTONE):
-------------------------------------------------------------
-• Structure: Deliverable-based Sprint / Milestone SOW
-• Sprint/Milestone Package: ${fmt(gFixedSprintPrice * seats)} per milestone block
-• Milestone Capacity: ${80 * seats} Development & QA Hours Included
-• Scope Assurance: 25% Scope buffer included with guaranteed milestone delivery`;
-    } else {
-      modelSection = `COMMERCIAL OPTIONS OVERVIEW:
-------------------------------------------------------------
-Option A: Dedicated FTE Retainer (Recommended)
-• Rate: ${fmt(fteSingle)} / seat / month (Total: ${fmt(fteTotal)}/mo for ${seats} headcount)
-
-Option B: Time & Material (T&M)
-• Rate: ${fmt(gHourlyTmRate)} / tracked hour
-
-Option C: Milestone-based Sprint
-• Rate: ${fmt(gFixedSprintPrice)} / 80-hour milestone package`;
-    }
-
-    return `Subject: Commercial Proposal & Quotation - ${project} | ${client}
-
-Dear ${recipient},
-
-Thank you for the opportunity to partner with ${client}.
-
-Following our technical & delivery scope review for "${project}", please find our commercial proposal outlined below:
-
-${modelSection}
-
-TERMS & CONDITIONS:
-------------------------------------------------------------
-1. Payment Terms: ${terms}
-2. Proposal Validity: ${validity} from date of issuance
-3. Infrastructure & Tooling: Standard enterprise development stack included
-4. IP Rights: 100% intellectual property ownership transfers to ${client} upon settlement
-
-Please confirm your preferred model so we can issue the Master Services Agreement (MSA) / Statement of Work (SOW) and initiate team onboarding.
-
-Warm regards,
-
-${sender}
-Commercial & Delivery Operations
-`;
-  }
-
-  function getDraftEmailText() {
-    return currentMode === 'mgmt' ? getManagementEmailText() : getClientEmailText();
-  }
-
-  function generateEmailPreview() {
-    const text = getDraftEmailText();
-    const box = document.getElementById('emailPreviewBox');
-    if (box) box.innerText = text;
-  }
-
-  function switchTab(mode) {
-    currentMode = mode;
-    const tabMgmt = document.getElementById('tabMgmt');
-    const tabClient = document.getElementById('tabClient');
-    const modalTitle = document.getElementById('modalTitle');
-    const recipientInput = document.getElementById('propRecipientName');
-
-    if (mode === 'mgmt') {
-      tabMgmt.classList.add('active');
-      tabClient.classList.remove('active');
-      modalTitle.innerText = '👔 Management Approval Request (Internal Cost Breakup)';
-      if (recipientInput.value === 'Sir/Madam' || recipientInput.value === 'John Doe') {
-        recipientInput.value = 'Leadership & Finance Team';
-      }
-    } else {
-      tabClient.classList.add('active');
-      tabMgmt.classList.remove('active');
-      modalTitle.innerText = '✉️ Client Quotation Draft (Proposal Ready)';
-      if (recipientInput.value === 'Leadership & Finance Team') {
-        recipientInput.value = 'John Doe';
-      }
-    }
-    generateEmailPreview();
-  }
-
-  function openApprovalModal(mode) {
-    switchTab(mode);
-    document.getElementById('emailModal').classList.add('active');
-  }
-
-  function openApprovalWithModel(mode, modelType) {
-    document.getElementById('propModel').value = modelType;
-    openApprovalModal(mode);
-  }
-
-  function closeModal() {
-    document.getElementById('emailModal').classList.remove('active');
-  }
-
-  function copyDraft() {
-    const draftText = getDraftEmailText();
-    navigator.clipboard.writeText(draftText).then(() => {
-      showToast('✓ Draft copied to clipboard!');
-    });
-  }
-
-  function openInMailClient() {
-    const client = document.getElementById('propClientOrg').value || 'Client';
-    const project = document.getElementById('propProject').value || 'Project';
-    
-    let subject = '';
-    if (currentMode === 'mgmt') {
-      subject = `[APPROVAL REQUEST] Commercial Quotation & Cost Breakup - ${project} | ${client}`;
-    } else {
-      subject = `Commercial Proposal & Quotation - ${project} | ${client}`;
-    }
-    
-    const body = encodeURIComponent(getDraftEmailText().replace(/^Subject:.*\n\n/, ''));
-    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById('toastMessage');
-    toast.innerText = msg;
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
-  }
-
-  // Close modal when clicking outside
-  document.getElementById('emailModal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-
-  // Initialize on load
-  window.onload = function() {
-    calculateAll();
-  };
-</script>
-</body>
-</html>
+• Overtime/Weekend (if applicable): Standard 1.5
