@@ -217,6 +217,7 @@
       </div>
     </div>
 
+    <!-- RESTORED: Summary Comparison Table -->
     <table>
       <thead>
         <tr>
@@ -518,7 +519,6 @@
         <input type="number" id="targetGm" value="18" step="0.5" min="1" max="50" oninput="calculate()" required>
       </div>
       
-      <!-- ADDED SUBSIDIES -->
       <div class="form-group">
         <label>Employee Subsidy (Rs./FTE/mo)</label>
         <input type="number" id="employeeSubsidy" value="0" min="0" oninput="calculate()">
@@ -620,9 +620,7 @@
       <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <div id="historyListContainer">
-        <!-- Rendered dynamically -->
-      </div>
+      <div id="historyListContainer"></div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-action" style="background:#64748b;" onclick="closeHistoryModal()">Close</button>
@@ -632,7 +630,6 @@
 </div>
 
 <script>
-// FULL LOCATION MAP RESTORED
 const stateCityMap = {
   MH: [
     { name: "Greater Mumbai (UA)", tier: "A" },
@@ -802,7 +799,7 @@ function validateAndCalculateCrm() {
   calculate();
 }
 
-// CAP FUNCTION FOR MIX PERCENTAGES
+// CAPPING FUNCTION FOR PERCENTAGES
 function syncMixPercentages(changedId) {
   const ids = ['fresherPct', 'experiencedPct', 'napsPct', 'natsPct'];
   let totalOthers = 0;
@@ -916,14 +913,9 @@ function calculate() {
   const costPerHire = parseFloat(document.getElementById('costPerHire').value) || 0;
   const totalAbsoluteHiringCost = monthlyGrossHires * costPerHire;
 
-  // Restore Missing UI field updates
   const recruitmentPerFte = billableFte > 0 ? (totalAbsoluteHiringCost / billableFte) : 0;
-  if(document.getElementById('totalHiringCostDisplay')) {
-    document.getElementById('totalHiringCostDisplay').value = '₹' + Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN') + ' / mo';
-  }
-  if(document.getElementById('effectiveRecruitmentPerFte')) {
-    document.getElementById('effectiveRecruitmentPerFte').value = '₹' + recruitmentPerFte.toFixed(2) + ' / FTE';
-  }
+  if(document.getElementById('totalHiringCostDisplay')) document.getElementById('totalHiringCostDisplay').value = '₹' + Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN') + ' / mo';
+  if(document.getElementById('effectiveRecruitmentPerFte')) document.getElementById('effectiveRecruitmentPerFte').value = '₹' + recruitmentPerFte.toFixed(2) + ' / FTE';
 
   // CTC Mix Normalization
   const fCtc = parseFloat(document.getElementById('fresherCtc').value) || 0;
@@ -937,8 +929,8 @@ function calculate() {
   const natsPct = parseFloat(document.getElementById('natsPct').value) || 0;
   
   const totalPct = fPct + ePct + napsPct + natsPct;
-  const fNorm = totalPct > 0 ? fPct / totalPct : 0.5;
-  const eNorm = totalPct > 0 ? ePct / totalPct : 0.5;
+  const fNorm = totalPct > 0 ? fPct / totalPct : 1; 
+  const eNorm = totalPct > 0 ? ePct / totalPct : 0;
   const napsNorm = totalPct > 0 ? napsPct / totalPct : 0;
   const natsNorm = totalPct > 0 ? natsPct / totalPct : 0;
 
@@ -951,7 +943,6 @@ function calculate() {
 
   const baseCsaCount = billableFte;
   
-  // FIX: Ensure training buffer is bypassed if training is explicitly billable to client
   const trainingBillableStatus = document.getElementById('trainingBillable').value;
   let trainingBufferCount = 0;
   if (trainingBillableStatus === 'no' && throughput > 0 && trainingDays > 0) {
@@ -1003,7 +994,11 @@ function calculate() {
 
   function computeParityModelRate(versantExtra) {
     const totalAgentCtc = baseWeightedCtc + versantExtra;
-    const csaSalaryTotal = totalAgentCtc * totalCsaCount;
+    
+    // Agent Base and Training broken into two strictly separate cost pools
+    const agentBaseSalaryTotal = totalAgentCtc * baseCsaCount;
+    const trainingBufferCost = totalAgentCtc * trainingBufferCount;
+    const csaSalaryTotal = agentBaseSalaryTotal + trainingBufferCost;
 
     const supportOpsCost = (overheadFte + otherFte) * totalSupportHeadcount;
     const directOpsCost = (otherFte + overheadFte + crmCostPerFte) * billableFte;
@@ -1015,10 +1010,13 @@ function calculate() {
     
     return {
       agentCtc: totalAgentCtc,
+      agentBaseSalaryTotal,
+      trainingBufferCost,
       csaSalaryTotal,
       projectMonthlyCost,
       billedRateFte,
       monthlyInvoiceTotal,
+      monthlyGrossMargin: monthlyInvoiceTotal * targetGm,
       acv: monthlyInvoiceTotal * 12
     };
   }
@@ -1039,17 +1037,49 @@ function calculate() {
   document.getElementById('floatingMonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
   document.getElementById('floatingMarginPct').innerText = (targetGm * 100).toFixed(0) + '%';
 
-  // FIX: Dynamic label to show visual feedback for Training Buffer logic
-  const trainingLabel = trainingBillableStatus === 'yes' ? 'Excl. Training Buffer (Billed Separately)' : `Incl. ${trainingBufferCount.toFixed(2)} FTE Training Buffer`;
+  // RESTORED: Render Main Proposal Comparison Table
+  const comparisonItems = [
+    { label: "Prospect / Client Account", v3: document.getElementById('prospectName').value, v4: document.getElementById('prospectName').value, isText: true },
+    { label: "Prepared By", v3: document.getElementById('preparedBy').value, v4: document.getElementById('preparedBy').value, isText: true },
+    { label: "Effective Agent Base CTC", v3: v3.agentCtc, v4: v4.agentCtc, prefix: "₹" },
+    { label: "Monthly Sourcing & Recruitment", v3: `₹${Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo`, v4: `₹${Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo`, isText: true },
+    { label: "Effective Billable Units", v3: `${effectiveBillableUnits.toFixed(2)} FTEs`, v4: `${effectiveBillableUnits.toFixed(2)} FTEs`, isText: true },
+    { label: "Operational Seat Footprint", v3: `${totalPhysicalSeats.toFixed(2)} Workstations`, v4: `${totalPhysicalSeats.toFixed(2)} Workstations`, isText: true },
+    { label: "Target Gross Margin (%)", v3: `${(targetGm * 100).toFixed(0)}%`, v4: `${(targetGm * 100).toFixed(0)}%`, isText: true },
+    { label: "FINAL COMMON RATE / BILLABLE FTE", v3: v3.billedRateFte, v4: v4.billedRateFte, prefix: "₹", isBold: true, highlight: true },
+    { label: "TOTAL MONTHLY INVOICE", v3: v3.monthlyInvoiceTotal, v4: v4.monthlyInvoiceTotal, prefix: "₹", isBold: true },
+    { label: "Monthly Gross Margin Realized", v3: v3.monthlyGrossMargin, v4: v4.monthlyGrossMargin, prefix: "₹", isMargin: true }
+  ];
+
+  let compHtml = '';
+  comparisonItems.forEach(item => {
+    let v3Display = item.isText ? item.v3 : `₹${Math.round(item.v3).toLocaleString('en-IN')}`;
+    let v4Display = item.isText ? item.v4 : `₹${Math.round(item.v4).toLocaleString('en-IN')}`;
+    let deltaDisplay = item.isText ? '-' : `+₹${Math.round(item.v4 - item.v3).toLocaleString('en-IN')}`;
+
+    let rowStyle = item.highlight ? 'background:#ecfdf5; font-weight:800; font-size:14px; border:2px solid #10b981;' : (item.isBold ? 'font-weight:700;' : '');
+    let marginStyle = item.isMargin ? 'color:#166534; font-weight:700;' : '';
+
+    compHtml += `<tr style="${rowStyle}">
+      <td>${item.label}</td>
+      <td style="${marginStyle}">${v3Display}</td>
+      <td style="${marginStyle}">${v4Display}</td>
+      <td style="color:#2563eb; font-weight:600;">${deltaDisplay}</td>
+    </tr>`;
+  });
+  if(document.getElementById('versantComparisonTbody')) document.getElementById('versantComparisonTbody').innerHTML = compHtml;
+
+  const trainingLabel = trainingBillableStatus === 'yes' ? '0 FTE (Billed Separately)' : `${trainingBufferCount.toFixed(2)} FTE Buffer`;
 
   const costBreakupLines = [
-    { cat: "1. Agent Direct Salary (Loaded)", basis: trainingLabel, v3Cost: v3.csaSalaryTotal, v4Cost: v4.csaSalaryTotal },
-    { cat: "2. Support Staff Hierarchy Salaries", basis: `Absorbed + Billable Allocation`, v3Cost: totalSupportMonthlyBudget, v4Cost: totalSupportMonthlyBudget },
-    { cat: "3. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v4Cost: totalAbsoluteHiringCost },
-    { cat: "4. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v4Cost: baseInfraPerSeat * totalPhysicalSeats },
-    { cat: "5. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v4Cost: itPerSeat * totalPhysicalSeats },
-    { cat: "6. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount) },
-    { cat: "7. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v4Cost: -totalSubsidyAmount },
+    { cat: "1. Agent Direct Salary (Base)", basis: `Active Billable Agents (${baseCsaCount.toFixed(2)} FTEs)`, v3Cost: v3.agentBaseSalaryTotal, v4Cost: v4.agentBaseSalaryTotal },
+    { cat: "2. Training Buffer Allocation", basis: trainingLabel, v3Cost: v3.trainingBufferCost, v4Cost: v4.trainingBufferCost },
+    { cat: "3. Support Staff Hierarchy Salaries", basis: `Absorbed + Billable Allocation`, v3Cost: totalSupportMonthlyBudget, v4Cost: totalSupportMonthlyBudget },
+    { cat: "4. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v4Cost: totalAbsoluteHiringCost },
+    { cat: "5. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v4Cost: baseInfraPerSeat * totalPhysicalSeats },
+    { cat: "6. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v4Cost: itPerSeat * totalPhysicalSeats },
+    { cat: "7. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount) },
+    { cat: "8. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v4Cost: -totalSubsidyAmount },
     { cat: "TOTAL PROGRAM BASE COST (COGS)", basis: "Consolidated Expense", v3Cost: v3.projectMonthlyCost, v4Cost: v4.projectMonthlyCost, isTotal: true },
     { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue across Effective FTEs`, v3Cost: v3.monthlyInvoiceTotal, v4Cost: v4.monthlyInvoiceTotal, isFinal: true }
   ];
@@ -1057,7 +1087,7 @@ function calculate() {
   let costBreakupHtml = '';
   costBreakupLines.forEach(row => {
     let rowStyle = row.isFinal ? 'background:#ecfdf5; font-weight:800; border:2px solid #10b981; color:#065f46;' : (row.isTotal ? 'background:#f1f5f9; font-weight:700;' : '');
-    let textStyle = row.v3Cost < 0 ? 'color:#dc2626;' : ''; // Red for negative costs (subsidies)
+    let textStyle = row.v3Cost < 0 ? 'color:#dc2626;' : ''; 
     
     costBreakupHtml += `<tr style="${rowStyle}">
       <td>${row.cat}</td>
@@ -1087,7 +1117,7 @@ function calculate() {
   });
   document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
 
-  // FIX: RESTORED FULL currentCalcData object to ensure HTML Saves and Emails don't break.
+  // Restore currentCalcData strictly for Modal generation 
   const stateSelectEl = document.getElementById('stateSelect');
   const citySelectEl = document.getElementById('citySelect');
   
@@ -1109,6 +1139,7 @@ function calculate() {
     billableFte,
     billableSupportHeadcount,
     totalBillableParityUnits,
+    effectiveBillableUnits,
     totalPhysicalSeats,
     v3, v4,
     targetGm,
@@ -1122,8 +1153,298 @@ function calculate() {
     totalSupportMonthlyBudget,
     totalSupportHeadcount,
     v4Extra,
-    v3Extra
+    v3Extra,
+    trainingLabel
   };
+}
+
+// EMAIL GENERATION 
+function openEmailModal(type) {
+  if (!checkAllRequiredFields()) return;
+
+  const d = currentCalcData;
+  if (!d.billableFte) return;
+
+  const gmPct = (d.targetGm * 100).toFixed(0);
+  let subject = "";
+  let bodyHtml = "";
+
+  const tableStyle = 'width:100%; border-collapse:collapse; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; font-size:12.5px; margin:12px 0; border:1px solid #cbd5e1;';
+  const thStyle = 'border:1px solid #cbd5e1; padding:8px 10px; background:#f1f5f9; color:#0f172a; text-align:left; font-weight:700;';
+  const tdStyle = 'border:1px solid #cbd5e1; padding:7px 10px; text-align:left; color:#1e293b;';
+  const totalTdStyle = 'border:1px solid #cbd5e1; padding:8px 10px; text-align:left; background:#ecfdf5; font-weight:700; color:#166534;';
+
+  if (type === 'mgmt') {
+    subject = `[APPROVAL REQUEST] Commercial Cost Sheet & Parity Rate Proposal - ${d.prospectName} [${d.proposalNumber}] - Sales: ${d.salesPerson}`;
+    
+    bodyHtml = `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">` +
+      `<p>Dear Management & Finance Team,</p>` +
+      `<p>Please review and approve the commercial costing and rate proposal structured for <strong>${d.prospectName}</strong> (Ref: <strong>${d.proposalNumber}</strong>).</p>` +
+      `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
+      `<strong>1. PROGRAM ARCHITECTURE & STAKEHOLDER ATTRIBUTION</strong>` +
+      `<ul>` +
+      `<li>Prospect / Client: <strong>${d.prospectName}</strong></li>` +
+      `<li>Prepared By: <strong>${d.preparedBy}</strong> | Sales Person: <strong>${d.salesPerson}</strong> | Referred By: <strong>${d.referredBy}</strong></li>` +
+      `<li>Proposal Reference ID: <strong>${d.proposalNumber}</strong></li>` +
+      `<li>Location: <strong>${d.cityText}, ${d.stateText} [Gazette Area ${d.tierVal}]</strong></li>` +
+      `<li>Operational Dynamic: <strong>${d.attritionPct.toFixed(1)}% Attrition | ${d.throughputPct.toFixed(1)}% Throughput (${d.monthlyGrossHires.toFixed(2)} Monthly Gross Hires)</strong></li>` +
+      `<li>Working Model: <strong>${d.workingModel === '7_days' ? '7 Days Working Model' : '6 Days Working Model'} (${d.totalOffloadPercentage.toFixed(1)}% Combined Seat Footprint Offload: ${d.shrinkagePct.toFixed(1)}% Shrinkage ${d.workingModel === '7_days' ? '+ 14% 7-Day' : ''})</strong></li>` +
+      `<li>Billable Headcount Scope: <strong>${d.billableFte} Agent FTEs + ${d.billableSupportHeadcount.toFixed(2)} Billable Support FTEs = ${d.totalBillableParityUnits.toFixed(2)} Total Billable FTEs</strong></li>` +
+      `<li>Total Physical Workstations Required: <strong>${d.totalPhysicalSeats.toFixed(2)} Physical Workstations</strong> (Offload Adjusted)</li>` +
+      `<li>Commercial Model: <strong>Uniform Parity Billing</strong></li>` +
+      `</ul>` +
+      `<strong>2. ITEMIZED COST BREAKDOWN (MONTHLY)</strong>` +
+      `<table style="${tableStyle}">` +
+      `<thead><tr><th style="${thStyle}">Cost Component</th><th style="${thStyle}">Unit Basis</th><th style="${thStyle}">Monthly Total (V3)</th><th style="${thStyle}">Cost / Billable FTE</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td style="${tdStyle}">Agent Base Salary</td><td style="${tdStyle}">₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} CTC / mo</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">Training Buffer Allocation</td><td style="${tdStyle}">${d.trainingLabel}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">Support Staff Hierarchy</td><td style="${tdStyle}">${d.totalSupportHeadcount.toFixed(2)} FTEs</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">Facility Infrastructure</td><td style="${tdStyle}">₹${d.baseInfraPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.baseInfraPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.baseInfraPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">IT & Technology Assets</td><td style="${tdStyle}">₹${d.itPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.itPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.itPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">Recruitment & Hiring Cost</td><td style="${tdStyle}">₹${d.costPerHire.toLocaleString('en-IN')} / hire (${d.monthlyGrossHires.toFixed(2)} hires)</td><td style="${tdStyle}">₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${d.recruitmentPerFte.toFixed(2)}</td></tr>` +
+      `<tr><td style="${tdStyle}">Operations & Admin Overheads</td><td style="${tdStyle}">₹${(d.overheadFte + d.otherFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount)).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount))/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<strong>3. COMMERCIAL PRICING & P&L SUMMARY (@ ${gmPct}% GROSS MARGIN)</strong>` +
+      `<table style="${tableStyle}">` +
+      `<thead><tr><th style="${thStyle}">Financial Metric</th><th style="${thStyle}">Versant 3 Proposal</th><th style="${thStyle}">Versant 4 Proposal</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td style="${tdStyle}"><strong>Uniform Parity Rate / FTE</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</td><td style="${totalTdStyle}">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</td></tr>` +
+      `<tr><td style="${tdStyle}"><strong>Total Monthly Invoicing</strong></td><td style="${tdStyle}">₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td style="${tdStyle}">₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
+      `<tr><td style="${tdStyle}"><strong>Monthly Gross Margin Realized</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td style="${totalTdStyle}">₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td></tr>` +
+      `<tr><td style="${tdStyle}"><strong>Annual Contract Value (ACV)</strong></td><td style="${tdStyle}">₹${Math.round(d.v3.acv).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v4.acv).toLocaleString('en-IN')}</td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<p>Kindly review and provide commercial sign-off.</p>` +
+      `<p>Best regards,<br><strong>${d.preparedBy}</strong><br>Commercial & Pricing Delivery</p></div>`;
+      
+    document.getElementById('modalTitle').innerText = "📧 Management Approval Email Draft (Tabular Format)";
+  } else {
+    subject = `Commercial Proposal & Pricing Schedule - ${d.prospectName} [${d.proposalNumber}]`;
+    
+    bodyHtml = `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">` +
+      `<p>Dear ${d.prospectName} Team,</p>` +
+      `<p>Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal (Ref: <strong>${d.proposalNumber}</strong>) for the <strong>${d.effectiveBillableUnits.toFixed(2)} Billed FTE</strong> engagement in <strong>${d.cityText}, ${d.stateText}</strong>.</p>` +
+      `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
+      `<strong>1. PROGRAM SCOPE & RESOURCE DELIVERY</strong>` +
+      `<ul>` +
+      `<li>Client / Prospect: <strong>${d.prospectName}</strong></li>` +
+      `<li>Proposal Reference ID: <strong>${d.proposalNumber}</strong></li>` +
+      `<li>Key Account Manager / Sales Lead: <strong>${d.salesPerson}</strong></li>` +
+      `<li>Billed Resource Scope: <strong>${d.billableFte} Dedicated Agent FTEs</strong> + <strong>${d.billableSupportHeadcount.toFixed(2)} Dedicated Billable Support FTEs</strong> (Total <strong>${d.totalBillableParityUnits.toFixed(2)} Billable Parity Units</strong>)</li>` +
+      `<li>Operational Work Model: <strong>${d.workingModel === '7_days' ? '7 Days Operations Model' : '6 Days Standard Operations'}</strong></li>` +
+      `<li>Dedicated Workstations: <strong>${d.totalPhysicalSeats.toFixed(2)} dedicated operational workstations optimized for the program</strong></li>` +
+      `<li>Support Governance: Fully aligned Team Leaders, Quality Analysts, Assistant Manager, MIS Lead & Voice Trainer</li>` +
+      `<li>Facility Enablement: Ergonomic seating, dual power backup, high-speed leased line connectivity, managed IT hardware, and dedicated facility security</li>` +
+      `</ul>` +
+      `<strong>2. COMMERCIAL RATE SCHEDULE (UNIFORM PARITY PRICING)</strong>` +
+      `<table style="${tableStyle}">` +
+      `<thead><tr><th style="${thStyle}">Engagement Profile</th><th style="${thStyle}">Common Rate per Billable FTE</th><th style="${thStyle}">Total Monthly Invoicing</th></tr></thead>` +
+      `<tbody>` +
+      `<tr><td style="${tdStyle}"><strong>Option A: Versant Level 3</strong><br><span style="font-size:11px; color:#64748b;">Standard Voice / Chat Profile</span></td><td style="${totalTdStyle}">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
+      `<tr><td style="${tdStyle}"><strong>Option B: Versant Level 4</strong><br><span style="font-size:11px; color:#64748b;">Enhanced Global Voice Profile</span></td><td style="${totalTdStyle}">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
+      `</tbody>` +
+      `</table>` +
+      `<strong>3. COMMERCIAL GOVERNANCE & STATUTORY TERMS</strong>` +
+      `<ul>` +
+      `<li>Pricing Inclusions: All agent salaries, dedicated billable and supervisory staff, facility seating, workstation IT, recruitment, and management overheads.</li>` +
+      `<li>Statutory Compliance: 100% compliant with Central Gazette minimum wage baselines, PF, ESIC, and statutory gratuity regulations.</li>` +
+      `<li>Taxes: Goods & Services Tax (GST) applicable at statutory rates (18%).</li>` +
+      `<li>Payment Terms: Net 30 days from date of invoice submission.</li>` +
+      `</ul>` +
+      `<p>We look forward to partnering with your team on this engagement.</p>` +
+      `<p>Warm regards,<br><strong>${d.salesPerson}</strong><br>Client Solutions & Commercial Delivery</p></div>`;
+      
+    document.getElementById('modalTitle').innerText = "💼 Client Commercial Proposal Email Draft (Tabular Schedule)";
+  }
+
+  document.getElementById('modalSubject').innerText = subject;
+  document.getElementById('modalEmailBody').innerHTML = bodyHtml;
+  window.currentEmailHtml = bodyHtml;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = bodyHtml;
+  const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(tempDiv.innerText)}`;
+  document.getElementById('modalMailtoLink').href = mailtoUrl;
+
+  document.getElementById('emailModal').style.display = 'flex';
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').style.display = 'none';
+}
+
+function copyEmailHtml() {
+  const blob = new Blob([window.currentEmailHtml], { type: 'text/html' });
+  const textBlob = new Blob([document.getElementById('modalEmailBody').innerText], { type: 'text/plain' });
+  const item = new ClipboardItem({
+    'text/html': blob,
+    'text/plain': textBlob
+  });
+
+  navigator.clipboard.write([item]).then(() => {
+    alert("✅ Formatted email with table borders copied successfully! Paste directly into Outlook/Gmail.");
+  }).catch(() => {
+    navigator.clipboard.writeText(document.getElementById('modalEmailBody').innerText).then(() => {
+      alert("✅ Text version copied to clipboard.");
+    });
+  });
+}
+
+function openSaveHtmlModal() {
+  if (!checkAllRequiredFields()) return;
+  const cleanProspect = (currentCalcData.prospectName || 'Prospect').replace(/[^a-zA-Z0-9]/g, '_');
+  const defaultDocName = `Commercial_Proposal_${cleanProspect}_${currentCalcData.proposalNumber || 'PROP'}`;
+  document.getElementById('customProposalName').value = defaultDocName;
+  document.getElementById('saveHtmlModal').style.display = 'flex';
+}
+
+function closeSaveHtmlModal() {
+  document.getElementById('saveHtmlModal').style.display = 'none';
+}
+
+function executeHtmlDownload() {
+  const d = currentCalcData;
+  let customTitle = document.getElementById('customProposalName').value.trim();
+  if (!customTitle) {
+    customTitle = `Commercial_Proposal_${d.prospectName}_${d.proposalNumber}`;
+  }
+  const cleanFileName = customTitle.replace(/[^a-zA-Z0-9_-]/g, '_') + '.html';
+  const gmPct = (d.targetGm * 100).toFixed(0);
+
+  let supportRowsHtml = '';
+  supportRoles.forEach(r => {
+    const span = parseFloat(r.span) || 0;
+    const ctc = parseFloat(r.ctc) || 0;
+    const count = span > 0 ? (d.billableFte * (182/184)) / span : 0;
+    const cost = count * ctc;
+    supportRowsHtml += `<tr>
+      <td>${r.name}</td>
+      <td>1:${r.span}</td>
+      <td>₹${ctc.toLocaleString('en-IN')}</td>
+      <td>${count.toFixed(2)}</td>
+      <td>₹${Math.round(cost).toLocaleString('en-IN')}</td>
+      <td>${r.billable === 'yes' ? '<span class="pill pill-success">Billable at Parity</span>' : '<span class="pill pill-neutral">Absorbed Overhead</span>'}</td>
+    </tr>`;
+  });
+
+  const htmlDocContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${customTitle}</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 36px 20px; line-height: 1.5; }
+  .container { max-width: 1080px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 36px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07); }
+  .header { border-bottom: 2px solid #0f2756; padding-bottom: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+  h1 { color: #0f2756; font-size: 24px; margin: 0 0 6px 0; }
+  .meta { color: #64748b; font-size: 13px; font-weight: 500; }
+  h2 { font-size: 16px; color: #0f2756; margin: 28px 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+  .grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .summary-card { background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px; }
+  .summary-card.v4 { background: #faf5ff; border-color: #ddd6fe; }
+  .card-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+  .card-value { font-size: 22px; font-weight: 800; color: #0f2756; margin: 6px 0 2px 0; }
+  .card-sub { font-size: 12px; color: #475569; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+  th { background: #f1f5f9; color: #1e293b; font-weight: 700; }
+  tr:nth-child(even) { background: #f8fafc; }
+  .highlight-row { background: #ecfdf5 !important; font-weight: 700; color: #166534; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .pill-success { background: #dcfce7; color: #166534; }
+  .pill-neutral { background: #f1f5f9; color: #475569; }
+  .footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>${d.prospectName}</h1>
+      <div class="meta">Prepared By: <strong>${d.preparedBy}</strong> | Sales Person: <strong>${d.salesPerson}</strong> | Referred By: <strong>${d.referredBy}</strong></div>
+    </div>
+    <div style="text-align:right;">
+      <span class="pill pill-success">Uniform Rate Parity</span>
+      <div class="meta" style="margin-top:4px;">Ref: <strong>${d.proposalNumber}</strong> | Date: ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+    </div>
+  </div>
+
+  <div class="grid-summary">
+    <div class="summary-card">
+      <div class="card-label">Versant 3 (Baseline Voice)</div>
+      <div class="card-value">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')}</div>
+      <div class="card-sub">Per Billable FTE / Month (@ ${gmPct}% GM)</div>
+    </div>
+
+    <div class="summary-card v4">
+      <div class="card-label">Versant 4 (Enhanced Voice)</div>
+      <div class="card-value" style="color:#6d28d9;">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')}</div>
+      <div class="card-sub">Per Billable FTE / Month (@ ${gmPct}% GM)</div>
+    </div>
+
+    <div class="summary-card" style="background:#f0fdf4; border-color:#bbf7d0;">
+      <div class="card-label">Total Contract Scale</div>
+      <div class="card-value" style="color:#166534;">${d.effectiveBillableUnits.toFixed(2)} FTEs</div>
+      <div class="card-sub">Effective Billed Load</div>
+    </div>
+  </div>
+
+  <h2>1. Program Sizing & Operational Architecture</h2>
+  <table>
+    <tr><th>Parameter</th><th>Value</th><th>Parameter</th><th>Value</th></tr>
+    <tr><td>Prospect / Client</td><td><strong>${d.prospectName}</strong></td><td>Proposal Reference ID</td><td><strong>${d.proposalNumber}</strong></td></tr>
+    <tr><td>Prepared By</td><td>${d.preparedBy}</td><td>Sales Person / Lead</td><td>${d.salesPerson}</td></tr>
+    <tr><td>Referred By</td><td>${d.referredBy}</td><td>Operational Working Model</td><td>${d.workingModel === '7_days' ? '7-Day Operations (-14% Seat Offload)' : '6-Day Standard Operations'}</td></tr>
+    <tr><td>Location & Tier</td><td>${d.cityText}, ${d.stateText} [Area ${d.tierVal}]</td><td>Total Physical Workstations</td><td>${d.totalPhysicalSeats.toFixed(2)} Dedicated Workstations</td></tr>
+    <tr><td>Monthly Attrition Rate</td><td>${d.attritionPct.toFixed(1)}%</td><td>Training Throughput</td><td>${d.throughputPct.toFixed(1)}%</td></tr>
+    <tr><td>Monthly Gross Hires</td><td>${d.monthlyGrossHires.toFixed(2)} Hires / mo</td><td>Total Monthly Sourcing Budget</td><td>₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo (₹${d.recruitmentPerFte.toFixed(0)}/FTE)</td></tr>
+    <tr><td>Agent Workstation Footprint</td><td>${d.totalPhysicalSeats.toFixed(2)} Workstations</td><td>Total Combined Seat Offload</td><td>${d.totalOffloadPercentage.toFixed(1)}% (${d.shrinkagePct.toFixed(1)}% Shrinkage)</td></tr>
+  </table>
+
+  <h2>2. Support Staff Hierarchy & Alignment</h2>
+  <table>
+    <thead><tr><th>Role Name</th><th>Span (1:X)</th><th>Monthly CTC</th><th>FTE Count</th><th>Monthly Cost</th><th>Billing Status</th></tr></thead>
+    <tbody>${supportRowsHtml}</tbody>
+  </table>
+
+  <h2>3. Itemized Commercial Cost & Billing Comparison</h2>
+  <table>
+    <thead>
+      <tr><th>Commercial Line Item</th><th>Versant 3 Proposal</th><th>Versant 4 Proposal</th><th>Delta (V4 - V3)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Agent Effective Monthly CTC</td><td>₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.agentCtc).toLocaleString('en-IN')}</td><td>+₹${Math.round(d.v4Extra).toLocaleString('en-IN')}</td></tr>
+      <tr><td>Agent Base Salary Total</td><td>₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td>-</td></tr>
+      <tr><td>Training Buffer Cost</td><td>₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.trainingBufferCost).toLocaleString('en-IN')}</td><td>-</td></tr>
+      <tr><td>Support Staff Allocation</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
+      <tr><td>Facility Infra & IT Cost (Loaded)</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
+      <tr><td>Target Gross Margin (%)</td><td>${gmPct}%</td><td>${gmPct}%</td><td>-</td></tr>
+      <tr class="highlight-row"><td><strong>FINAL COMMON RATE / BILLABLE FTE</strong></td><td><strong>₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>+₹${Math.round(d.v4.billedRateFte - d.v3.billedRateFte).toLocaleString('en-IN')}</strong></td></tr>
+      <tr><td><strong>Total Monthly Invoicing</strong></td><td>₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>+₹${Math.round(d.v4.monthlyInvoiceTotal - d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')}</td></tr>
+      <tr class="highlight-row"><td><strong>Monthly Gross Margin Realized</strong></td><td>₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td>+₹${Math.round(d.v4.monthlyGrossMargin - d.v3.monthlyGrossMargin).toLocaleString('en-IN')}</td></tr>
+      <tr><td><strong>Annual Contract Value (ACV)</strong></td><td>₹${Math.round(d.v3.acv).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.acv).toLocaleString('en-IN')}</td><td>+₹${Math.round(d.v4.acv - d.v3.acv).toLocaleString('en-IN')}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">Generated via Commercial Seat Rate &amp; Uniform Parity Billing Calculator</div>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlDocContent], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.href = url;
+  downloadAnchor.download = cleanFileName;
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  URL.revokeObjectURL(url);
+
+  closeSaveHtmlModal();
+  alert(`✅ Commercial proposal #${d.proposalNumber} successfully saved as: ${cleanFileName}`);
 }
 
 window.onload = function() {
