@@ -217,7 +217,6 @@
       </div>
     </div>
 
-    <!-- RESTORED: Summary Comparison Table -->
     <table>
       <thead>
         <tr>
@@ -1037,7 +1036,7 @@ function calculate() {
   document.getElementById('floatingMonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
   document.getElementById('floatingMarginPct').innerText = (targetGm * 100).toFixed(0) + '%';
 
-  // RESTORED: Render Main Proposal Comparison Table
+  // Render Main Proposal Comparison Table
   const comparisonItems = [
     { label: "Prospect / Client Account", v3: document.getElementById('prospectName').value, v4: document.getElementById('prospectName').value, isText: true },
     { label: "Prepared By", v3: document.getElementById('preparedBy').value, v4: document.getElementById('preparedBy').value, isText: true },
@@ -1072,16 +1071,16 @@ function calculate() {
   const trainingLabel = trainingBillableStatus === 'yes' ? '0 FTE (Billed Separately)' : `${trainingBufferCount.toFixed(2)} FTE Buffer`;
 
   const costBreakupLines = [
-    { cat: "1. Agent Direct Salary (Base)", basis: `Active Billable Agents (${baseCsaCount.toFixed(2)} FTEs)`, v3Cost: v3.agentBaseSalaryTotal, v4Cost: v4.agentBaseSalaryTotal },
-    { cat: "2. Training Buffer Allocation", basis: trainingLabel, v3Cost: v3.trainingBufferCost, v4Cost: v4.trainingBufferCost },
-    { cat: "3. Support Staff Hierarchy Salaries", basis: `Absorbed + Billable Allocation`, v3Cost: totalSupportMonthlyBudget, v4Cost: totalSupportMonthlyBudget },
-    { cat: "4. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v4Cost: totalAbsoluteHiringCost },
-    { cat: "5. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v4Cost: baseInfraPerSeat * totalPhysicalSeats },
-    { cat: "6. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v4Cost: itPerSeat * totalPhysicalSeats },
-    { cat: "7. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount) },
-    { cat: "8. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v4Cost: -totalSubsidyAmount },
-    { cat: "TOTAL PROGRAM BASE COST (COGS)", basis: "Consolidated Expense", v3Cost: v3.projectMonthlyCost, v4Cost: v4.projectMonthlyCost, isTotal: true },
-    { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue across Effective FTEs`, v3Cost: v3.monthlyInvoiceTotal, v4Cost: v4.monthlyInvoiceTotal, isFinal: true }
+    { cat: "1. Agent Direct Salary (Base)", basis: `Active Billable Agents (${baseCsaCount.toFixed(2)} FTEs)`, v3Cost: v3.agentBaseSalaryTotal, v3Fte: v3.agentBaseSalaryTotal / baseCsaCount, v4Cost: v4.agentBaseSalaryTotal, v4Fte: v4.agentBaseSalaryTotal / baseCsaCount },
+    { cat: "2. Training Buffer Allocation", basis: trainingLabel, v3Cost: v3.trainingBufferCost, v3Fte: v3.trainingBufferCost / totalBillableParityUnits, v4Cost: v4.trainingBufferCost, v4Fte: v4.trainingBufferCost / totalBillableParityUnits },
+    { cat: "3. Support Staff Hierarchy Salaries", basis: `Absorbed + Billable Allocation`, v3Cost: totalSupportMonthlyBudget, v3Fte: totalSupportMonthlyBudget / totalBillableParityUnits, v4Cost: totalSupportMonthlyBudget, v4Fte: totalSupportMonthlyBudget / totalBillableParityUnits },
+    { cat: "4. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v3Fte: totalAbsoluteHiringCost / totalBillableParityUnits, v4Cost: totalAbsoluteHiringCost, v4Fte: totalAbsoluteHiringCost / totalBillableParityUnits },
+    { cat: "5. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v3Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: baseInfraPerSeat * totalPhysicalSeats, v4Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v3Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: itPerSeat * totalPhysicalSeats, v4Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "7. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v3Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount)) / totalBillableParityUnits, v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount)) / totalBillableParityUnits },
+    { cat: "8. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v3Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits, v4Cost: -totalSubsidyAmount, v4Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits },
+    { cat: "TOTAL PROGRAM BASE COST (COGS)", basis: "Consolidated Expense", v3Cost: v3.projectMonthlyCost, v3Fte: v3.projectMonthlyCost / totalBillableParityUnits, v4Cost: v4.projectMonthlyCost, v4Fte: v4.projectMonthlyCost / totalBillableParityUnits, isTotal: true },
+    { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue across Effective FTEs`, v3Cost: v3.monthlyInvoiceTotal, v3Fte: v3.monthlyInvoiceTotal / effectiveBillableUnits, v4Cost: v4.monthlyInvoiceTotal, v4Fte: v4.monthlyInvoiceTotal / effectiveBillableUnits, isFinal: true }
   ];
 
   let costBreakupHtml = '';
@@ -1093,9 +1092,9 @@ function calculate() {
       <td>${row.cat}</td>
       <td style="font-size:12px; color:#475569;">${row.basis}</td>
       <td style="${textStyle}">₹${Math.round(row.v3Cost).toLocaleString('en-IN')}</td>
-      <td>₹${Math.round(row.v3Cost / totalBillableParityUnits).toLocaleString('en-IN')} / FTE</td>
+      <td>₹${Math.round(row.v3Fte).toLocaleString('en-IN')} / FTE</td>
       <td style="color:#6d28d9; ${textStyle}">₹${Math.round(row.v4Cost).toLocaleString('en-IN')}</td>
-      <td style="color:#6d28d9;">₹${Math.round(row.v4Cost / totalBillableParityUnits).toLocaleString('en-IN')} / FTE</td>
+      <td style="color:#6d28d9;">₹${Math.round(row.v4Fte).toLocaleString('en-IN')} / FTE</td>
     </tr>`;
   });
   document.getElementById('completeCostBreakupTbody').innerHTML = costBreakupHtml;
@@ -1197,7 +1196,7 @@ function openEmailModal(type) {
       `<table style="${tableStyle}">` +
       `<thead><tr><th style="${thStyle}">Cost Component</th><th style="${thStyle}">Unit Basis</th><th style="${thStyle}">Monthly Total (V3)</th><th style="${thStyle}">Cost / Billable FTE</th></tr></thead>` +
       `<tbody>` +
-      `<tr><td style="${tdStyle}">Agent Base Salary</td><td style="${tdStyle}">₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} CTC / mo</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">Agent Direct Salary (Base)</td><td style="${tdStyle}">₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} CTC / mo</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal / d.billableFte).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">Training Buffer Allocation</td><td style="${tdStyle}">${d.trainingLabel}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">Support Staff Hierarchy</td><td style="${tdStyle}">${d.totalSupportHeadcount.toFixed(2)} FTEs</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">Facility Infrastructure</td><td style="${tdStyle}">₹${d.baseInfraPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.baseInfraPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.baseInfraPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
