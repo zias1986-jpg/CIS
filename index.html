@@ -77,7 +77,7 @@
   .btn-action:hover { background: #1d4ed8; }
 
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
-  .modal-box { background: #ffffff; border-radius: 10px; max-width: 960px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); overflow: hidden; }
+  .modal-box { background: #ffffff; border-radius: 10px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); overflow: hidden; }
   .modal-header { padding: 16px 20px; background: var(--primary); color: #fff; display: flex; justify-content: space-between; align-items: center; }
   .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700; }
   .modal-close { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; line-height: 1; }
@@ -101,6 +101,11 @@
     .floating-prospect { max-width: 100%; }
     .floating-stat-val { font-size: 14px; }
   }
+
+  details summary::-webkit-details-marker { display:none; }
+  details > summary { list-style: none; }
+  .formula-toggle { transition: background 0.2s; }
+  .formula-toggle:hover { background: #f1f5f9; }
 </style>
 </head>
 <body>
@@ -114,6 +119,8 @@
     <button type="button" class="btn-action" style="background:#0f2756;" onclick="searchProposalById()">Load Proposal</button>
     <button type="button" class="btn-action" style="background:#475569;" onclick="openHistoryModal()">View Saved Proposals</button>
     <button type="button" class="btn-action" style="background:#0284c7;" onclick="generateNewProposalNumber()">+ New Proposal #</button>
+    <button type="button" class="btn-action" style="background:#0f766e; margin-left: auto;" onclick="openMenuCardModal()">📋 Detailed Menu Card</button>
+    <button type="button" class="btn-action" style="background:#4338ca; margin-left: 8px;" onclick="openAdvancedMatrixModal()">🧮 4-Way Rate Matrix</button>
   </div>
 
   <div class="card" style="border-left: 5px solid var(--accent);">
@@ -254,68 +261,24 @@
 
   <div class="card">
     <h2>
-      <span>1. Location & Statutory Minimum Wage Baseline</span>
-      <span class="badge">w.e.f. 01.04.2026 Gazette Rates</span>
+      <span>1. Quick City Selection & Cost Baseline</span>
+      <span class="badge">Auto-Loads Salaries & Infra Base</span>
     </h2>
     <div class="grid">
       <div class="form-group">
-        <label class="required">State / Union Territory</label>
-        <select id="stateSelect" onchange="handleStateChange()" required>
-          <option value="MH">Maharashtra</option>
-          <option value="DL" selected>Delhi (NCT)</option>
-          <option value="KA">Karnataka</option>
-          <option value="TN">Tamil Nadu</option>
-          <option value="TS">Telangana</option>
-          <option value="UP">Uttar Pradesh</option>
-          <option value="WB">West Bengal</option>
-          <option value="GJ">Gujarat</option>
-          <option value="HR">Haryana</option>
-          <option value="RJ">Rajasthan</option>
-          <option value="AP">Andhra Pradesh</option>
-          <option value="KL">Kerala</option>
-          <option value="MP">Madhya Pradesh</option>
-          <option value="PB">Punjab</option>
-          <option value="BR">Bihar</option>
-          <option value="OD">Odisha</option>
-          <option value="JH">Jharkhand</option>
-          <option value="CT">Chhattisgarh</option>
-          <option value="UK">Uttarakhand</option>
-          <option value="GA">Goa</option>
-          <option value="AS">Assam</option>
-          <option value="JK">Jammu & Kashmir</option>
-          <option value="CH">Chandigarh</option>
-          <option value="PY">Puducherry</option>
-          <option value="OTHER">Other States / UTs</option>
+        <label class="required">Operating City</label>
+        <select id="quickCitySelect" onchange="applyCityCosts()" required>
+          <option value="Mumbai" selected>Mumbai</option>
+          <option value="Pune">Pune</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Noida">Noida</option>
+          <option value="Indore">Indore</option>
+          <option value="Jaipur">Jaipur</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="required">City / Location Type</label>
-        <select id="citySelect" onchange="handleCityChange()" required></select>
-      </div>
-      <div class="form-group">
-        <label class="required">Gazette Area Tier</label>
-        <select id="areaTier" onchange="applyLocationAndWage(true)" required>
-          <option value="A" selected>Area A (Metros / Major Urban)</option>
-          <option value="B">Area B (Tier-2 Agglomerations)</option>
-          <option value="C">Area C (Rest of State / Non-Metro)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="required">Statutory Worker Category</label>
-        <select id="workerCategory" onchange="applyLocationAndWage(false)" required>
-          <option value="watch_noarms" selected>Watch & Ward / Security (No Arms)</option>
-          <option value="clerical_skilled">Clerical / Skilled (Construction Schedule)</option>
-          <option value="semi_skilled">Semi-Skilled / Supervisory</option>
-          <option value="unskilled">Unskilled Operations / Housekeeping</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="required">Monthly Operational Days</label>
-        <input type="number" id="workingDays" value="26" min="20" max="31" oninput="applyLocationAndWage(false)" required>
-      </div>
-      <div class="form-group">
-        <label>Statutory Minimum Floor</label>
-        <input type="text" id="statutoryFloorDisplay" class="readonly-input" readonly value="">
+        <label>Cost Source</label>
+        <input type="text" class="readonly-input" readonly value="Pre-configured Multi-City Rate Card">
       </div>
     </div>
   </div>
@@ -387,19 +350,19 @@
     <div class="grid">
       <div class="form-group">
         <label class="required">Fresher Base CTC (Rs./mo)</label>
-        <input type="number" id="fresherCtc" value="25000" min="0" oninput="calculate()" required>
+        <input type="number" id="fresherCtc" value="20000" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">Experienced Base CTC (Rs./mo)</label>
-        <input type="number" id="experiencedCtc" value="28000" min="0" oninput="calculate()" required>
+        <input type="number" id="experiencedCtc" value="24000" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">NAPS Base CTC (Rs./mo)</label>
-        <input type="number" id="napsCtc" value="15000" min="0" oninput="calculate()" required>
+        <input type="number" id="napsCtc" value="16500" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">NATS Base CTC (Rs./mo)</label>
-        <input type="number" id="natsCtc" value="18000" min="0" oninput="calculate()" required>
+        <input type="number" id="natsCtc" value="16500" min="0" oninput="calculate()" required>
       </div>
 
       <div class="form-group">
@@ -443,18 +406,20 @@
       <span>4. Support Staff Hierarchy (Span, CTC, Seats & Billable Status)</span>
       <div>
         <button type="button" class="btn-action" onclick="addSupportRole()">+ Add Role</button>
+        <button type="button" class="btn-action" style="background:#0f766e; margin-left:6px;" onclick="applyIndustrySpans()">📊 Apply Industry Spans</button>
       </div>
     </h2>
     <table>
       <thead>
         <tr>
-          <th style="width: 22%;">Support Role</th>
-          <th style="width: 13%;">Span (1:X)</th>
-          <th style="width: 15%;">Monthly CTC (Rs.)</th>
-          <th style="width: 11%;">FTE Count</th>
-          <th style="width: 11%;">Seats Req.</th>
-          <th style="width: 14%;">Monthly Budget</th>
-          <th style="width: 14%;">Billable at Parity?</th>
+          <th style="width: 20%;">Support Role</th>
+          <th style="width: 10%;">Span (1:X)</th>
+          <th style="width: 13%;">Base CTC</th>
+          <th style="width: 11%;">IJP Mix (%)</th>
+          <th style="width: 10%;">FTE Count</th>
+          <th style="width: 10%;">Seats Req.</th>
+          <th style="width: 13%;">Monthly Budget</th>
+          <th style="width: 13%;">Billable?</th>
         </tr>
       </thead>
       <tbody id="supportRolesTbody"></tbody>
@@ -464,7 +429,7 @@
   <div class="card">
     <h2>
       <span>5. Seat Infrastructure, IT, Sourcing & Subsidies</span>
-      <span class="badge" id="tierCostBadge">Tier A Defaults (Editable)</span>
+      <span class="badge" id="tierCostBadge">Pre-filled via City</span>
     </h2>
     <div class="grid" style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:14px;">
       <div class="form-group">
@@ -476,11 +441,11 @@
       </div>
       <div class="form-group">
         <label class="required">CRM License Cost (Rs. / FTE / mo)</label>
-        <input type="number" id="crmLicenseCost" value="0" min="0" oninput="validateAndCalculateCrm()" required>
+        <input type="number" id="crmLicenseCost" value="1000" min="0" oninput="validateAndCalculateCrm()" required>
       </div>
       <div class="form-group">
         <label>Effective CRM & Dialer Cost</label>
-        <input type="text" id="effectiveCrmDisplay" class="readonly-input" readonly value="₹0 / FTE">
+        <input type="text" id="effectiveCrmDisplay" class="readonly-input" readonly value="₹1,000 / FTE">
       </div>
     </div>
 
@@ -499,11 +464,11 @@
       </div>
       <div class="form-group">
         <label class="required">Base Infra Cost per Physical Seat (Rs./mo)</label>
-        <input type="number" id="infraPerSeat" value="3000" min="0" oninput="calculate()" required>
+        <input type="number" id="infraPerSeat" value="6300" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">IT & Tech Cost per Physical Seat (Rs./mo)</label>
-        <input type="number" id="itPerSeat" value="1800" min="0" oninput="calculate()" required>
+        <input type="number" id="itPerSeat" value="2500" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">Overhead / Admin per FTE (Rs./mo)</label>
@@ -571,6 +536,38 @@
   </div>
 </div>
 
+<!-- Standard Menu Card Modal - NOW FULL SCREEN -->
+<div id="menuCardModal" class="modal-overlay" style="align-items: flex-start; padding: 0; background: #fff; z-index: 10000;">
+  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none;">
+    <div class="modal-header" style="background:#0f766e;">
+      <h3>📋 Standard City-Wise Menu Cards</h3>
+      <button class="modal-close" onclick="closeMenuCardModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="menuCardBody">
+      <!-- Injected via JavaScript -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeMenuCardModal()">Close Screen</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4-Way Rate Matrix Modal -->
+<div id="advancedMatrixModal" class="modal-overlay" style="align-items: flex-start; padding: 0; background: #fff; z-index: 10000;">
+  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none;">
+    <div class="modal-header" style="background:#4338ca;">
+      <h3>🧮 4-Way Rate Matrix (Seat Rate Cut by Scenario)</h3>
+      <button class="modal-close" onclick="closeAdvancedMatrixModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="advancedMatrixBody">
+      <!-- Injected via JavaScript -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeAdvancedMatrixModal()">Close Screen</button>
+    </div>
+  </div>
+</div>
+
 <!-- Email Modal -->
 <div id="emailModal" class="modal-overlay">
   <div class="modal-box">
@@ -629,137 +626,23 @@
 </div>
 
 <script>
-const stateCityMap = {
-  MH: [
-    { name: "Greater Mumbai (UA)", tier: "A" },
-    { name: "Navi Mumbai (UA)", tier: "A" },
-    { name: "Pune (UA)", tier: "A" },
-    { name: "Nagpur (UA)", tier: "A" },
-    { name: "Nasik (UA)", tier: "B" },
-    { name: "Aurangabad (UA)", tier: "B" },
-    { name: "Kolhapur / Solapur / Amravati", tier: "B" },
-    { name: "Rest of Maharashtra", tier: "C" }
-  ],
-  DL: [{ name: "Delhi (UA) - Entire NCT", tier: "A" }],
-  KA: [
-    { name: "Bangaluru (UA)", tier: "A" },
-    { name: "Mysore (UA)", tier: "B" },
-    { name: "Hubli-Dharwad / Belgaum / Mangalore", tier: "B" },
-    { name: "Rest of Karnataka", tier: "C" }
-  ],
-  TN: [
-    { name: "Chennai (UA)", tier: "A" },
-    { name: "Coimbatore (UA)", tier: "B" },
-    { name: "Madurai / Tiruchirappalli / Salem", tier: "B" },
-    { name: "Rest of Tamil Nadu", tier: "C" }
-  ],
-  TS: [
-    { name: "Hyderabad (UA)", tier: "A" },
-    { name: "Secunderabad", tier: "A" },
-    { name: "Warangal (UA)", tier: "B" },
-    { name: "Rest of Telangana", tier: "C" }
-  ],
-  UP: [
-    { name: "Kanpur (UA)", tier: "A" },
-    { name: "Lucknow (UA)", tier: "A" },
-    { name: "Ghaziabad (UA)", tier: "A" },
-    { name: "Noida", tier: "A" },
-    { name: "Agra / Varanasi / Prayagraj", tier: "B" },
-    { name: "Rest of Uttar Pradesh", tier: "C" }
-  ],
-  WB: [
-    { name: "Kolkata (UA)", tier: "A" },
-    { name: "Asansol / Durgapur / Siliguri", tier: "B" },
-    { name: "Rest of West Bengal", tier: "C" }
-  ],
-  GJ: [
-    { name: "Ahmedabad (UA)", tier: "A" },
-    { name: "Surat / Vadodara / Rajkot (UA)", tier: "B" },
-    { name: "Rest of Gujarat", tier: "C" }
-  ],
-  HR: [
-    { name: "Faridabad Complex (M. Corpn)", tier: "A" },
-    { name: "Gurgaon (M. Corpn)", tier: "A" },
-    { name: "Panchkula (UA)", tier: "B" },
-    { name: "Rest of Haryana", tier: "C" }
-  ],
-  RJ: [
-    { name: "Jaipur (M. Corpn)", tier: "B" },
-    { name: "Jodhpur / Kota / Bikaner / Ajmer", tier: "B" },
-    { name: "Rest of Rajasthan", tier: "C" }
-  ],
-  AP: [
-    { name: "Greater Visakhapatnam / Vijayawada", tier: "B" },
-    { name: "Guntur / Nellore", tier: "B" },
-    { name: "Rest of Andhra Pradesh", tier: "C" }
-  ],
-  KL: [
-    { name: "Kochi / Thiruvananthapuram (UA)", tier: "B" },
-    { name: "Kozhikode / Kannur / Thrissur", tier: "B" },
-    { name: "Rest of Kerala", tier: "C" }
-  ],
-  MP: [
-    { name: "Bhopal / Indore / Jabalpur / Gwalior", tier: "B" },
-    { name: "Rest of Madhya Pradesh", tier: "C" }
-  ],
-  PB: [
-    { name: "Ludhiana / Amritsar / Jalandhar", tier: "B" },
-    { name: "Rest of Punjab", tier: "C" }
-  ],
-  BR: [
-    { name: "Patna (UA)", tier: "B" },
-    { name: "Rest of Bihar", tier: "C" }
-  ],
-  OD: [
-    { name: "Bhubaneshwar / Cuttack / Raurkela", tier: "B" },
-    { name: "Rest of Odisha", tier: "C" }
-  ],
-  JH: [
-    { name: "Ranchi / Jamshedpur / Dhanbad", tier: "B" },
-    { name: "Rest of Jharkhand", tier: "C" }
-  ],
-  CT: [
-    { name: "Raipur / Durg-Bhilai Nagar", tier: "B" },
-    { name: "Rest of Chhattisgarh", tier: "C" }
-  ],
-  UK: [
-    { name: "Dehradun (UA)", tier: "B" },
-    { name: "Rest of Uttarakhand", tier: "C" }
-  ],
-  GA: [{ name: "Goa (Entire State Area B)", tier: "B" }],
-  AS: [{ name: "Guwahati (UA)", tier: "B" }, { name: "Rest of Assam", tier: "C" }],
-  JK: [{ name: "Srinagar / Jammu (UA)", tier: "B" }, { name: "Rest of J&K", tier: "C" }],
-  CH: [{ name: "Chandigarh (UA)", tier: "B" }],
-  PY: [{ name: "Puducherry (UA)", tier: "B" }],
-  OTHER: [
-    { name: "Tier A Urban Agglomeration", tier: "A" },
-    { name: "Tier B Classified City", tier: "B" },
-    { name: "Tier C Area / Non-Metro", tier: "C" }
-  ]
+const cityCostData = {
+  Mumbai: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, it: 2500 },
+  Pune: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, it: 2500 },
+  Bangalore: { fresher: 24000, naps: 16500, nats: 16500, exp: 28000, tl: 41000, am: 58000, qa: 40000, trainer: 40000, mis: 36000, infra: 6500, it: 2500 },
+  Noida: { fresher: 20300, naps: 15000, nats: 15000, exp: 22000, tl: 34000, am: 45000, qa: 34000, trainer: 32000, mis: 36000, infra: 4800, it: 2000 },
+  Indore: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 30000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, it: 2000 },
+  Jaipur: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 32000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, it: 2000 }
 };
 
-const wageRateMatrix = {
-  watch_noarms: { A: 1008, B: 918, C: 781 },
-  clerical_skilled: { A: 1008, B: 918, C: 781 },
-  semi_skilled: { A: 918, B: 781, C: 650 },
-  unskilled:    { A: 827, B: 693, C: 556 }
-};
-
-const tierSeatCostMatrix = {
-  A: { infra: 3000, it: 1800, label: "Tier A (Metros / Tier-1)" },
-  B: { infra: 2200, it: 1500, label: "Tier B (Tier-2 Cities)" },
-  C: { infra: 1600, it: 1200, label: "Tier C (Tier-3 / Non-Metro)" }
-};
-
-const defaultSupportRoles = [
-  { name: "Team Leader (TL)", span: 20, ctc: 28800, seatFactor: 1.0, billable: "no" },
-  { name: "Assistant Manager (AM)", span: 100, ctc: 43333, seatFactor: 1.0, billable: "no" },
-  { name: "Quality Analyst (QA)", span: 40, ctc: 28800, seatFactor: 1.0, billable: "no" },
-  { name: "MIS Executive", span: 100, ctc: 28000, seatFactor: 1.0, billable: "no" },
-  { name: "Trainer", span: 100, ctc: 30000, seatFactor: 0.2, billable: "no" }
+let supportRoles = [
+  { key: "tl", name: "Team Leader (TL)", span: 20, ctc: 37000, seatFactor: 1.0, billable: "no", ijpPct: 0 },
+  { key: "am", name: "Assistant Manager (AM)", span: 100, ctc: 50000, seatFactor: 1.0, billable: "no", ijpPct: 0 },
+  { key: "qa", name: "Quality Analyst (QA)", span: 40, ctc: 37000, seatFactor: 1.0, billable: "no", ijpPct: 0 },
+  { key: "trainer", name: "Trainer", span: 100, ctc: 40000, seatFactor: 0.2, billable: "no", ijpPct: 0 },
+  { key: "mis", name: "MIS Executive", span: 100, ctc: 36000, seatFactor: 1.0, billable: "no", ijpPct: 0 }
 ];
 
-let supportRoles = JSON.parse(JSON.stringify(defaultSupportRoles));
 let currentCalcData = {};
 
 function generateNewProposalNumber() {
@@ -767,10 +650,8 @@ function generateNewProposalNumber() {
   const dateStr = now.toISOString().slice(0,10).replace(/-/g, '');
   const rand = Math.floor(1000 + Math.random() * 9000);
   const newNum = `PROP-${dateStr}-${rand}`;
-  
   document.getElementById('proposalNumber').value = newNum;
   document.getElementById('proposalDateDisplay').value = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  
   calculate();
   return newNum;
 }
@@ -798,20 +679,14 @@ function validateAndCalculateCrm() {
   calculate();
 }
 
-// CAPPING FUNCTION FOR PERCENTAGES
 function syncMixPercentages(changedId) {
   const ids = ['fresherPct', 'experiencedPct', 'napsPct', 'natsPct'];
   let totalOthers = 0;
-  
   ids.forEach(id => {
-    if (id !== changedId) {
-      totalOthers += parseFloat(document.getElementById(id).value) || 0;
-    }
+    if (id !== changedId) totalOthers += parseFloat(document.getElementById(id).value) || 0;
   });
-  
   let changedEl = document.getElementById(changedId);
   let val = parseFloat(changedEl.value) || 0;
-  
   if (totalOthers + val > 100) {
     val = 100 - totalOthers;
     changedEl.value = parseFloat(val.toFixed(2));
@@ -819,17 +694,34 @@ function syncMixPercentages(changedId) {
   calculate();
 }
 
+function applyIndustrySpans() {
+  supportRoles.forEach(r => {
+    if (r.key === 'tl' || r.name.toLowerCase().includes('team leader')) r.span = 15;
+    else if (r.key === 'am' || r.name.toLowerCase().includes('assistant manager')) r.span = 100;
+    else if (r.key === 'qa' || r.name.toLowerCase().includes('quality')) r.span = 35;
+    else if (r.key === 'trainer' || r.name.toLowerCase().includes('trainer')) r.span = 100;
+    else if (r.key === 'mis' || r.name.toLowerCase().includes('mis')) r.span = 100;
+  });
+  buildSupportTableStructure();
+  calculate();
+}
+
 function buildSupportTableStructure() {
   const tbody = document.getElementById('supportRolesTbody');
   let html = '';
   supportRoles.forEach((role, idx) => {
+    const ijpStyle = role.ijpPct > 0 ? 'color:#166534; background:#dcfce7; font-weight:700;' : '';
     html += `<tr>
       <td><input type="text" class="table-input" value="${role.name}" oninput="updateRoleField(${idx}, 'name', this.value)"></td>
       <td><input type="number" class="table-input" value="${role.span}" oninput="updateRoleField(${idx}, 'span', this.value)"></td>
       <td><input type="number" class="table-input" value="${role.ctc}" oninput="updateRoleField(${idx}, 'ctc', this.value)"></td>
+      <td><input type="number" class="table-input" style="${ijpStyle}" value="${role.ijpPct}" min="0" max="100" oninput="updateRoleField(${idx}, 'ijpPct', this.value)"></td>
       <td><strong id="role_count_display_${idx}">0.00</strong></td>
       <td><strong id="role_seats_display_${idx}">0.00</strong></td>
-      <td id="role_monthly_display_${idx}">₹0</td>
+      <td>
+        <div id="role_monthly_display_${idx}">₹0</div>
+        <div id="role_effective_ctc_display_${idx}" style="font-size:10px; color:#64748b;"></div>
+      </td>
       <td>
         <select class="table-input" onchange="updateRoleField(${idx}, 'billable', this.value)">
           <option value="no" ${role.billable !== 'yes' ? 'selected' : ''}>No (Absorbed)</option>
@@ -844,54 +736,387 @@ function buildSupportTableStructure() {
 function updateRoleField(index, field, value) {
   if (field === 'name' || field === 'billable') supportRoles[index][field] = value;
   else supportRoles[index][field] = value === '' ? 0 : parseFloat(value);
+  if(field === 'ijpPct') buildSupportTableStructure();
   calculate();
 }
 
 function addSupportRole() {
-  supportRoles.push({ name: "New Role", span: 50, ctc: 30000, seatFactor: 1.0, billable: "no" });
+  supportRoles.push({ key: "custom_" + Date.now(), name: "New Role", span: 50, ctc: 30000, seatFactor: 1.0, billable: "no", ijpPct: 0 });
   buildSupportTableStructure();
   calculate();
 }
 
-function handleStateChange() {
-  const state = document.getElementById('stateSelect').value;
-  const cities = stateCityMap[state] || stateCityMap['MH'];
-  const citySelect = document.getElementById('citySelect');
-  citySelect.innerHTML = '';
-  cities.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.tier;
-    opt.innerText = `${c.name} [Area ${c.tier}]`;
-    citySelect.appendChild(opt);
+function applyCityCosts() {
+  const city = document.getElementById('quickCitySelect').value;
+  const data = cityCostData[city];
+  if (!data) return;
+  document.getElementById('fresherCtc').value = data.fresher;
+  document.getElementById('napsCtc').value = data.naps;
+  document.getElementById('natsCtc').value = data.nats;
+  document.getElementById('experiencedCtc').value = data.exp;
+  document.getElementById('infraPerSeat').value = data.infra;
+  document.getElementById('itPerSeat').value = data.it;
+
+  supportRoles.forEach((role) => {
+    if (role.key === "tl" || role.name.toLowerCase().includes("team leader")) role.ctc = data.tl;
+    else if (role.key === "am" || role.name.toLowerCase().includes("assistant manager")) role.ctc = data.am;
+    else if (role.key === "qa" || role.name.toLowerCase().includes("quality")) role.ctc = data.qa;
+    else if (role.key === "trainer" || role.name.toLowerCase().includes("trainer")) role.ctc = data.trainer;
+    else if (role.key === "mis" || role.name.toLowerCase().includes("mis")) role.ctc = data.mis;
   });
-  handleCityChange();
-}
-
-function handleCityChange() {
-  document.getElementById('areaTier').value = document.getElementById('citySelect').value;
-  applyLocationAndWage(true);
-}
-
-function applyLocationAndWage(updateTierCosts = false) {
-  const tier = document.getElementById('areaTier').value;
-  const cat = document.getElementById('workerCategory').value;
-  const days = parseFloat(document.getElementById('workingDays').value) || 26;
-
-  if (updateTierCosts && tierSeatCostMatrix[tier]) {
-    document.getElementById('infraPerSeat').value = tierSeatCostMatrix[tier].infra;
-    document.getElementById('itPerSeat').value = tierSeatCostMatrix[tier].it;
-    document.getElementById('tierCostBadge').innerText = `${tierSeatCostMatrix[tier].label} Defaults`;
-  }
-
-  if (wageRateMatrix[cat]) {
-    const perDay = wageRateMatrix[cat][tier];
-    const monthlyFloor = Math.round(perDay * days);
-    document.getElementById('statutoryFloorDisplay').value = `Rs. ${perDay} / day (₹${monthlyFloor.toLocaleString('en-IN')}/mo)`;
-    document.getElementById('fresherCtc').value = monthlyFloor;
-    document.getElementById('experiencedCtc').value = Math.round(monthlyFloor * 1.12);
-  }
+  buildSupportTableStructure();
   calculate();
 }
+
+// ==========================================
+// MENU CARD MODAL GENERATION LOGIC
+// ==========================================
+function openMenuCardModal() {
+  const menuBody = document.getElementById('menuCardBody');
+  const cities = Object.keys(cityCostData);
+  
+  // Base Sandbox Rules 
+  const billableFte = 100;
+  const targetGm = 0.18;
+  const attrition = 0.10;
+  const throughput = 0.85;
+  const monthlyGrossHires = (billableFte * attrition) / throughput;
+  const costPerHire = 3750;
+  const hireTotal = monthlyGrossHires * costPerHire;
+  const shrinkagePct = 0.05;
+  const csaSeats = billableFte * (1 - shrinkagePct);
+  const overheadFte = 400;
+  const otherFte = 500;
+  const crmCostPerFte = 1000;
+  const crmTotal = crmCostPerFte * billableFte;
+  const v4Extra = 3000;
+  const trainingDaysNonBillable = 15; 
+
+  const spans = { tl: 15, am: 100, qa: 35, trainer: 100, mis: 100 };
+  const seatFactors = { tl: 1, am: 1, qa: 1, trainer: 0.2, mis: 1 };
+
+  let v3B = {}; let v3NB = {}; let v4B = {}; let v4NB = {};
+
+  cities.forEach(city => {
+    const d = cityCostData[city];
+    const ctcV3 = (d.fresher * 0.5) + (d.exp * 0.5);
+    const ctcV4 = ctcV3 + v4Extra;
+    
+    let supHC = 0, supSeats = 0, supBudget = 0;
+    ['tl', 'am', 'qa', 'trainer', 'mis'].forEach(role => {
+      let count = billableFte / spans[role];
+      supHC += count;
+      supSeats += count * seatFactors[role];
+      supBudget += count * d[role];
+    });
+
+    const parityUnits = billableFte + supHC; 
+    const physSeats = csaSeats + supSeats; 
+
+    const infraTotal = d.infra * physSeats;
+    const itTotal = d.it * physSeats;
+    const opsTotal = (overheadFte + otherFte) * parityUnits;
+
+    // Buffer Calculation
+    const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
+    const bufferCostV3 = bufferFte * ctcV3;
+    const bufferCostV4 = bufferFte * ctcV4;
+    
+    const agentBaseCostV3 = ctcV3 * billableFte;
+    const agentBaseCostV4 = ctcV4 * billableFte;
+
+    function buildCol(agentBaseCost, bufferCost) {
+      let projectCost = agentBaseCost + bufferCost + supBudget + hireTotal + infraTotal + itTotal + crmTotal + opsTotal;
+      let finalRate = (projectCost / parityUnits) / (1 - targetGm);
+      return {
+        agent: agentBaseCost / parityUnits,
+        buffer: bufferCost / parityUnits,
+        support: supBudget / parityUnits,
+        infra: infraTotal / parityUnits,
+        it: itTotal / parityUnits,
+        crm: crmTotal / parityUnits,
+        ops: opsTotal / parityUnits,
+        hire: hireTotal / parityUnits,
+        cogs: projectCost / parityUnits,
+        margin: finalRate - (projectCost / parityUnits),
+        final: finalRate
+      };
+    }
+
+    v3B[city] = buildCol(agentBaseCostV3, 0);
+    v3NB[city] = buildCol(agentBaseCostV3, bufferCostV3);
+    v4B[city] = buildCol(agentBaseCostV4, 0);
+    v4NB[city] = buildCol(agentBaseCostV4, bufferCostV4);
+  });
+
+  function generateTableHTML(title, dataMap, colorHex) {
+    let html = `<h4 style="margin: 18px 0 8px 0; color:${colorHex}; font-size:15px; border-bottom: 2px solid ${colorHex}; padding-bottom: 4px;">${title}</h4>`;
+    html += `<div style="overflow-x:auto; margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; font-size:12px;">`;
+    html += `<thead><tr><th style="background:#f1f5f9; text-align:left; padding:8px; border:1px solid #cbd5e1; width:22%;">Cost Component</th>`;
+    cities.forEach(c => html += `<th style="background:${colorHex}15; color:${colorHex}; text-align:center; padding:8px; border:1px solid #cbd5e1; width:13%;">${c}</th>`);
+    html += `</tr></thead><tbody>`;
+
+    const rows = [
+      { k: 'agent', l: '1. Agent Direct Salary (Amortized)' },
+      { k: 'buffer', l: '2. Training Buffer Allocation' },
+      { k: 'support', l: '3. Support Staff Allocation' },
+      { k: 'hire', l: '4. Sourcing & Recruitment' },
+      { k: 'infra', l: '5. Physical Workstation Infra' },
+      { k: 'it', l: '6. Workstation IT & Tech' },
+      { k: 'crm', l: '7. CRM & Dialer Licenses' },
+      { k: 'ops', l: '8. Operations & Overheads' },
+      { k: 'cogs', l: 'TOTAL BASE COST (COGS) / FTE', isBase: true },
+      { k: 'margin', l: 'Gross Margin Markup (18%)', isMargin: true },
+      { k: 'final', l: 'FINAL BILLED RATE / FTE', isFinal: true }
+    ];
+
+    rows.forEach(r => {
+      let bg = r.isBase ? '#f8fafc' : (r.isMargin ? '#f0fdf4' : '#fff');
+      let fw = r.isBase || r.isMargin || r.isFinal ? '700' : '400';
+      if(r.isFinal) bg = `${colorHex}15`;
+
+      html += `<tr style="background:${bg}; font-weight:${fw};">`;
+      html += `<td style="padding:6px 8px; border:1px solid #cbd5e1;">${r.l}</td>`;
+      cities.forEach(c => {
+        let cellData = dataMap[c];
+        let val = Math.round(cellData[r.k]).toLocaleString('en-IN');
+        let colorStyle = r.isFinal ? `color:${colorHex}; font-size:13.5px;` : (r.isMargin ? `color:#166534;` : '');
+        html += `<td style="padding:6px 8px; text-align:center; border:1px solid #cbd5e1; ${colorStyle}">₹${val}</td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  let formulaHtml = `
+    <details class="formula-toggle" style="margin: 12px 0 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+      <summary style="font-weight: 700; cursor: pointer; color: #0f2756; font-size: 14px; list-style: none; outline: none; user-select: none;">
+        <span style="font-size: 16px; font-weight:900; color:#2563eb; margin-right:6px;">+</span> View Calculation Formulas & Active Sandbox Inputs
+      </summary>
+      <div style="margin-top: 16px; font-size: 13px; color: #334155; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
+        <div>
+          <strong style="color:#0f2756;">Active Sandbox Inputs:</strong>
+          <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
+            <li><strong>Base Production Load:</strong> 100 Billable Agent FTEs</li>
+            <li><strong>Agent Mix Matrix:</strong> 50% Experienced, 50% Fresher</li>
+            <li><strong>Support Governance:</strong> 100% Billable (None Absorbed)</li>
+            <li><strong>Training Duration:</strong> 15 Days (if Non-Billable), 0 Days (if Billable)</li>
+            <li><strong>Throughput / Attrition Flow:</strong> 85% Pass Rate, 10% Shrinkage Base</li>
+            <li><strong>Support Spans:</strong> TL (1:15), QA (1:35), AM/Trainer/MIS (1:100)</li>
+            <li><strong>Target Gross Margin (GM):</strong> 18% Base</li>
+          </ul>
+        </div>
+        <div>
+          <strong style="color:#0f2756;">Underlying Formulas & Math:</strong>
+          <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
+            <li><strong>Parity Units:</strong> Billable FTEs + Billable Support FTEs</li>
+            <li><strong>Physical Seats Needed:</strong> Base FTEs (Shrinkage Offloaded) + Total Support Seats</li>
+            <li><strong>Amortized Cost per FTE:</strong> Total Line Item Absolute Cost ÷ Parity Units</li>
+            <li><strong>Agent Direct Salary:</strong> (Blended Agent Base CTC × Base FTEs) ÷ Parity Units</li>
+            <li><strong>Training Buffer Cost:</strong> (Monthly Gross Hires × [Training Days ÷ 30] × Blended CTC) ÷ Parity Units</li>
+            <li><strong>Final Billed Rate:</strong> Total Base Cost (COGS) ÷ (1 - 0.18)</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  `;
+
+  let fullHtml = `
+    <div class="model-banner" style="margin-bottom:10px;">
+      <strong>Menu Assumptions Sandbox:</strong> 50% Exp / 50% Fresher Mix • Support Staff 100% Billable • Industry Spans (TL 1:15, QA 1:35) • CRM Included @ ₹1000/FTE • 18% Target GM.
+    </div>
+    
+    ${formulaHtml}
+
+    <div style="border: 2px solid #0284c7; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: #ffffff;">
+      <h2 style="color: #0284c7; margin-top: 0; font-size: 18px;">Versant 3 Menu Card (Baseline Voice)</h2>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>${generateTableHTML('Table A: Training Billable to Client', v3B, '#0284c7')}</div>
+        <div>${generateTableHTML('Table B: Training Non-Billable (Amortized Buffer)', v3NB, '#0284c7')}</div>
+      </div>
+    </div>
+
+    <div style="border: 2px solid #7c3aed; border-radius: 8px; padding: 16px; margin-bottom: 8px; background: #ffffff;">
+      <h2 style="color: #7c3aed; margin-top: 0; font-size: 18px;">Versant 4 Menu Card (Enhanced Voice)</h2>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>${generateTableHTML('Table A: Training Billable to Client', v4B, '#7c3aed')}</div>
+        <div>${generateTableHTML('Table B: Training Non-Billable (Amortized Buffer)', v4NB, '#7c3aed')}</div>
+      </div>
+    </div>
+  `;
+
+  fullHtml += `<style>@media (max-width: 1150px) { .modal-body > div > div { grid-template-columns: 1fr !important; } }</style>`;
+
+  menuBody.innerHTML = fullHtml;
+  document.getElementById('menuCardModal').style.display = 'flex';
+}
+
+function closeMenuCardModal() {
+  document.getElementById('menuCardModal').style.display = 'none';
+}
+
+// ==========================================
+// 4-WAY ADVANCED MATRIX GENERATION LOGIC
+// ==========================================
+function openAdvancedMatrixModal() {
+  const matrixBody = document.getElementById('advancedMatrixBody');
+  const cities = Object.keys(cityCostData);
+  
+  // Base Sandbox Rules 
+  const billableFte = 100;
+  const targetGm = 0.18;
+  const attrition = 0.10;
+  const throughput = 0.85;
+  const monthlyGrossHires = (billableFte * attrition) / throughput;
+  const costPerHire = 3750;
+  const hireTotal = monthlyGrossHires * costPerHire;
+  const shrinkagePct = 0.05;
+  const csaSeats = billableFte * (1 - shrinkagePct);
+  const overheadFte = 400;
+  const otherFte = 500;
+  const crmCostPerFte = 1000;
+  const crmTotal = crmCostPerFte * billableFte;
+  const v4Extra = 3000;
+  const trainingDaysNonBillable = 15; 
+
+  const spans = { tl: 15, am: 100, qa: 35, trainer: 100, mis: 100 };
+  const seatFactors = { tl: 1, am: 1, qa: 1, trainer: 0.2, mis: 1 };
+
+  let v3Rows = '';
+  let v4Rows = '';
+
+  cities.forEach(city => {
+    const d = cityCostData[city];
+    const ctcV3 = (d.fresher * 0.5) + (d.exp * 0.5);
+    const ctcV4 = ctcV3 + v4Extra;
+    
+    let supHC = 0, supSeats = 0, supBudget = 0;
+    ['tl', 'am', 'qa', 'trainer', 'mis'].forEach(role => {
+      let count = billableFte / spans[role];
+      supHC += count;
+      supSeats += count * seatFactors[role];
+      supBudget += count * d[role];
+    });
+
+    const physSeats = csaSeats + supSeats; 
+    const infraTotal = d.infra * physSeats;
+    const itTotal = d.it * physSeats;
+
+    const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
+    const bufferCostV3 = bufferFte * ctcV3;
+    const bufferCostV4 = bufferFte * ctcV4;
+    
+    const agentBaseCostV3 = ctcV3 * billableFte;
+    const agentBaseCostV4 = ctcV4 * billableFte;
+
+    // Helper to calc exact rate
+    function getRate(agentCost, bufferCost, isSupportBillable) {
+        const parityUnits = isSupportBillable ? (billableFte + supHC) : billableFte;
+        // Ops is always applied to entire headcount
+        const opsTotal = (overheadFte + otherFte) * (billableFte + supHC);
+        const projectCost = agentCost + bufferCost + supBudget + hireTotal + infraTotal + itTotal + crmTotal + opsTotal;
+        return (projectCost / parityUnits) / (1 - targetGm);
+    }
+
+    // V3 Scenario Rates
+    const v3_tb_sb = getRate(agentBaseCostV3, 0, true);
+    const v3_tb_snb = getRate(agentBaseCostV3, 0, false);
+    const v3_tnb_sb = getRate(agentBaseCostV3, bufferCostV3, true);
+    const v3_tnb_snb = getRate(agentBaseCostV3, bufferCostV3, false);
+
+    v3Rows += `<tr style="background:#fff;">
+      <td style="padding:10px; font-weight:700; border:1px solid #cbd5e1;">${city}</td>
+      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1; background:#f0f9ff;">₹${Math.round(v3_tb_sb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1;">₹${Math.round(v3_tb_snb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1; background:#f0f9ff;">₹${Math.round(v3_tnb_sb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1;">₹${Math.round(v3_tnb_snb).toLocaleString('en-IN')}</td>
+    </tr>`;
+
+    // V4 Scenario Rates
+    const v4_tb_sb = getRate(agentBaseCostV4, 0, true);
+    const v4_tb_snb = getRate(agentBaseCostV4, 0, false);
+    const v4_tnb_sb = getRate(agentBaseCostV4, bufferCostV4, true);
+    const v4_tnb_snb = getRate(agentBaseCostV4, bufferCostV4, false);
+
+    v4Rows += `<tr style="background:#fff;">
+      <td style="padding:10px; font-weight:700; border:1px solid #cbd5e1;">${city}</td>
+      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1; background:#faf5ff;">₹${Math.round(v4_tb_sb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1;">₹${Math.round(v4_tb_snb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1; background:#faf5ff;">₹${Math.round(v4_tnb_sb).toLocaleString('en-IN')}</td>
+      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1;">₹${Math.round(v4_tnb_snb).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+
+  const legend = `
+    <div style="background:#f1f5f9; padding:12px; border-radius:6px; font-size:12.5px; border:1px solid #cbd5e1; margin-bottom:16px;">
+      <strong>Matrix Legend:</strong><br>
+      • <strong>TB:</strong> Training Billable (No Buffer Cost loaded into rate)<br>
+      • <strong>TNB:</strong> Training Non-Billable (15-Day Training Buffer Cost amortized into rate)<br>
+      • <strong>SB:</strong> Support Billable (Support Cost divided across parity pool of Agents + Support)<br>
+      • <strong>SNB:</strong> Support Non-Billable (Support Cost absorbed fully by base Agents)
+    </div>
+  `;
+
+  let formulaHtml = `
+    <details class="formula-toggle" style="margin: 0 0 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+      <summary style="font-weight: 700; cursor: pointer; color: #4338ca; font-size: 14px; list-style: none; outline: none; user-select: none;">
+        <span style="font-size: 16px; font-weight:900; margin-right:6px;">+</span> View Active Sandbox Inputs
+      </summary>
+      <div style="margin-top: 16px; font-size: 13px; color: #334155; line-height: 1.6; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
+        <ul style="margin: 0; padding-left: 20px; list-style-type: square; column-count:2;">
+          <li><strong>Base Load:</strong> 100 Billable Agent FTEs</li>
+          <li><strong>Agent Mix:</strong> 50% Experienced, 50% Fresher</li>
+          <li><strong>Throughput:</strong> 85% Pass, 10% Shrinkage Base</li>
+          <li><strong>Support Spans:</strong> TL (1:15), QA (1:35), AM/Trainer/MIS (1:100)</li>
+          <li><strong>CRM:</strong> Included @ ₹1000/FTE</li>
+          <li><strong>Target GM:</strong> 18% Base</li>
+        </ul>
+      </div>
+    </details>
+  `;
+
+  const theadHtml = `
+    <thead>
+      <tr>
+        <th style="background:#f1f5f9; text-align:left; border:1px solid #cbd5e1;">City</th>
+        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 1<br><span style="color:#0f2756; font-size:14px;">TB + SB</span></th>
+        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 2<br><span style="color:#0f2756; font-size:14px;">TB + SNB</span></th>
+        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 3<br><span style="color:#0f2756; font-size:14px;">TNB + SB</span></th>
+        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 4<br><span style="color:#0f2756; font-size:14px;">TNB + SNB</span></th>
+      </tr>
+    </thead>
+  `;
+
+  let fullHtml = `
+    ${legend}
+    ${formulaHtml}
+    
+    <div style="border: 2px solid #0284c7; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: #ffffff;">
+      <h2 style="color: #0284c7; margin-top: 0; font-size: 18px;">Versant 3 Final Billed Seat Rates (Baseline Voice)</h2>
+      <table style="width:100%; border-collapse:collapse;">
+        ${theadHtml}
+        <tbody>${v3Rows}</tbody>
+      </table>
+    </div>
+
+    <div style="border: 2px solid #7c3aed; border-radius: 8px; padding: 16px; margin-bottom: 8px; background: #ffffff;">
+      <h2 style="color: #7c3aed; margin-top: 0; font-size: 18px;">Versant 4 Final Billed Seat Rates (Enhanced Voice)</h2>
+      <table style="width:100%; border-collapse:collapse;">
+        ${theadHtml}
+        <tbody>${v4Rows}</tbody>
+      </table>
+    </div>
+  `;
+
+  matrixBody.innerHTML = fullHtml;
+  document.getElementById('advancedMatrixModal').style.display = 'flex';
+}
+
+function closeAdvancedMatrixModal() {
+  document.getElementById('advancedMatrixModal').style.display = 'none';
+}
+
 
 function calculate() {
   const billableFte = parseFloat(document.getElementById('billableFte').value) || 0;
@@ -916,7 +1141,6 @@ function calculate() {
   if(document.getElementById('totalHiringCostDisplay')) document.getElementById('totalHiringCostDisplay').value = '₹' + Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN') + ' / mo';
   if(document.getElementById('effectiveRecruitmentPerFte')) document.getElementById('effectiveRecruitmentPerFte').value = '₹' + recruitmentPerFte.toFixed(2) + ' / FTE';
 
-  // CTC Mix Normalization
   const fCtc = parseFloat(document.getElementById('fresherCtc').value) || 0;
   const eCtc = parseFloat(document.getElementById('experiencedCtc').value) || 0;
   const napsCtc = parseFloat(document.getElementById('napsCtc').value) || 0;
@@ -956,11 +1180,20 @@ function calculate() {
     if (r.span > 0 && billableFte > 0) {
       count = totalCsaCount / r.span;
       seats = count * (r.seatFactor || 1);
-      roleBudget = count * r.ctc;
+      
+      let ijpPct = Math.max(0, Math.min(100, parseFloat(r.ijpPct) || 0));
+      let effectiveRoleCtc = r.ctc * (1 - (0.30 * (ijpPct / 100)));
+      
+      roleBudget = count * effectiveRoleCtc;
+      
       totalSupportHeadcount += count;
       totalSupportSeats += seats;
       totalSupportMonthlyBudget += roleBudget;
       if (r.billable === 'yes') billableSupportHeadcount += count;
+      
+      if (document.getElementById(`role_effective_ctc_display_${idx}`)) {
+          document.getElementById(`role_effective_ctc_display_${idx}`).innerText = ijpPct > 0 ? `(Eff: ₹${Math.round(effectiveRoleCtc).toLocaleString('en-IN')})` : '';
+      }
     }
     if (document.getElementById(`role_count_display_${idx}`)) {
       document.getElementById(`role_count_display_${idx}`).innerText = count.toFixed(2);
@@ -994,7 +1227,6 @@ function calculate() {
   function computeParityModelRate(versantExtra) {
     const totalAgentCtc = baseWeightedCtc + versantExtra;
     
-    // Agent Base and Training broken into two strictly separate cost pools
     const agentBaseSalaryTotal = totalAgentCtc * baseCsaCount;
     const trainingBufferCost = totalAgentCtc * trainingBufferCount;
     const csaSalaryTotal = agentBaseSalaryTotal + trainingBufferCost;
@@ -1036,7 +1268,6 @@ function calculate() {
   document.getElementById('floatingMonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
   document.getElementById('floatingMarginPct').innerText = (targetGm * 100).toFixed(0) + '%';
 
-  // Render Main Proposal Comparison Table
   const comparisonItems = [
     { label: "Prospect / Client Account", v3: document.getElementById('prospectName').value, v4: document.getElementById('prospectName').value, isText: true },
     { label: "Prepared By", v3: document.getElementById('preparedBy').value, v4: document.getElementById('preparedBy').value, isText: true },
@@ -1077,8 +1308,9 @@ function calculate() {
     { cat: "4. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v3Fte: totalAbsoluteHiringCost / totalBillableParityUnits, v4Cost: totalAbsoluteHiringCost, v4Fte: totalAbsoluteHiringCost / totalBillableParityUnits },
     { cat: "5. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v3Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: baseInfraPerSeat * totalPhysicalSeats, v4Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
     { cat: "6. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v3Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: itPerSeat * totalPhysicalSeats, v4Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
-    { cat: "7. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v3Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount)) / totalBillableParityUnits, v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount)) / totalBillableParityUnits },
-    { cat: "8. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v3Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits, v4Cost: -totalSubsidyAmount, v4Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits },
+    { cat: "7. CRM & Dialer Telephony", basis: `₹${crmCostPerFte.toLocaleString('en-IN')} / FTE`, v3Cost: crmCostPerFte * billableFte, v3Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits, v4Cost: crmCostPerFte * billableFte, v4Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits },
+    { cat: "8. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v3Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount))/totalBillableParityUnits, v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount))/totalBillableParityUnits },
+    { cat: "9. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v3Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits, v4Cost: -totalSubsidyAmount, v4Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits },
     { cat: "TOTAL PROGRAM BASE COST (COGS)", basis: "Consolidated Expense", v3Cost: v3.projectMonthlyCost, v3Fte: v3.projectMonthlyCost / totalBillableParityUnits, v4Cost: v4.projectMonthlyCost, v4Fte: v4.projectMonthlyCost / totalBillableParityUnits, isTotal: true },
     { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue across Effective FTEs`, v3Cost: v3.monthlyInvoiceTotal, v3Fte: v3.monthlyInvoiceTotal / effectiveBillableUnits, v4Cost: v4.monthlyInvoiceTotal, v4Fte: v4.monthlyInvoiceTotal / effectiveBillableUnits, isFinal: true }
   ];
@@ -1116,19 +1348,13 @@ function calculate() {
   });
   document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
 
-  // Restore currentCalcData strictly for Modal generation 
-  const stateSelectEl = document.getElementById('stateSelect');
-  const citySelectEl = document.getElementById('citySelect');
-  
   currentCalcData = {
     prospectName: document.getElementById('prospectName').value,
     preparedBy: document.getElementById('preparedBy').value,
     salesPerson: document.getElementById('salesPerson').value,
     referredBy: document.getElementById('referredBy').value,
     proposalNumber: document.getElementById('proposalNumber').value,
-    cityText: citySelectEl.options[citySelectEl.selectedIndex]?.text || '',
-    stateText: stateSelectEl.options[stateSelectEl.selectedIndex]?.text || '',
-    tierVal: document.getElementById('areaTier').value,
+    cityText: document.getElementById('quickCitySelect').value,
     attritionPct: attrition * 100,
     throughputPct: throughput * 100,
     monthlyGrossHires,
@@ -1148,9 +1374,11 @@ function calculate() {
     recruitmentPerFte,
     overheadFte,
     otherFte,
+    crmCostPerFte,
     totalAbsoluteHiringCost,
     totalSupportMonthlyBudget,
     totalSupportHeadcount,
+    totalCsaCount,
     v4Extra,
     v3Extra,
     trainingLabel
@@ -1185,9 +1413,9 @@ function openEmailModal(type) {
       `<li>Prospect / Client: <strong>${d.prospectName}</strong></li>` +
       `<li>Prepared By: <strong>${d.preparedBy}</strong> | Sales Person: <strong>${d.salesPerson}</strong> | Referred By: <strong>${d.referredBy}</strong></li>` +
       `<li>Proposal Reference ID: <strong>${d.proposalNumber}</strong></li>` +
-      `<li>Location: <strong>${d.cityText}, ${d.stateText} [Gazette Area ${d.tierVal}]</strong></li>` +
+      `<li>Location: <strong>${d.cityText}</strong></li>` +
       `<li>Operational Dynamic: <strong>${d.attritionPct.toFixed(1)}% Attrition | ${d.throughputPct.toFixed(1)}% Throughput (${d.monthlyGrossHires.toFixed(2)} Monthly Gross Hires)</strong></li>` +
-      `<li>Working Model: <strong>${d.workingModel === '7_days' ? '7 Days Working Model' : '6 Days Working Model'} (${d.totalOffloadPercentage.toFixed(1)}% Combined Seat Footprint Offload: ${d.shrinkagePct.toFixed(1)}% Shrinkage ${d.workingModel === '7_days' ? '+ 14% 7-Day' : ''})</strong></li>` +
+      `<li>Working Model: <strong>${d.workingModel === '7_days' ? '7 Days Working Model' : '6 Days Working Model'} (${d.totalOffloadPercentage.toFixed(1)}% Combined Seat Footprint Offload: ${d.shrinkagePct.toFixed(1)}% Shrinkage)</strong></li>` +
       `<li>Billable Headcount Scope: <strong>${d.billableFte} Agent FTEs + ${d.billableSupportHeadcount.toFixed(2)} Billable Support FTEs = ${d.totalBillableParityUnits.toFixed(2)} Total Billable FTEs</strong></li>` +
       `<li>Total Physical Workstations Required: <strong>${d.totalPhysicalSeats.toFixed(2)} Physical Workstations</strong> (Offload Adjusted)</li>` +
       `<li>Commercial Model: <strong>Uniform Parity Billing</strong></li>` +
@@ -1201,6 +1429,7 @@ function openEmailModal(type) {
       `<tr><td style="${tdStyle}">Support Staff Hierarchy</td><td style="${tdStyle}">${d.totalSupportHeadcount.toFixed(2)} FTEs</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">Facility Infrastructure</td><td style="${tdStyle}">₹${d.baseInfraPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.baseInfraPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.baseInfraPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">IT & Technology Assets</td><td style="${tdStyle}">₹${d.itPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.itPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.itPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
+      `<tr><td style="${tdStyle}">CRM & Dialer Telephony</td><td style="${tdStyle}">₹${d.crmCostPerFte.toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.crmCostPerFte * d.billableFte)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `<tr><td style="${tdStyle}">Recruitment & Hiring Cost</td><td style="${tdStyle}">₹${d.costPerHire.toLocaleString('en-IN')} / hire (${d.monthlyGrossHires.toFixed(2)} hires)</td><td style="${tdStyle}">₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${d.recruitmentPerFte.toFixed(2)}</td></tr>` +
       `<tr><td style="${tdStyle}">Operations & Admin Overheads</td><td style="${tdStyle}">₹${(d.overheadFte + d.otherFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount)).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount))/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
       `</tbody>` +
@@ -1224,7 +1453,7 @@ function openEmailModal(type) {
     
     bodyHtml = `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">` +
       `<p>Dear ${d.prospectName} Team,</p>` +
-      `<p>Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal (Ref: <strong>${d.proposalNumber}</strong>) for the <strong>${d.effectiveBillableUnits.toFixed(2)} Billed FTE</strong> engagement in <strong>${d.cityText}, ${d.stateText}</strong>.</p>` +
+      `<p>Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal (Ref: <strong>${d.proposalNumber}</strong>) for the <strong>${d.effectiveBillableUnits.toFixed(2)} Billed FTE</strong> engagement in <strong>${d.cityText}</strong>.</p>` +
       `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
       `<strong>1. PROGRAM SCOPE & RESOURCE DELIVERY</strong>` +
       `<ul>` +
@@ -1316,12 +1545,16 @@ function executeHtmlDownload() {
   supportRoles.forEach(r => {
     const span = parseFloat(r.span) || 0;
     const ctc = parseFloat(r.ctc) || 0;
-    const count = span > 0 ? (d.billableFte * (182/184)) / span : 0;
-    const cost = count * ctc;
+    const ijpPct = Math.max(0, Math.min(100, parseFloat(r.ijpPct) || 0));
+    const effCtc = ctc * (1 - (0.30 * (ijpPct / 100)));
+    const count = span > 0 ? (d.totalCsaCount) / span : 0;
+    const cost = count * effCtc;
+    const ijpBadge = ijpPct > 0 ? `<br><span style="font-size:10px; color:#166534;">(${ijpPct}% IJP)</span>` : '';
+
     supportRowsHtml += `<tr>
       <td>${r.name}</td>
       <td>1:${r.span}</td>
-      <td>₹${ctc.toLocaleString('en-IN')}</td>
+      <td>₹${Math.round(effCtc).toLocaleString('en-IN')} ${ijpBadge}</td>
       <td>${count.toFixed(2)}</td>
       <td>₹${Math.round(cost).toLocaleString('en-IN')}</td>
       <td>${r.billable === 'yes' ? '<span class="pill pill-success">Billable at Parity</span>' : '<span class="pill pill-neutral">Absorbed Overhead</span>'}</td>
@@ -1396,7 +1629,7 @@ function executeHtmlDownload() {
     <tr><td>Prospect / Client</td><td><strong>${d.prospectName}</strong></td><td>Proposal Reference ID</td><td><strong>${d.proposalNumber}</strong></td></tr>
     <tr><td>Prepared By</td><td>${d.preparedBy}</td><td>Sales Person / Lead</td><td>${d.salesPerson}</td></tr>
     <tr><td>Referred By</td><td>${d.referredBy}</td><td>Operational Working Model</td><td>${d.workingModel === '7_days' ? '7-Day Operations (-14% Seat Offload)' : '6-Day Standard Operations'}</td></tr>
-    <tr><td>Location & Tier</td><td>${d.cityText}, ${d.stateText} [Area ${d.tierVal}]</td><td>Total Physical Workstations</td><td>${d.totalPhysicalSeats.toFixed(2)} Dedicated Workstations</td></tr>
+    <tr><td>Location & Tier</td><td>${d.cityText}</td><td>Total Physical Workstations</td><td>${d.totalPhysicalSeats.toFixed(2)} Dedicated Workstations</td></tr>
     <tr><td>Monthly Attrition Rate</td><td>${d.attritionPct.toFixed(1)}%</td><td>Training Throughput</td><td>${d.throughputPct.toFixed(1)}%</td></tr>
     <tr><td>Monthly Gross Hires</td><td>${d.monthlyGrossHires.toFixed(2)} Hires / mo</td><td>Total Monthly Sourcing Budget</td><td>₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo (₹${d.recruitmentPerFte.toFixed(0)}/FTE)</td></tr>
     <tr><td>Agent Workstation Footprint</td><td>${d.totalPhysicalSeats.toFixed(2)} Workstations</td><td>Total Combined Seat Offload</td><td>${d.totalOffloadPercentage.toFixed(1)}% (${d.shrinkagePct.toFixed(1)}% Shrinkage)</td></tr>
@@ -1419,6 +1652,7 @@ function executeHtmlDownload() {
       <tr><td>Training Buffer Cost</td><td>₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.trainingBufferCost).toLocaleString('en-IN')}</td><td>-</td></tr>
       <tr><td>Support Staff Allocation</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
       <tr><td>Facility Infra & IT Cost (Loaded)</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
+      <tr><td>CRM & Dialer Telephony</td><td>₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
       <tr><td>Target Gross Margin (%)</td><td>${gmPct}%</td><td>${gmPct}%</td><td>-</td></tr>
       <tr class="highlight-row"><td><strong>FINAL COMMON RATE / BILLABLE FTE</strong></td><td><strong>₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>+₹${Math.round(d.v4.billedRateFte - d.v3.billedRateFte).toLocaleString('en-IN')}</strong></td></tr>
       <tr><td><strong>Total Monthly Invoicing</strong></td><td>₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>+₹${Math.round(d.v4.monthlyInvoiceTotal - d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')}</td></tr>
@@ -1448,9 +1682,7 @@ function executeHtmlDownload() {
 
 window.onload = function() {
   generateNewProposalNumber();
-  handleStateChange();
-  buildSupportTableStructure();
-  calculate();
+  applyCityCosts(); 
 };
 </script>
 </body>
