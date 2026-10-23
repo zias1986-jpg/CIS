@@ -39,12 +39,12 @@
   .badge-v4 { background: #ede9fe; color: #6d28d9; }
   
   .email-actions-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .btn-email { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-  .btn-mgmt { background: #0f766e; color: #ffffff; }
+  .btn-email { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); color: #fff; }
+  .btn-mgmt { background: #0f766e; }
   .btn-mgmt:hover { background: #115e59; }
-  .btn-client { background: #4338ca; color: #ffffff; }
+  .btn-client { background: #4338ca; }
   .btn-client:hover { background: #3730a3; }
-  .btn-save { background: #0284c7; color: #ffffff; }
+  .btn-save { background: #0284c7; }
   .btn-save:hover { background: #0369a1; }
 
   .lookup-panel { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -119,8 +119,10 @@
     <button type="button" class="btn-action" style="background:#0f2756;" onclick="searchProposalById()">Load Proposal</button>
     <button type="button" class="btn-action" style="background:#475569;" onclick="openHistoryModal()">View Saved Proposals</button>
     <button type="button" class="btn-action" style="background:#0284c7;" onclick="generateNewProposalNumber()">+ New Proposal #</button>
-    <button type="button" class="btn-action" style="background:#0f766e; margin-left: auto;" onclick="openMenuCardModal()">📋 Detailed Menu Card</button>
-    <button type="button" class="btn-action" style="background:#4338ca; margin-left: 8px;" onclick="openAdvancedMatrixModal()">🧮 4-Way Rate Matrix</button>
+    <div style="margin-left: auto; display:flex; gap:8px;">
+      <button type="button" class="btn-action" style="background:#0f766e;" onclick="openMenuCardModal()">📋 View Standard Menu Card</button>
+      <button type="button" class="btn-action" style="background:#4338ca;" onclick="openScenarioModal()">🧮 View Scenario Matrix</button>
+    </div>
   </div>
 
   <div class="card" style="border-left: 5px solid var(--accent);">
@@ -163,15 +165,9 @@
     </h2>
 
     <div class="email-actions-bar">
-      <button type="button" class="btn-email btn-mgmt" onclick="openEmailModal('mgmt')">
-        📧 Share Approval Mail to Management
-      </button>
-      <button type="button" class="btn-email btn-client" onclick="openEmailModal('client')">
-        💼 Share Proposal with Client
-      </button>
-      <button type="button" class="btn-email btn-save" onclick="openSaveHtmlModal()">
-        🌐 Name &amp; Save Proposal in HTML
-      </button>
+      <button type="button" class="btn-email btn-mgmt" onclick="openEmailModal('mgmt')">📧 Share Approval Mail to Management</button>
+      <button type="button" class="btn-email btn-client" onclick="openEmailModal('client')">💼 Share Proposal with Client</button>
+      <button type="button" class="btn-email btn-save" onclick="openSaveHtmlModal()">🌐 Name &amp; Save Proposal in HTML</button>
     </div>
 
     <div class="model-banner">
@@ -243,20 +239,22 @@
       <span>Complete Cost Breakup View (Monthly Program P&amp;L)</span>
       <span class="badge badge-success">Itemized Project Economics</span>
     </h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Cost Category / Line Item</th>
-          <th>Computation / Basis</th>
-          <th>Monthly Cost (Versant 3)</th>
-          <th>Cost / FTE (V3)</th>
-          <th>Monthly Cost (Versant 4)</th>
-          <th>Cost / FTE (V4)</th>
-        </tr>
-      </thead>
-      <tbody id="completeCostBreakupTbody">
-      </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Cost Category / Line Item</th>
+            <th>Computation / Basis</th>
+            <th>Monthly Cost (Versant 3)</th>
+            <th>Cost / FTE (V3)</th>
+            <th>Monthly Cost (Versant 4)</th>
+            <th>Cost / FTE (V4)</th>
+          </tr>
+        </thead>
+        <tbody id="completeCostBreakupTbody">
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
@@ -347,6 +345,9 @@
       <span>3. Agent Base Salary Matrix (Includes NAPS & NATS)</span>
       <span class="badge">CTC & Mix Ratios</span>
     </h2>
+    <div class="model-banner" style="margin-bottom: 14px; background:#eff6ff; border-left-color:#3b82f6; color:#1e40af;">
+      <strong>Govt Rebate & Compliance:</strong> NAPS reimburses 25% of stipend (max ₹1,500/mo). NATS reimburses 50% of stipend (max ₹6,150/mo effective April 2026). CTCs conform to the 17 Sept 2026 EPFO wage ceiling limit of ₹25,000.
+    </div>
     <div class="grid">
       <div class="form-group">
         <label class="required">Fresher Base CTC (Rs./mo)</label>
@@ -391,11 +392,15 @@
         <input type="number" id="v4PremiumInput" value="3000" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
+        <label>Govt Rebate Extracted</label>
+        <input type="text" id="rebateBenefitDisplay" class="readonly-input" style="color:#166534; background:#dcfce7;" readonly value="₹0 / FTE Saved">
+      </div>
+      <div class="form-group">
         <label>Blended Base Agent CTC (Normalized)</label>
         <input type="text" id="baseWeightedCtc" class="readonly-input" readonly value="">
       </div>
       <div class="form-group">
-        <label>Effective Versant 4 Agent CTC</label>
+        <label>V4 Effective Blended CTC (incl. Premium)</label>
         <input type="text" id="v4EffectiveCtcDisplay" class="readonly-input" readonly value="">
       </div>
     </div>
@@ -409,21 +414,23 @@
         <button type="button" class="btn-action" style="background:#0f766e; margin-left:6px;" onclick="applyIndustrySpans()">📊 Apply Industry Spans</button>
       </div>
     </h2>
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 20%;">Support Role</th>
-          <th style="width: 10%;">Span (1:X)</th>
-          <th style="width: 13%;">Base CTC</th>
-          <th style="width: 11%;">IJP Mix (%)</th>
-          <th style="width: 10%;">FTE Count</th>
-          <th style="width: 10%;">Seats Req.</th>
-          <th style="width: 13%;">Monthly Budget</th>
-          <th style="width: 13%;">Billable?</th>
-        </tr>
-      </thead>
-      <tbody id="supportRolesTbody"></tbody>
-    </table>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">Support Role</th>
+            <th style="width: 10%;">Span (1:X)</th>
+            <th style="width: 13%;">Base CTC</th>
+            <th style="width: 11%;">IJP Mix (%)</th>
+            <th style="width: 10%;">FTE Count</th>
+            <th style="width: 10%;">Seats Req.</th>
+            <th style="width: 13%;">Monthly Budget</th>
+            <th style="width: 13%;">Billable?</th>
+          </tr>
+        </thead>
+        <tbody id="supportRolesTbody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
@@ -441,10 +448,14 @@
       </div>
       <div class="form-group">
         <label class="required">CRM License Cost (Rs. / FTE / mo)</label>
-        <input type="number" id="crmLicenseCost" value="1000" min="0" oninput="validateAndCalculateCrm()" required>
+        <input type="number" id="crmLicenseCost" value="500" min="0" oninput="validateAndCalculateTools()" required>
       </div>
       <div class="form-group">
-        <label>Effective CRM & Dialer Cost</label>
+        <label class="required">Dialer Cost (Rs. / FTE / mo)</label>
+        <input type="number" id="dialerLicenseCost" value="500" min="0" oninput="validateAndCalculateTools()" required>
+      </div>
+      <div class="form-group">
+        <label>Effective Tools Cost</label>
         <input type="text" id="effectiveCrmDisplay" class="readonly-input" readonly value="₹1,000 / FTE">
       </div>
     </div>
@@ -465,10 +476,6 @@
       <div class="form-group">
         <label class="required">Base Infra Cost per Physical Seat (Rs./mo)</label>
         <input type="number" id="infraPerSeat" value="6300" min="0" oninput="calculate()" required>
-      </div>
-      <div class="form-group">
-        <label class="required">IT & Tech Cost per Physical Seat (Rs./mo)</label>
-        <input type="number" id="itPerSeat" value="2500" min="0" oninput="calculate()" required>
       </div>
       <div class="form-group">
         <label class="required">Overhead / Admin per FTE (Rs./mo)</label>
@@ -492,6 +499,37 @@
         <input type="number" id="infraSubsidy" value="0" min="0" oninput="calculate()">
       </div>
     </div>
+
+    <!-- Tech Cost Breakup Sub-Section -->
+    <div style="margin-top: 14px; padding: 12px; border: 1px dashed #94a3b8; border-radius: 6px;">
+      <h3 style="font-size:13px; color:#475569; margin: 0 0 10px 0;">Workstation IT & Tech Sub-Breakdown</h3>
+      <div class="grid">
+        <div class="form-group">
+          <label class="required">Base IT / Desktops (Rs./Seat)</label>
+          <input type="number" id="baseItCost" value="1000" min="0" oninput="calculate()" required>
+        </div>
+        <div class="form-group">
+          <label class="required">ILL Cost (Rs./Seat)</label>
+          <input type="number" id="illCost" value="500" min="0" oninput="calculate()" required>
+        </div>
+        <div class="form-group">
+          <label class="required">Server Cost (Rs./Seat)</label>
+          <input type="number" id="serverCost" value="300" min="0" oninput="calculate()" required>
+        </div>
+        <div class="form-group">
+          <label class="required">Switches & Routers (Rs./Seat)</label>
+          <input type="number" id="switchesCost" value="200" min="0" oninput="calculate()" required>
+        </div>
+        <div class="form-group">
+          <label class="required">Telephony Server (Rs./Seat)</label>
+          <input type="number" id="telServerCost" value="250" min="0" oninput="calculate()" required>
+        </div>
+        <div class="form-group">
+          <label class="required">AD Server (Rs./Seat)</label>
+          <input type="number" id="adServerCost" value="250" min="0" oninput="calculate()" required>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -499,18 +537,20 @@
       <span>6. Commercial Margin Sensitivity Scenario Matrix</span>
       <span class="badge badge-success">P&L Projections</span>
     </h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Target GM Scenario</th>
-          <th>Versant 3 Rate / FTE</th>
-          <th>Versant 4 Rate / FTE</th>
-          <th>Monthly Gross Margin (V4)</th>
-        </tr>
-      </thead>
-      <tbody id="marginScenarioTable">
-      </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Target GM Scenario</th>
+            <th>Versant 3 Rate / FTE</th>
+            <th>Versant 4 Rate / FTE</th>
+            <th>Monthly Gross Margin (V4)</th>
+          </tr>
+        </thead>
+        <tbody id="marginScenarioTable">
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -536,44 +576,38 @@
   </div>
 </div>
 
-<!-- Standard Menu Card Modal - NOW FULL SCREEN -->
+<!-- Modals -->
 <div id="menuCardModal" class="modal-overlay" style="align-items: flex-start; padding: 0; background: #fff; z-index: 10000;">
-  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none;">
+  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none;">
     <div class="modal-header" style="background:#0f766e;">
       <h3>📋 Standard City-Wise Menu Cards</h3>
-      <button class="modal-close" onclick="closeMenuCardModal()">&times;</button>
+      <button class="modal-close" onclick="closeModal('menuCardModal')">&times;</button>
     </div>
-    <div class="modal-body" id="menuCardBody">
-      <!-- Injected via JavaScript -->
-    </div>
+    <div class="modal-body" id="menuCardBody"></div>
     <div class="modal-footer">
-      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeMenuCardModal()">Close Screen</button>
+      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeModal('menuCardModal')">Close Screen</button>
     </div>
   </div>
 </div>
 
-<!-- 4-Way Rate Matrix Modal -->
-<div id="advancedMatrixModal" class="modal-overlay" style="align-items: flex-start; padding: 0; background: #fff; z-index: 10000;">
-  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none;">
+<div id="scenarioModal" class="modal-overlay" style="align-items: flex-start; padding: 0; background: #fff; z-index: 10000;">
+  <div class="modal-box" style="max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none;">
     <div class="modal-header" style="background:#4338ca;">
-      <h3>🧮 4-Way Rate Matrix (Seat Rate Cut by Scenario)</h3>
-      <button class="modal-close" onclick="closeAdvancedMatrixModal()">&times;</button>
+      <h3>🧮 City-Wise Rate Scenario Matrix (Versant 3 & 4)</h3>
+      <button class="modal-close" onclick="closeModal('scenarioModal')">&times;</button>
     </div>
-    <div class="modal-body" id="advancedMatrixBody">
-      <!-- Injected via JavaScript -->
-    </div>
+    <div class="modal-body" id="scenarioCardBody"></div>
     <div class="modal-footer">
-      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeAdvancedMatrixModal()">Close Screen</button>
+      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeModal('scenarioModal')">Close Screen</button>
     </div>
   </div>
 </div>
 
-<!-- Email Modal -->
 <div id="emailModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-header">
       <h3 id="modalTitle">Email Draft Preview</h3>
-      <button class="modal-close" onclick="closeEmailModal()">&times;</button>
+      <button class="modal-close" onclick="closeModal('emailModal')">&times;</button>
     </div>
     <div class="modal-body">
       <div style="margin-bottom:10px; font-size:13px; font-weight:600; color:#334155;">
@@ -588,12 +622,11 @@
   </div>
 </div>
 
-<!-- Save HTML Modal -->
 <div id="saveHtmlModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 520px;">
     <div class="modal-header">
       <h3>🌐 Save Commercial Proposal</h3>
-      <button class="modal-close" onclick="closeSaveHtmlModal()">&times;</button>
+      <button class="modal-close" onclick="closeModal('saveHtmlModal')">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-group" style="margin-bottom: 12px;">
@@ -602,13 +635,12 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeSaveHtmlModal()">Cancel</button>
+      <button type="button" class="btn-action" style="background:#64748b;" onclick="closeModal('saveHtmlModal')">Cancel</button>
       <button type="button" class="btn-action" style="background:#0284c7;" onclick="executeHtmlDownload()">💾 Download HTML File</button>
     </div>
   </div>
 </div>
 
-<!-- Saved Proposals Library Modal -->
 <div id="historyModal" class="modal-overlay">
   <div class="modal-box" style="max-width: 960px;">
     <div class="modal-header">
@@ -627,12 +659,12 @@
 
 <script>
 const cityCostData = {
-  Mumbai: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, it: 2500 },
-  Pune: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, it: 2500 },
-  Bangalore: { fresher: 24000, naps: 16500, nats: 16500, exp: 28000, tl: 41000, am: 58000, qa: 40000, trainer: 40000, mis: 36000, infra: 6500, it: 2500 },
-  Noida: { fresher: 20300, naps: 15000, nats: 15000, exp: 22000, tl: 34000, am: 45000, qa: 34000, trainer: 32000, mis: 36000, infra: 4800, it: 2000 },
-  Indore: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 30000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, it: 2000 },
-  Jaipur: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 32000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, it: 2000 }
+  Mumbai: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, itBase: 1000, ill: 500, server: 300, switches: 200, telServer: 250, adServer: 250 },
+  Pune: { fresher: 20000, naps: 16500, nats: 16500, exp: 24000, tl: 37000, am: 50000, qa: 37000, trainer: 40000, mis: 36000, infra: 6300, itBase: 1000, ill: 500, server: 300, switches: 200, telServer: 250, adServer: 250 },
+  Bangalore: { fresher: 24000, naps: 16500, nats: 16500, exp: 28000, tl: 41000, am: 58000, qa: 40000, trainer: 40000, mis: 36000, infra: 6500, itBase: 1000, ill: 500, server: 300, switches: 200, telServer: 250, adServer: 250 },
+  Noida: { fresher: 20300, naps: 15000, nats: 15000, exp: 22000, tl: 34000, am: 45000, qa: 34000, trainer: 32000, mis: 36000, infra: 4800, itBase: 800, ill: 400, server: 300, switches: 200, telServer: 200, adServer: 100 },
+  Indore: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 30000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, itBase: 800, ill: 400, server: 300, switches: 200, telServer: 200, adServer: 100 },
+  Jaipur: { fresher: 18000, naps: 15000, nats: 15000, exp: 22000, tl: 32000, am: 43000, qa: 30000, trainer: 33000, mis: 30000, infra: 5000, itBase: 800, ill: 400, server: 300, switches: 200, telServer: 200, adServer: 100 }
 };
 
 let supportRoles = [
@@ -644,38 +676,61 @@ let supportRoles = [
 ];
 
 let currentCalcData = {};
+let storedBreakupLines = [];
 
 function generateNewProposalNumber() {
   const now = new Date();
   const dateStr = now.toISOString().slice(0,10).replace(/-/g, '');
   const rand = Math.floor(1000 + Math.random() * 9000);
   const newNum = `PROP-${dateStr}-${rand}`;
-  document.getElementById('proposalNumber').value = newNum;
-  document.getElementById('proposalDateDisplay').value = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  
+  if (document.getElementById('proposalNumber')) {
+    document.getElementById('proposalNumber').value = newNum;
+  }
+  if (document.getElementById('proposalDateDisplay')) {
+    document.getElementById('proposalDateDisplay').value = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  
   calculate();
   return newNum;
 }
 
 function handleHeaderDetailsChange() {
-  const pName = document.getElementById('prospectName').value.trim();
-  const sales = document.getElementById('salesPerson').value.trim();
-  document.getElementById('floatingProspectName').innerText = `${pName || "Prospect"} ${sales ? '• ' + sales : ''}`;
+  const pName = document.getElementById('prospectName')?.value.trim();
+  const sales = document.getElementById('salesPerson')?.value.trim();
+  if (document.getElementById('floatingProspectName')) {
+    document.getElementById('floatingProspectName').innerText = `${pName || "Prospect"} ${sales ? '• ' + sales : ''}`;
+  }
   calculate();
 }
 
 function checkAllRequiredFields() { return true; }
 
-function toggleCrmCost() {
-  const isClientProvided = document.getElementById('crmProvidedByClient').value === 'yes';
-  const crmInput = document.getElementById('crmLicenseCost');
-  crmInput.disabled = isClientProvided;
-  if (isClientProvided) crmInput.value = 0;
-  validateAndCalculateCrm();
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
 }
 
-function validateAndCalculateCrm() {
-  const val = parseFloat(document.getElementById('crmLicenseCost').value) || 0;
-  document.getElementById('effectiveCrmDisplay').value = `₹${Math.round(val).toLocaleString('en-IN')} / FTE`;
+function toggleCrmCost() {
+  const isClientProvided = document.getElementById('crmProvidedByClient')?.value === 'yes';
+  if (document.getElementById('crmLicenseCost')) {
+    document.getElementById('crmLicenseCost').disabled = isClientProvided;
+  }
+  if (document.getElementById('dialerLicenseCost')) {
+    document.getElementById('dialerLicenseCost').disabled = isClientProvided;
+  }
+  if (isClientProvided) {
+    if (document.getElementById('crmLicenseCost')) document.getElementById('crmLicenseCost').value = 0;
+    if (document.getElementById('dialerLicenseCost')) document.getElementById('dialerLicenseCost').value = 0;
+  }
+  validateAndCalculateTools();
+}
+
+function validateAndCalculateTools() {
+  const crm = parseFloat(document.getElementById('crmLicenseCost')?.value) || 0;
+  const dialer = parseFloat(document.getElementById('dialerLicenseCost')?.value) || 0;
+  if (document.getElementById('effectiveCrmDisplay')) {
+    document.getElementById('effectiveCrmDisplay').value = `₹${Math.round(crm + dialer).toLocaleString('en-IN')} / FTE`;
+  }
   calculate();
 }
 
@@ -683,13 +738,18 @@ function syncMixPercentages(changedId) {
   const ids = ['fresherPct', 'experiencedPct', 'napsPct', 'natsPct'];
   let totalOthers = 0;
   ids.forEach(id => {
-    if (id !== changedId) totalOthers += parseFloat(document.getElementById(id).value) || 0;
+    if (id !== changedId) {
+      totalOthers += parseFloat(document.getElementById(id)?.value) || 0;
+    }
   });
+  
   let changedEl = document.getElementById(changedId);
-  let val = parseFloat(changedEl.value) || 0;
-  if (totalOthers + val > 100) {
-    val = 100 - totalOthers;
-    changedEl.value = parseFloat(val.toFixed(2));
+  if (changedEl) {
+    let val = parseFloat(changedEl.value) || 0;
+    if (totalOthers + val > 100) {
+      val = 100 - totalOthers;
+      changedEl.value = parseFloat(val.toFixed(2));
+    }
   }
   calculate();
 }
@@ -708,6 +768,7 @@ function applyIndustrySpans() {
 
 function buildSupportTableStructure() {
   const tbody = document.getElementById('supportRolesTbody');
+  if(!tbody) return;
   let html = '';
   supportRoles.forEach((role, idx) => {
     const ijpStyle = role.ijpPct > 0 ? 'color:#166534; background:#dcfce7; font-weight:700;' : '';
@@ -747,50 +808,187 @@ function addSupportRole() {
 }
 
 function applyCityCosts() {
-  const city = document.getElementById('quickCitySelect').value;
+  const city = document.getElementById('quickCitySelect')?.value;
+  if(!city) return;
   const data = cityCostData[city];
   if (!data) return;
-  document.getElementById('fresherCtc').value = data.fresher;
-  document.getElementById('napsCtc').value = data.naps;
-  document.getElementById('natsCtc').value = data.nats;
-  document.getElementById('experiencedCtc').value = data.exp;
-  document.getElementById('infraPerSeat').value = data.infra;
-  document.getElementById('itPerSeat').value = data.it;
+  
+  if (document.getElementById('fresherCtc')) document.getElementById('fresherCtc').value = data.fresher;
+  if (document.getElementById('napsCtc')) document.getElementById('napsCtc').value = data.naps;
+  if (document.getElementById('natsCtc')) document.getElementById('natsCtc').value = data.nats;
+  if (document.getElementById('experiencedCtc')) document.getElementById('experiencedCtc').value = data.exp;
+  
+  if (document.getElementById('infraPerSeat')) document.getElementById('infraPerSeat').value = data.infra;
+  if (document.getElementById('baseItCost')) document.getElementById('baseItCost').value = data.itBase;
+  if (document.getElementById('illCost')) document.getElementById('illCost').value = data.ill;
+  if (document.getElementById('serverCost')) document.getElementById('serverCost').value = data.server;
+  if (document.getElementById('switchesCost')) document.getElementById('switchesCost').value = data.switches;
+  if (document.getElementById('telServerCost')) document.getElementById('telServerCost').value = data.telServer;
+  if (document.getElementById('adServerCost')) document.getElementById('adServerCost').value = data.adServer;
 
   supportRoles.forEach((role) => {
-    if (role.key === "tl" || role.name.toLowerCase().includes("team leader")) role.ctc = data.tl;
-    else if (role.key === "am" || role.name.toLowerCase().includes("assistant manager")) role.ctc = data.am;
-    else if (role.key === "qa" || role.name.toLowerCase().includes("quality")) role.ctc = data.qa;
-    else if (role.key === "trainer" || role.name.toLowerCase().includes("trainer")) role.ctc = data.trainer;
-    else if (role.key === "mis" || role.name.toLowerCase().includes("mis")) role.ctc = data.mis;
+    const rName = role.name.toLowerCase();
+    if (rName.includes("team leader")) role.ctc = data.tl;
+    else if (rName.includes("assistant manager")) role.ctc = data.am;
+    else if (rName.includes("quality")) role.ctc = data.qa;
+    else if (rName.includes("trainer")) role.ctc = data.trainer;
+    else if (rName.includes("mis")) role.ctc = data.mis;
   });
+  
   buildSupportTableStructure();
   calculate();
 }
 
-// ==========================================
-// MENU CARD MODAL GENERATION LOGIC
-// ==========================================
-function openMenuCardModal() {
-  const menuBody = document.getElementById('menuCardBody');
+const sharedSandboxFormulaHTML = `
+<details class="formula-toggle" style="margin: 0 0 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+  <summary style="font-weight: 700; cursor: pointer; color: #0f2756; font-size: 14px; list-style: none; outline: none; user-select: none;">
+    <span style="font-size: 16px; font-weight:900; color:#2563eb; margin-right:6px;">+</span> View Calculation Formulas & Active Sandbox Inputs
+  </summary>
+  <div style="margin-top: 16px; font-size: 13px; color: #334155; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
+    <div>
+      <strong style="color:#0f2756;">Active Sandbox Inputs:</strong>
+      <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
+        <li><strong>Base Production Load:</strong> 100 Billable Agent FTEs</li>
+        <li><strong>Agent Mix Matrix:</strong> 50% Experienced, 50% Fresher</li>
+        <li><strong>Training Duration:</strong> 15 Days (if Non-Billable), 0 Days (if Billable)</li>
+        <li><strong>Throughput / Attrition Flow:</strong> 85% Pass Rate, 10% Shrinkage Base</li>
+        <li><strong>Support Spans:</strong> TL (1:15), QA (1:35), AM/Trainer/MIS (1:100)</li>
+        <li><strong>CRM/Dialer Included:</strong> ₹1000/FTE</li>
+        <li><strong>Target Gross Margin (GM):</strong> 18% Base</li>
+      </ul>
+    </div>
+    <div>
+      <strong style="color:#0f2756;">Cut Definitions & Math:</strong>
+      <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
+        <li><strong>Support Billable:</strong> Parity Units = (Agent FTEs + Support FTEs). Cost is heavily amortized.</li>
+        <li><strong>Support Non-Billable:</strong> Parity Units = Agent FTEs ONLY. Support salaries become an un-billed overhead load.</li>
+        <li><strong>Training Non-Billable:</strong> 15-day Buffer Cost is added to project overhead.</li>
+        <li><strong>Final Billed Rate:</strong> Total Base Cost (COGS) ÷ Parity Units ÷ (1 - 0.18)</li>
+      </ul>
+    </div>
+  </div>
+</details>`;
+
+function openScenarioModal() {
+  const menuBody = document.getElementById('scenarioCardBody');
+  if(!menuBody) return;
   const cities = Object.keys(cityCostData);
   
-  // Base Sandbox Rules 
   const billableFte = 100;
   const targetGm = 0.18;
   const attrition = 0.10;
   const throughput = 0.85;
   const monthlyGrossHires = (billableFte * attrition) / throughput;
-  const costPerHire = 3750;
-  const hireTotal = monthlyGrossHires * costPerHire;
+  const hireTotal = monthlyGrossHires * 3750;
   const shrinkagePct = 0.05;
   const csaSeats = billableFte * (1 - shrinkagePct);
   const overheadFte = 400;
   const otherFte = 500;
-  const crmCostPerFte = 1000;
-  const crmTotal = crmCostPerFte * billableFte;
+  const crmTotal = 1000 * billableFte; 
   const v4Extra = 3000;
   const trainingDaysNonBillable = 15; 
+  const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
+
+  const spans = { tl: 15, am: 100, qa: 35, trainer: 100, mis: 100 };
+  const seatFactors = { tl: 1, am: 1, qa: 1, trainer: 0.2, mis: 1 };
+
+  let v3Data = {}; let v4Data = {};
+
+  cities.forEach(city => {
+    const d = cityCostData[city];
+    const ctcV3 = (d.fresher * 0.5) + (d.exp * 0.5);
+    const ctcV4 = ctcV3 + v4Extra;
+    
+    let supHC = 0, supSeats = 0, supBudget = 0;
+    ['tl', 'am', 'qa', 'trainer', 'mis'].forEach(role => {
+      let count = billableFte / spans[role];
+      supHC += count;
+      supSeats += count * seatFactors[role];
+      supBudget += count * d[role];
+    });
+
+    const physSeats = csaSeats + supSeats; 
+    const infraTotal = d.infra * physSeats;
+    const itTotal = (d.itBase + d.ill + d.server + d.switches + d.telServer + d.adServer) * physSeats;
+    const opsTotal = (overheadFte + otherFte) * (billableFte + supHC); 
+    
+    const baseFixedCost = supBudget + hireTotal + infraTotal + itTotal + crmTotal + opsTotal;
+
+    function calcRate(ctc, isTB, isSB) {
+      const agentCost = ctc * billableFte;
+      const bufferCost = isTB ? 0 : (ctc * bufferFte);
+      const totalCost = agentCost + bufferCost + baseFixedCost;
+      const parityUnits = isSB ? (billableFte + supHC) : billableFte;
+      return (totalCost / parityUnits) / (1 - targetGm);
+    }
+
+    v3Data[city] = {
+      tb_sb: calcRate(ctcV3, true, true),
+      tb_snb: calcRate(ctcV3, true, false),
+      tnb_sb: calcRate(ctcV3, false, true),
+      tnb_snb: calcRate(ctcV3, false, false)
+    };
+    
+    v4Data[city] = {
+      tb_sb: calcRate(ctcV4, true, true),
+      tb_snb: calcRate(ctcV4, true, false),
+      tnb_sb: calcRate(ctcV4, false, true),
+      tnb_snb: calcRate(ctcV4, false, false)
+    };
+  });
+
+  function buildScenarioTable(title, dataMap, colorHex) {
+    let html = `<div style="border: 2px solid ${colorHex}; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: #ffffff;">`;
+    html += `<h2 style="color: ${colorHex}; margin-top: 0; font-size: 18px;">${title}</h2>`;
+    html += `<table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:12px;">`;
+    html += `<thead><tr>`;
+    html += `<th style="background:#f1f5f9; text-align:left; padding:10px; border:1px solid #cbd5e1; width:20%;">Operating City</th>`;
+    html += `<th style="background:${colorHex}15; color:${colorHex}; text-align:center; padding:10px; border:1px solid #cbd5e1; width:20%;">Training Billable <br>+ Support Billable</th>`;
+    html += `<th style="background:${colorHex}15; color:${colorHex}; text-align:center; padding:10px; border:1px solid #cbd5e1; width:20%;">Training Billable <br>+ Support Non-Billable</th>`;
+    html += `<th style="background:${colorHex}15; color:${colorHex}; text-align:center; padding:10px; border:1px solid #cbd5e1; width:20%;">Training Non-Billable <br>+ Support Billable</th>`;
+    html += `<th style="background:${colorHex}15; color:${colorHex}; text-align:center; padding:10px; border:1px solid #cbd5e1; width:20%;">Training Non-Billable <br>+ Support Non-Billable</th>`;
+    html += `</tr></thead><tbody>`;
+
+    cities.forEach(c => {
+      html += `<tr>`;
+      html += `<td style="font-weight:700; padding:10px; border:1px solid #cbd5e1; background:#f8fafc;">${c}</td>`;
+      html += `<td style="text-align:center; padding:10px; border:1px solid #cbd5e1; font-weight:700; color:#0f172a;">₹${Math.round(dataMap[c].tb_sb).toLocaleString('en-IN')}</td>`;
+      html += `<td style="text-align:center; padding:10px; border:1px solid #cbd5e1; font-weight:700; color:#0f172a;">₹${Math.round(dataMap[c].tb_snb).toLocaleString('en-IN')}</td>`;
+      html += `<td style="text-align:center; padding:10px; border:1px solid #cbd5e1; font-weight:700; color:#0f172a;">₹${Math.round(dataMap[c].tnb_sb).toLocaleString('en-IN')}</td>`;
+      html += `<td style="text-align:center; padding:10px; border:1px solid #cbd5e1; font-weight:700; color:#dc2626;">₹${Math.round(dataMap[c].tnb_snb).toLocaleString('en-IN')}</td>`;
+      html += `</tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  let fullHtml = sharedSandboxFormulaHTML;
+  fullHtml += buildScenarioTable('Versant 3 - Multi-Cut Scenario Matrix', v3Data, '#0284c7');
+  fullHtml += buildScenarioTable('Versant 4 - Multi-Cut Scenario Matrix (+₹3000 Premium)', v4Data, '#7c3aed');
+
+  menuBody.innerHTML = fullHtml;
+  document.getElementById('scenarioModal').style.display = 'flex';
+}
+
+function openMenuCardModal() {
+  const menuBody = document.getElementById('menuCardBody');
+  if(!menuBody) return;
+  const cities = Object.keys(cityCostData);
+  
+  const billableFte = 100;
+  const targetGm = 0.18;
+  const attrition = 0.10;
+  const throughput = 0.85;
+  const monthlyGrossHires = (billableFte * attrition) / throughput;
+  const hireTotal = monthlyGrossHires * 3750;
+  const shrinkagePct = 0.05;
+  const csaSeats = billableFte * (1 - shrinkagePct);
+  const overheadFte = 400;
+  const otherFte = 500;
+  const crmTotal = 1000 * billableFte;
+  const v4Extra = 3000;
+  const trainingDaysNonBillable = 15; 
+  const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
 
   const spans = { tl: 15, am: 100, qa: 35, trainer: 100, mis: 100 };
   const seatFactors = { tl: 1, am: 1, qa: 1, trainer: 0.2, mis: 1 };
@@ -814,14 +1012,11 @@ function openMenuCardModal() {
     const physSeats = csaSeats + supSeats; 
 
     const infraTotal = d.infra * physSeats;
-    const itTotal = d.it * physSeats;
+    const itTotal = (d.itBase + d.ill + d.server + d.switches + d.telServer + d.adServer) * physSeats;
     const opsTotal = (overheadFte + otherFte) * parityUnits;
 
-    // Buffer Calculation
-    const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
     const bufferCostV3 = bufferFte * ctcV3;
     const bufferCostV4 = bufferFte * ctcV4;
-    
     const agentBaseCostV3 = ctcV3 * billableFte;
     const agentBaseCostV4 = ctcV4 * billableFte;
 
@@ -862,7 +1057,7 @@ function openMenuCardModal() {
       { k: 'support', l: '3. Support Staff Allocation' },
       { k: 'hire', l: '4. Sourcing & Recruitment' },
       { k: 'infra', l: '5. Physical Workstation Infra' },
-      { k: 'it', l: '6. Workstation IT & Tech' },
+      { k: 'it', l: '6. Workstation IT & Tech (Consolidated)' },
       { k: 'crm', l: '7. CRM & Dialer Licenses' },
       { k: 'ops', l: '8. Operations & Overheads' },
       { k: 'cogs', l: 'TOTAL BASE COST (COGS) / FTE', isBase: true },
@@ -889,46 +1084,8 @@ function openMenuCardModal() {
     return html;
   }
 
-  let formulaHtml = `
-    <details class="formula-toggle" style="margin: 12px 0 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
-      <summary style="font-weight: 700; cursor: pointer; color: #0f2756; font-size: 14px; list-style: none; outline: none; user-select: none;">
-        <span style="font-size: 16px; font-weight:900; color:#2563eb; margin-right:6px;">+</span> View Calculation Formulas & Active Sandbox Inputs
-      </summary>
-      <div style="margin-top: 16px; font-size: 13px; color: #334155; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-        <div>
-          <strong style="color:#0f2756;">Active Sandbox Inputs:</strong>
-          <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-            <li><strong>Base Production Load:</strong> 100 Billable Agent FTEs</li>
-            <li><strong>Agent Mix Matrix:</strong> 50% Experienced, 50% Fresher</li>
-            <li><strong>Support Governance:</strong> 100% Billable (None Absorbed)</li>
-            <li><strong>Training Duration:</strong> 15 Days (if Non-Billable), 0 Days (if Billable)</li>
-            <li><strong>Throughput / Attrition Flow:</strong> 85% Pass Rate, 10% Shrinkage Base</li>
-            <li><strong>Support Spans:</strong> TL (1:15), QA (1:35), AM/Trainer/MIS (1:100)</li>
-            <li><strong>Target Gross Margin (GM):</strong> 18% Base</li>
-          </ul>
-        </div>
-        <div>
-          <strong style="color:#0f2756;">Underlying Formulas & Math:</strong>
-          <ul style="margin-top: 6px; padding-left: 20px; list-style-type: square; margin-bottom: 0;">
-            <li><strong>Parity Units:</strong> Billable FTEs + Billable Support FTEs</li>
-            <li><strong>Physical Seats Needed:</strong> Base FTEs (Shrinkage Offloaded) + Total Support Seats</li>
-            <li><strong>Amortized Cost per FTE:</strong> Total Line Item Absolute Cost ÷ Parity Units</li>
-            <li><strong>Agent Direct Salary:</strong> (Blended Agent Base CTC × Base FTEs) ÷ Parity Units</li>
-            <li><strong>Training Buffer Cost:</strong> (Monthly Gross Hires × [Training Days ÷ 30] × Blended CTC) ÷ Parity Units</li>
-            <li><strong>Final Billed Rate:</strong> Total Base Cost (COGS) ÷ (1 - 0.18)</li>
-          </ul>
-        </div>
-      </div>
-    </details>
-  `;
-
-  let fullHtml = `
-    <div class="model-banner" style="margin-bottom:10px;">
-      <strong>Menu Assumptions Sandbox:</strong> 50% Exp / 50% Fresher Mix • Support Staff 100% Billable • Industry Spans (TL 1:15, QA 1:35) • CRM Included @ ₹1000/FTE • 18% Target GM.
-    </div>
-    
-    ${formulaHtml}
-
+  let fullHtml = sharedSandboxFormulaHTML;
+  fullHtml += `
     <div style="border: 2px solid #0284c7; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: #ffffff;">
       <h2 style="color: #0284c7; margin-top: 0; font-size: 18px;">Versant 3 Menu Card (Baseline Voice)</h2>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -936,7 +1093,6 @@ function openMenuCardModal() {
         <div>${generateTableHTML('Table B: Training Non-Billable (Amortized Buffer)', v3NB, '#0284c7')}</div>
       </div>
     </div>
-
     <div style="border: 2px solid #7c3aed; border-radius: 8px; padding: 16px; margin-bottom: 8px; background: #ffffff;">
       <h2 style="color: #7c3aed; margin-top: 0; font-size: 18px;">Versant 4 Menu Card (Enhanced Voice)</h2>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -944,212 +1100,58 @@ function openMenuCardModal() {
         <div>${generateTableHTML('Table B: Training Non-Billable (Amortized Buffer)', v4NB, '#7c3aed')}</div>
       </div>
     </div>
+    <style>@media (max-width: 1150px) { .modal-body > div > div { grid-template-columns: 1fr !important; } }</style>
   `;
-
-  fullHtml += `<style>@media (max-width: 1150px) { .modal-body > div > div { grid-template-columns: 1fr !important; } }</style>`;
-
   menuBody.innerHTML = fullHtml;
   document.getElementById('menuCardModal').style.display = 'flex';
 }
 
-function closeMenuCardModal() {
-  document.getElementById('menuCardModal').style.display = 'none';
-}
-
-// ==========================================
-// 4-WAY ADVANCED MATRIX GENERATION LOGIC
-// ==========================================
-function openAdvancedMatrixModal() {
-  const matrixBody = document.getElementById('advancedMatrixBody');
-  const cities = Object.keys(cityCostData);
-  
-  // Base Sandbox Rules 
-  const billableFte = 100;
-  const targetGm = 0.18;
-  const attrition = 0.10;
-  const throughput = 0.85;
-  const monthlyGrossHires = (billableFte * attrition) / throughput;
-  const costPerHire = 3750;
-  const hireTotal = monthlyGrossHires * costPerHire;
-  const shrinkagePct = 0.05;
-  const csaSeats = billableFte * (1 - shrinkagePct);
-  const overheadFte = 400;
-  const otherFte = 500;
-  const crmCostPerFte = 1000;
-  const crmTotal = crmCostPerFte * billableFte;
-  const v4Extra = 3000;
-  const trainingDaysNonBillable = 15; 
-
-  const spans = { tl: 15, am: 100, qa: 35, trainer: 100, mis: 100 };
-  const seatFactors = { tl: 1, am: 1, qa: 1, trainer: 0.2, mis: 1 };
-
-  let v3Rows = '';
-  let v4Rows = '';
-
-  cities.forEach(city => {
-    const d = cityCostData[city];
-    const ctcV3 = (d.fresher * 0.5) + (d.exp * 0.5);
-    const ctcV4 = ctcV3 + v4Extra;
-    
-    let supHC = 0, supSeats = 0, supBudget = 0;
-    ['tl', 'am', 'qa', 'trainer', 'mis'].forEach(role => {
-      let count = billableFte / spans[role];
-      supHC += count;
-      supSeats += count * seatFactors[role];
-      supBudget += count * d[role];
-    });
-
-    const physSeats = csaSeats + supSeats; 
-    const infraTotal = d.infra * physSeats;
-    const itTotal = d.it * physSeats;
-
-    const bufferFte = monthlyGrossHires * (trainingDaysNonBillable / 30);
-    const bufferCostV3 = bufferFte * ctcV3;
-    const bufferCostV4 = bufferFte * ctcV4;
-    
-    const agentBaseCostV3 = ctcV3 * billableFte;
-    const agentBaseCostV4 = ctcV4 * billableFte;
-
-    // Helper to calc exact rate
-    function getRate(agentCost, bufferCost, isSupportBillable) {
-        const parityUnits = isSupportBillable ? (billableFte + supHC) : billableFte;
-        // Ops is always applied to entire headcount
-        const opsTotal = (overheadFte + otherFte) * (billableFte + supHC);
-        const projectCost = agentCost + bufferCost + supBudget + hireTotal + infraTotal + itTotal + crmTotal + opsTotal;
-        return (projectCost / parityUnits) / (1 - targetGm);
-    }
-
-    // V3 Scenario Rates
-    const v3_tb_sb = getRate(agentBaseCostV3, 0, true);
-    const v3_tb_snb = getRate(agentBaseCostV3, 0, false);
-    const v3_tnb_sb = getRate(agentBaseCostV3, bufferCostV3, true);
-    const v3_tnb_snb = getRate(agentBaseCostV3, bufferCostV3, false);
-
-    v3Rows += `<tr style="background:#fff;">
-      <td style="padding:10px; font-weight:700; border:1px solid #cbd5e1;">${city}</td>
-      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1; background:#f0f9ff;">₹${Math.round(v3_tb_sb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1;">₹${Math.round(v3_tb_snb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1; background:#f0f9ff;">₹${Math.round(v3_tnb_sb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#0284c7; border:1px solid #cbd5e1;">₹${Math.round(v3_tnb_snb).toLocaleString('en-IN')}</td>
-    </tr>`;
-
-    // V4 Scenario Rates
-    const v4_tb_sb = getRate(agentBaseCostV4, 0, true);
-    const v4_tb_snb = getRate(agentBaseCostV4, 0, false);
-    const v4_tnb_sb = getRate(agentBaseCostV4, bufferCostV4, true);
-    const v4_tnb_snb = getRate(agentBaseCostV4, bufferCostV4, false);
-
-    v4Rows += `<tr style="background:#fff;">
-      <td style="padding:10px; font-weight:700; border:1px solid #cbd5e1;">${city}</td>
-      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1; background:#faf5ff;">₹${Math.round(v4_tb_sb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1;">₹${Math.round(v4_tb_snb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1; background:#faf5ff;">₹${Math.round(v4_tnb_sb).toLocaleString('en-IN')}</td>
-      <td style="text-align:center; font-weight:700; color:#6d28d9; border:1px solid #cbd5e1;">₹${Math.round(v4_tnb_snb).toLocaleString('en-IN')}</td>
-    </tr>`;
-  });
-
-  const legend = `
-    <div style="background:#f1f5f9; padding:12px; border-radius:6px; font-size:12.5px; border:1px solid #cbd5e1; margin-bottom:16px;">
-      <strong>Matrix Legend:</strong><br>
-      • <strong>TB:</strong> Training Billable (No Buffer Cost loaded into rate)<br>
-      • <strong>TNB:</strong> Training Non-Billable (15-Day Training Buffer Cost amortized into rate)<br>
-      • <strong>SB:</strong> Support Billable (Support Cost divided across parity pool of Agents + Support)<br>
-      • <strong>SNB:</strong> Support Non-Billable (Support Cost absorbed fully by base Agents)
-    </div>
-  `;
-
-  let formulaHtml = `
-    <details class="formula-toggle" style="margin: 0 0 20px 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
-      <summary style="font-weight: 700; cursor: pointer; color: #4338ca; font-size: 14px; list-style: none; outline: none; user-select: none;">
-        <span style="font-size: 16px; font-weight:900; margin-right:6px;">+</span> View Active Sandbox Inputs
-      </summary>
-      <div style="margin-top: 16px; font-size: 13px; color: #334155; line-height: 1.6; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-        <ul style="margin: 0; padding-left: 20px; list-style-type: square; column-count:2;">
-          <li><strong>Base Load:</strong> 100 Billable Agent FTEs</li>
-          <li><strong>Agent Mix:</strong> 50% Experienced, 50% Fresher</li>
-          <li><strong>Throughput:</strong> 85% Pass, 10% Shrinkage Base</li>
-          <li><strong>Support Spans:</strong> TL (1:15), QA (1:35), AM/Trainer/MIS (1:100)</li>
-          <li><strong>CRM:</strong> Included @ ₹1000/FTE</li>
-          <li><strong>Target GM:</strong> 18% Base</li>
-        </ul>
-      </div>
-    </details>
-  `;
-
-  const theadHtml = `
-    <thead>
-      <tr>
-        <th style="background:#f1f5f9; text-align:left; border:1px solid #cbd5e1;">City</th>
-        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 1<br><span style="color:#0f2756; font-size:14px;">TB + SB</span></th>
-        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 2<br><span style="color:#0f2756; font-size:14px;">TB + SNB</span></th>
-        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 3<br><span style="color:#0f2756; font-size:14px;">TNB + SB</span></th>
-        <th style="background:#f1f5f9; text-align:center; border:1px solid #cbd5e1; font-size:12px;">Cut 4<br><span style="color:#0f2756; font-size:14px;">TNB + SNB</span></th>
-      </tr>
-    </thead>
-  `;
-
-  let fullHtml = `
-    ${legend}
-    ${formulaHtml}
-    
-    <div style="border: 2px solid #0284c7; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: #ffffff;">
-      <h2 style="color: #0284c7; margin-top: 0; font-size: 18px;">Versant 3 Final Billed Seat Rates (Baseline Voice)</h2>
-      <table style="width:100%; border-collapse:collapse;">
-        ${theadHtml}
-        <tbody>${v3Rows}</tbody>
-      </table>
-    </div>
-
-    <div style="border: 2px solid #7c3aed; border-radius: 8px; padding: 16px; margin-bottom: 8px; background: #ffffff;">
-      <h2 style="color: #7c3aed; margin-top: 0; font-size: 18px;">Versant 4 Final Billed Seat Rates (Enhanced Voice)</h2>
-      <table style="width:100%; border-collapse:collapse;">
-        ${theadHtml}
-        <tbody>${v4Rows}</tbody>
-      </table>
-    </div>
-  `;
-
-  matrixBody.innerHTML = fullHtml;
-  document.getElementById('advancedMatrixModal').style.display = 'flex';
-}
-
-function closeAdvancedMatrixModal() {
-  document.getElementById('advancedMatrixModal').style.display = 'none';
-}
-
-
 function calculate() {
-  const billableFte = parseFloat(document.getElementById('billableFte').value) || 0;
-  const targetGm = (parseFloat(document.getElementById('targetGm').value) || 0) / 100;
-  const billingEfficiency = (parseFloat(document.getElementById('billingEfficiency').value) || 100) / 100;
+  const billableFte = parseFloat(document.getElementById('billableFte')?.value) || 0;
+  const targetGm = (parseFloat(document.getElementById('targetGm')?.value) || 0) / 100;
+  const billingEfficiency = (parseFloat(document.getElementById('billingEfficiency')?.value) || 100) / 100;
   
   document.querySelectorAll('.targetGmDisplay, .targetGmDisplayCard').forEach(el => {
     el.innerText = (targetGm * 100).toFixed(0) + '%';
   });
 
-  const attrition = (parseFloat(document.getElementById('attritionPct').value) || 0) / 100;
-  const throughput = Math.max(0.01, (parseFloat(document.getElementById('throughputPct').value) || 85) / 100);
-  const trainingDays = parseFloat(document.getElementById('trainingDays').value) || 0;
+  const workingModel = document.getElementById('workingModelSelect')?.value || '6_days';
+  
+  // FIXED 7-DAYS LOGIC FOR 14% OFFLOAD SAFELY
+  let sevenDayOffloadPct = 0;
+  if (workingModel === '7_days') {
+     sevenDayOffloadPct = 0.14;
+  }
+
+  const attrition = (parseFloat(document.getElementById('attritionPct')?.value) || 0) / 100;
+  const throughput = Math.max(0.01, (parseFloat(document.getElementById('throughputPct')?.value) || 85) / 100);
+  const trainingDays = parseFloat(document.getElementById('trainingDays')?.value) || 0;
   
   const monthlyGrossHires = (throughput > 0) ? (billableFte * attrition) / throughput : 0;
-  document.getElementById('monthlyHiresDisplay').value = `${monthlyGrossHires.toFixed(2)} Hires / mo`;
+  if (document.getElementById('monthlyHiresDisplay')) {
+    document.getElementById('monthlyHiresDisplay').value = `${monthlyGrossHires.toFixed(2)} Hires / mo`;
+  }
 
-  const costPerHire = parseFloat(document.getElementById('costPerHire').value) || 0;
+  const costPerHire = parseFloat(document.getElementById('costPerHire')?.value) || 0;
   const totalAbsoluteHiringCost = monthlyGrossHires * costPerHire;
 
   const recruitmentPerFte = billableFte > 0 ? (totalAbsoluteHiringCost / billableFte) : 0;
-  if(document.getElementById('totalHiringCostDisplay')) document.getElementById('totalHiringCostDisplay').value = '₹' + Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN') + ' / mo';
-  if(document.getElementById('effectiveRecruitmentPerFte')) document.getElementById('effectiveRecruitmentPerFte').value = '₹' + recruitmentPerFte.toFixed(2) + ' / FTE';
+  if (document.getElementById('totalHiringCostDisplay')) {
+    document.getElementById('totalHiringCostDisplay').value = '₹' + Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN') + ' / mo';
+  }
+  if (document.getElementById('effectiveRecruitmentPerFte')) {
+    document.getElementById('effectiveRecruitmentPerFte').value = '₹' + recruitmentPerFte.toFixed(2) + ' / FTE';
+  }
 
-  const fCtc = parseFloat(document.getElementById('fresherCtc').value) || 0;
-  const eCtc = parseFloat(document.getElementById('experiencedCtc').value) || 0;
-  const napsCtc = parseFloat(document.getElementById('napsCtc').value) || 0;
-  const natsCtc = parseFloat(document.getElementById('natsCtc').value) || 0;
+  const fCtc = parseFloat(document.getElementById('fresherCtc')?.value) || 0;
+  const eCtc = parseFloat(document.getElementById('experiencedCtc')?.value) || 0;
+  const napsCtc = parseFloat(document.getElementById('napsCtc')?.value) || 0;
+  const natsCtc = parseFloat(document.getElementById('natsCtc')?.value) || 0;
   
-  const fPct = parseFloat(document.getElementById('fresherPct').value) || 0;
-  const ePct = parseFloat(document.getElementById('experiencedPct').value) || 0;
-  const napsPct = parseFloat(document.getElementById('napsPct').value) || 0;
-  const natsPct = parseFloat(document.getElementById('natsPct').value) || 0;
+  const fPct = parseFloat(document.getElementById('fresherPct')?.value) || 0;
+  const ePct = parseFloat(document.getElementById('experiencedPct')?.value) || 0;
+  const napsPct = parseFloat(document.getElementById('napsPct')?.value) || 0;
+  const natsPct = parseFloat(document.getElementById('natsPct')?.value) || 0;
   
   const totalPct = fPct + ePct + napsPct + natsPct;
   const fNorm = totalPct > 0 ? fPct / totalPct : 1; 
@@ -1157,16 +1159,24 @@ function calculate() {
   const napsNorm = totalPct > 0 ? napsPct / totalPct : 0;
   const natsNorm = totalPct > 0 ? natsPct / totalPct : 0;
 
-  const baseWeightedCtc = (fCtc * fNorm) + (eCtc * eNorm) + (napsCtc * napsNorm) + (natsCtc * natsNorm);
-  const v3Extra = parseFloat(document.getElementById('v3PremiumInput').value) || 0;
-  const v4Extra = parseFloat(document.getElementById('v4PremiumInput').value) || 0;
+  const napsRebate = Math.min(napsCtc * 0.25, 1500);
+  const natsRebate = Math.min(natsCtc * 0.50, 6150);
+  const blendedRebate = (napsRebate * napsNorm) + (natsRebate * natsNorm);
+  
+  if (document.getElementById('rebateBenefitDisplay')) {
+     document.getElementById('rebateBenefitDisplay').value = `₹${Math.round(blendedRebate).toLocaleString('en-IN')} / FTE Savings`;
+  }
 
-  document.getElementById('baseWeightedCtc').value = '₹' + Math.round(baseWeightedCtc).toLocaleString('en-IN');
-  document.getElementById('v4EffectiveCtcDisplay').value = '₹' + Math.round(baseWeightedCtc + v4Extra).toLocaleString('en-IN');
+  const baseWeightedCtc = (fCtc * fNorm) + (eCtc * eNorm) + ((napsCtc - napsRebate) * napsNorm) + ((natsCtc - natsRebate) * natsNorm);
+  const v3Extra = parseFloat(document.getElementById('v3PremiumInput')?.value) || 0;
+  const v4Extra = parseFloat(document.getElementById('v4PremiumInput')?.value) || 0;
+
+  if (document.getElementById('baseWeightedCtc')) document.getElementById('baseWeightedCtc').value = '₹' + Math.round(baseWeightedCtc).toLocaleString('en-IN');
+  if (document.getElementById('v4EffectiveCtcDisplay')) document.getElementById('v4EffectiveCtcDisplay').value = '₹' + Math.round(baseWeightedCtc + v4Extra).toLocaleString('en-IN');
 
   const baseCsaCount = billableFte;
   
-  const trainingBillableStatus = document.getElementById('trainingBillable').value;
+  const trainingBillableStatus = document.getElementById('trainingBillable')?.value || 'no';
   let trainingBufferCount = 0;
   if (trainingBillableStatus === 'no' && throughput > 0 && trainingDays > 0) {
     trainingBufferCount = monthlyGrossHires * (trainingDays / 30);
@@ -1201,28 +1211,39 @@ function calculate() {
     }
   });
 
-  const shrinkagePct = Math.max(0, parseFloat(document.getElementById('shrinkagePct').value) || 0) / 100;
-  const totalCombinedSeatOffloadFactor = Math.max(0.10, 1 - shrinkagePct);
+  const shrinkagePct = Math.max(0, parseFloat(document.getElementById('shrinkagePct')?.value) || 0) / 100;
+  const totalCombinedSeatOffloadFactor = Math.max(0.10, 1 - (shrinkagePct + sevenDayOffloadPct));
   const csaSeats = baseCsaCount * totalCombinedSeatOffloadFactor;
   const totalPhysicalSeats = csaSeats + totalSupportSeats;
   
-  document.getElementById('totalPhysicalSeatsDisplay').value = `${totalPhysicalSeats.toFixed(2)} Physical Seats`;
+  if (document.getElementById('totalPhysicalSeatsDisplay')) {
+    document.getElementById('totalPhysicalSeatsDisplay').value = `${totalPhysicalSeats.toFixed(2)} Physical Seats`;
+  }
 
-  const baseInfraPerSeat = parseFloat(document.getElementById('infraPerSeat').value) || 0;
-  const itPerSeat = parseFloat(document.getElementById('itPerSeat').value) || 0;
-  const totalFacilitySeatCost = (baseInfraPerSeat + itPerSeat) * totalPhysicalSeats;
+  const baseInfraPerSeat = parseFloat(document.getElementById('infraPerSeat')?.value) || 0;
+  const baseItCost = parseFloat(document.getElementById('baseItCost')?.value) || 0;
+  const illCost = parseFloat(document.getElementById('illCost')?.value) || 0;
+  const serverCost = parseFloat(document.getElementById('serverCost')?.value) || 0;
+  const switchesCost = parseFloat(document.getElementById('switchesCost')?.value) || 0;
+  const telServerCost = parseFloat(document.getElementById('telServerCost')?.value) || 0;
+  const adServerCost = parseFloat(document.getElementById('adServerCost')?.value) || 0;
+  
+  const itPerSeat = baseItCost + illCost + serverCost + switchesCost + telServerCost + adServerCost;
 
-  const overheadFte = parseFloat(document.getElementById('overheadFte').value) || 0;
-  const otherFte = parseFloat(document.getElementById('otherFte').value) || 0;
-  const crmCostPerFte = parseFloat(document.getElementById('crmLicenseCost').value) || 0;
+  const overheadFte = parseFloat(document.getElementById('overheadFte')?.value) || 0;
+  const otherFte = parseFloat(document.getElementById('otherFte')?.value) || 0;
+  const crmCostPerFte = parseFloat(document.getElementById('crmLicenseCost')?.value) || 0;
+  const dialerCostPerFte = parseFloat(document.getElementById('dialerLicenseCost')?.value) || 0;
 
-  const employeeSubsidy = parseFloat(document.getElementById('employeeSubsidy').value) || 0;
-  const infraSubsidy = parseFloat(document.getElementById('infraSubsidy').value) || 0;
+  const employeeSubsidy = parseFloat(document.getElementById('employeeSubsidy')?.value) || 0;
+  const infraSubsidy = parseFloat(document.getElementById('infraSubsidy')?.value) || 0;
   const totalSubsidyAmount = (employeeSubsidy * (totalCsaCount + totalSupportHeadcount)) + (infraSubsidy * totalPhysicalSeats);
 
   const totalBillableParityUnits = billableFte + billableSupportHeadcount;
   const effectiveBillableUnits = totalBillableParityUnits * billingEfficiency;
-  document.getElementById('effectiveBillableDisplay').value = `${effectiveBillableUnits.toFixed(2)} Effective Units Billed`;
+  if (document.getElementById('effectiveBillableDisplay')) {
+    document.getElementById('effectiveBillableDisplay').value = `${effectiveBillableUnits.toFixed(2)} Effective Units Billed`;
+  }
 
   function computeParityModelRate(versantExtra) {
     const totalAgentCtc = baseWeightedCtc + versantExtra;
@@ -1232,8 +1253,12 @@ function calculate() {
     const csaSalaryTotal = agentBaseSalaryTotal + trainingBufferCost;
 
     const supportOpsCost = (overheadFte + otherFte) * totalSupportHeadcount;
-    const directOpsCost = (otherFte + overheadFte + crmCostPerFte) * billableFte;
-    const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + totalAbsoluteHiringCost + directOpsCost + supportOpsCost + totalFacilitySeatCost - totalSubsidyAmount;
+    const directOpsCost = (otherFte + overheadFte + crmCostPerFte + dialerCostPerFte) * billableFte;
+    
+    const totalInfraCost = baseInfraPerSeat * totalPhysicalSeats;
+    const totalItCost = itPerSeat * totalPhysicalSeats;
+    
+    const projectMonthlyCost = csaSalaryTotal + totalSupportMonthlyBudget + totalAbsoluteHiringCost + directOpsCost + supportOpsCost + totalInfraCost + totalItCost - totalSubsidyAmount;
 
     const totalProjectRevenueRequired = targetGm < 1 ? projectMonthlyCost / (1 - targetGm) : 0;
     const billedRateFte = effectiveBillableUnits > 0 ? (totalProjectRevenueRequired / effectiveBillableUnits) : 0;
@@ -1255,22 +1280,22 @@ function calculate() {
   const v3 = computeParityModelRate(v3Extra);
   const v4 = computeParityModelRate(v4Extra);
 
-  document.getElementById('v3BilledFte').innerText = '₹' + Math.round(v3.billedRateFte).toLocaleString('en-IN');
-  document.getElementById('v3MonthlyTcv').innerText = '₹' + Math.round(v3.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
-  document.getElementById('v3Acv').innerText = '₹' + Math.round(v3.acv).toLocaleString('en-IN');
+  if (document.getElementById('v3BilledFte')) document.getElementById('v3BilledFte').innerText = '₹' + Math.round(v3.billedRateFte).toLocaleString('en-IN');
+  if (document.getElementById('v3MonthlyTcv')) document.getElementById('v3MonthlyTcv').innerText = '₹' + Math.round(v3.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
+  if (document.getElementById('v3Acv')) document.getElementById('v3Acv').innerText = '₹' + Math.round(v3.acv).toLocaleString('en-IN');
 
-  document.getElementById('v4BilledFte').innerText = '₹' + Math.round(v4.billedRateFte).toLocaleString('en-IN');
-  document.getElementById('v4MonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
-  document.getElementById('v4Acv').innerText = '₹' + Math.round(v4.acv).toLocaleString('en-IN');
+  if (document.getElementById('v4BilledFte')) document.getElementById('v4BilledFte').innerText = '₹' + Math.round(v4.billedRateFte).toLocaleString('en-IN');
+  if (document.getElementById('v4MonthlyTcv')) document.getElementById('v4MonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
+  if (document.getElementById('v4Acv')) document.getElementById('v4Acv').innerText = '₹' + Math.round(v4.acv).toLocaleString('en-IN');
 
-  document.getElementById('floatingV3Rate').innerText = '₹' + Math.round(v3.billedRateFte).toLocaleString('en-IN') + ' / FTE';
-  document.getElementById('floatingV4Rate').innerText = '₹' + Math.round(v4.billedRateFte).toLocaleString('en-IN') + ' / FTE';
-  document.getElementById('floatingMonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
-  document.getElementById('floatingMarginPct').innerText = (targetGm * 100).toFixed(0) + '%';
+  if (document.getElementById('floatingV3Rate')) document.getElementById('floatingV3Rate').innerText = '₹' + Math.round(v3.billedRateFte).toLocaleString('en-IN') + ' / FTE';
+  if (document.getElementById('floatingV4Rate')) document.getElementById('floatingV4Rate').innerText = '₹' + Math.round(v4.billedRateFte).toLocaleString('en-IN') + ' / FTE';
+  if (document.getElementById('floatingMonthlyTcv')) document.getElementById('floatingMonthlyTcv').innerText = '₹' + Math.round(v4.monthlyInvoiceTotal).toLocaleString('en-IN') + ' / mo';
+  if (document.getElementById('floatingMarginPct')) document.getElementById('floatingMarginPct').innerText = (targetGm * 100).toFixed(0) + '%';
 
   const comparisonItems = [
-    { label: "Prospect / Client Account", v3: document.getElementById('prospectName').value, v4: document.getElementById('prospectName').value, isText: true },
-    { label: "Prepared By", v3: document.getElementById('preparedBy').value, v4: document.getElementById('preparedBy').value, isText: true },
+    { label: "Prospect / Client Account", v3: document.getElementById('prospectName')?.value, v4: document.getElementById('prospectName')?.value, isText: true },
+    { label: "Prepared By", v3: document.getElementById('preparedBy')?.value, v4: document.getElementById('preparedBy')?.value, isText: true },
     { label: "Effective Agent Base CTC", v3: v3.agentCtc, v4: v4.agentCtc, prefix: "₹" },
     { label: "Monthly Sourcing & Recruitment", v3: `₹${Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo`, v4: `₹${Math.round(totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo`, isText: true },
     { label: "Effective Billable Units", v3: `${effectiveBillableUnits.toFixed(2)} FTEs`, v4: `${effectiveBillableUnits.toFixed(2)} FTEs`, isText: true },
@@ -1286,404 +1311,169 @@ function calculate() {
     let v3Display = item.isText ? item.v3 : `₹${Math.round(item.v3).toLocaleString('en-IN')}`;
     let v4Display = item.isText ? item.v4 : `₹${Math.round(item.v4).toLocaleString('en-IN')}`;
     let deltaDisplay = item.isText ? '-' : `+₹${Math.round(item.v4 - item.v3).toLocaleString('en-IN')}`;
-
     let rowStyle = item.highlight ? 'background:#ecfdf5; font-weight:800; font-size:14px; border:2px solid #10b981;' : (item.isBold ? 'font-weight:700;' : '');
     let marginStyle = item.isMargin ? 'color:#166534; font-weight:700;' : '';
-
-    compHtml += `<tr style="${rowStyle}">
-      <td>${item.label}</td>
-      <td style="${marginStyle}">${v3Display}</td>
-      <td style="${marginStyle}">${v4Display}</td>
-      <td style="color:#2563eb; font-weight:600;">${deltaDisplay}</td>
-    </tr>`;
+    compHtml += `<tr style="${rowStyle}"><td>${item.label}</td><td style="${marginStyle}">${v3Display}</td><td style="${marginStyle}">${v4Display}</td><td style="color:#2563eb; font-weight:600;">${deltaDisplay}</td></tr>`;
   });
-  if(document.getElementById('versantComparisonTbody')) document.getElementById('versantComparisonTbody').innerHTML = compHtml;
+  if (document.getElementById('versantComparisonTbody')) {
+     document.getElementById('versantComparisonTbody').innerHTML = compHtml;
+  }
 
   const trainingLabel = trainingBillableStatus === 'yes' ? '0 FTE (Billed Separately)' : `${trainingBufferCount.toFixed(2)} FTE Buffer`;
 
-  const costBreakupLines = [
+  storedBreakupLines = [
     { cat: "1. Agent Direct Salary (Base)", basis: `Active Billable Agents (${baseCsaCount.toFixed(2)} FTEs)`, v3Cost: v3.agentBaseSalaryTotal, v3Fte: v3.agentBaseSalaryTotal / baseCsaCount, v4Cost: v4.agentBaseSalaryTotal, v4Fte: v4.agentBaseSalaryTotal / baseCsaCount },
     { cat: "2. Training Buffer Allocation", basis: trainingLabel, v3Cost: v3.trainingBufferCost, v3Fte: v3.trainingBufferCost / totalBillableParityUnits, v4Cost: v4.trainingBufferCost, v4Fte: v4.trainingBufferCost / totalBillableParityUnits },
     { cat: "3. Support Staff Hierarchy Salaries", basis: `Absorbed + Billable Allocation`, v3Cost: totalSupportMonthlyBudget, v3Fte: totalSupportMonthlyBudget / totalBillableParityUnits, v4Cost: totalSupportMonthlyBudget, v4Fte: totalSupportMonthlyBudget / totalBillableParityUnits },
     { cat: "4. Sourcing & Recruitment", basis: `Amortized per hire`, v3Cost: totalAbsoluteHiringCost, v3Fte: totalAbsoluteHiringCost / totalBillableParityUnits, v4Cost: totalAbsoluteHiringCost, v4Fte: totalAbsoluteHiringCost / totalBillableParityUnits },
     { cat: "5. Physical Workstation Infra", basis: `Offload Adjusted`, v3Cost: baseInfraPerSeat * totalPhysicalSeats, v3Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: baseInfraPerSeat * totalPhysicalSeats, v4Fte: (baseInfraPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
-    { cat: "6. Workstation IT & Tech", basis: `Offload Adjusted`, v3Cost: itPerSeat * totalPhysicalSeats, v3Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: itPerSeat * totalPhysicalSeats, v4Fte: (itPerSeat * totalPhysicalSeats) / totalBillableParityUnits },
-    { cat: "7. CRM & Dialer Telephony", basis: `₹${crmCostPerFte.toLocaleString('en-IN')} / FTE`, v3Cost: crmCostPerFte * billableFte, v3Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits, v4Cost: crmCostPerFte * billableFte, v4Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits },
+    { cat: "6a. Tech: Base IT Assets", basis: `Offload Adjusted`, v3Cost: baseItCost * totalPhysicalSeats, v3Fte: (baseItCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: baseItCost * totalPhysicalSeats, v4Fte: (baseItCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6b. Tech: ILL Connectivty", basis: `Offload Adjusted`, v3Cost: illCost * totalPhysicalSeats, v3Fte: (illCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: illCost * totalPhysicalSeats, v4Fte: (illCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6c. Tech: Server Cost", basis: `Offload Adjusted`, v3Cost: serverCost * totalPhysicalSeats, v3Fte: (serverCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: serverCost * totalPhysicalSeats, v4Fte: (serverCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6d. Tech: Switches & Routers", basis: `Offload Adjusted`, v3Cost: switchesCost * totalPhysicalSeats, v3Fte: (switchesCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: switchesCost * totalPhysicalSeats, v4Fte: (switchesCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6e. Tech: Telephony Server", basis: `Offload Adjusted`, v3Cost: telServerCost * totalPhysicalSeats, v3Fte: (telServerCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: telServerCost * totalPhysicalSeats, v4Fte: (telServerCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "6f. Tech: AD Server", basis: `Offload Adjusted`, v3Cost: adServerCost * totalPhysicalSeats, v3Fte: (adServerCost * totalPhysicalSeats) / totalBillableParityUnits, v4Cost: adServerCost * totalPhysicalSeats, v4Fte: (adServerCost * totalPhysicalSeats) / totalBillableParityUnits },
+    { cat: "7a. CRM License", basis: `₹${crmCostPerFte.toLocaleString('en-IN')} / FTE`, v3Cost: crmCostPerFte * billableFte, v3Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits, v4Cost: crmCostPerFte * billableFte, v4Fte: (crmCostPerFte * billableFte) / totalBillableParityUnits },
+    { cat: "7b. Dialer Telephony", basis: `₹${dialerCostPerFte.toLocaleString('en-IN')} / FTE`, v3Cost: dialerCostPerFte * billableFte, v3Fte: (dialerCostPerFte * billableFte) / totalBillableParityUnits, v4Cost: dialerCostPerFte * billableFte, v4Fte: (dialerCostPerFte * billableFte) / totalBillableParityUnits },
     { cat: "8. Overheads & Transport", basis: `Across Agents & Support`, v3Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v3Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount))/totalBillableParityUnits, v4Cost: (overheadFte + otherFte) * (billableFte + totalSupportHeadcount), v4Fte: ((overheadFte + otherFte) * (billableFte + totalSupportHeadcount))/totalBillableParityUnits },
     { cat: "9. Location & Gov Subsidies", basis: `Emp Subsidy & Infra Subsidy`, v3Cost: -totalSubsidyAmount, v3Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits, v4Cost: -totalSubsidyAmount, v4Fte: totalSubsidyAmount === 0 ? 0 : -totalSubsidyAmount / totalBillableParityUnits },
     { cat: "TOTAL PROGRAM BASE COST (COGS)", basis: "Consolidated Expense", v3Cost: v3.projectMonthlyCost, v3Fte: v3.projectMonthlyCost / totalBillableParityUnits, v4Cost: v4.projectMonthlyCost, v4Fte: v4.projectMonthlyCost / totalBillableParityUnits, isTotal: true },
-    { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue across Effective FTEs`, v3Cost: v3.monthlyInvoiceTotal, v3Fte: v3.monthlyInvoiceTotal / effectiveBillableUnits, v4Cost: v4.monthlyInvoiceTotal, v4Fte: v4.monthlyInvoiceTotal / effectiveBillableUnits, isFinal: true }
+    { cat: "TOTAL MONTHLY INVOICING", basis: `Uniform Parity Revenue`, v3Cost: v3.monthlyInvoiceTotal, v3Fte: v3.monthlyInvoiceTotal / effectiveBillableUnits, v4Cost: v4.monthlyInvoiceTotal, v4Fte: v4.monthlyInvoiceTotal / effectiveBillableUnits, isFinal: true }
   ];
 
   let costBreakupHtml = '';
-  costBreakupLines.forEach(row => {
+  storedBreakupLines.forEach(row => {
     let rowStyle = row.isFinal ? 'background:#ecfdf5; font-weight:800; border:2px solid #10b981; color:#065f46;' : (row.isTotal ? 'background:#f1f5f9; font-weight:700;' : '');
     let textStyle = row.v3Cost < 0 ? 'color:#dc2626;' : ''; 
-    
-    costBreakupHtml += `<tr style="${rowStyle}">
-      <td>${row.cat}</td>
-      <td style="font-size:12px; color:#475569;">${row.basis}</td>
-      <td style="${textStyle}">₹${Math.round(row.v3Cost).toLocaleString('en-IN')}</td>
-      <td>₹${Math.round(row.v3Fte).toLocaleString('en-IN')} / FTE</td>
-      <td style="color:#6d28d9; ${textStyle}">₹${Math.round(row.v4Cost).toLocaleString('en-IN')}</td>
-      <td style="color:#6d28d9;">₹${Math.round(row.v4Fte).toLocaleString('en-IN')} / FTE</td>
-    </tr>`;
+    costBreakupHtml += `<tr style="${rowStyle}"><td>${row.cat}</td><td style="font-size:12px; color:#475569;">${row.basis}</td>
+      <td style="${textStyle}">₹${Math.round(row.v3Cost).toLocaleString('en-IN')}</td><td>₹${Math.round(row.v3Fte).toLocaleString('en-IN')} / FTE</td>
+      <td style="color:#6d28d9; ${textStyle}">₹${Math.round(row.v4Cost).toLocaleString('en-IN')}</td><td style="color:#6d28d9;">₹${Math.round(row.v4Fte).toLocaleString('en-IN')} / FTE</td></tr>`;
   });
-  document.getElementById('completeCostBreakupTbody').innerHTML = costBreakupHtml;
+  if (document.getElementById('completeCostBreakupTbody')) {
+     document.getElementById('completeCostBreakupTbody').innerHTML = costBreakupHtml;
+  }
 
   const scenarioGMs = [0.12, 0.15, 0.18, 0.20, 0.25];
   let scenarioRows = '';
   scenarioGMs.forEach(gm => {
     const scV3Rate = effectiveBillableUnits > 0 ? (v3.projectMonthlyCost / (1 - gm)) / effectiveBillableUnits : 0;
     const scV4Rate = effectiveBillableUnits > 0 ? (v4.projectMonthlyCost / (1 - gm)) / effectiveBillableUnits : 0;
-    const scV4Margin = (scV4Rate * effectiveBillableUnits) * gm;
     const isCurrent = Math.abs(gm - targetGm) < 0.001;
-
     scenarioRows += `<tr style="${isCurrent ? 'font-weight:700; background:#ecfdf5;' : ''}">
       <td>${(gm * 100).toFixed(0)}% Margin ${isCurrent ? '(Active)' : ''}</td>
-      <td>₹${Math.round(scV3Rate).toLocaleString('en-IN')}</td>
-      <td style="color:#7c3aed; font-weight:700;">₹${Math.round(scV4Rate).toLocaleString('en-IN')}</td>
-      <td style="color:#166534;">₹${Math.round(scV4Margin).toLocaleString('en-IN')} / mo</td>
-    </tr>`;
+      <td>₹${Math.round(scV3Rate).toLocaleString('en-IN')}</td><td style="color:#7c3aed; font-weight:700;">₹${Math.round(scV4Rate).toLocaleString('en-IN')}</td>
+      <td style="color:#166534;">₹${Math.round(scV4Rate * effectiveBillableUnits * gm).toLocaleString('en-IN')} / mo</td></tr>`;
   });
-  document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
+  if (document.getElementById('marginScenarioTable')) {
+     document.getElementById('marginScenarioTable').innerHTML = scenarioRows;
+  }
 
   currentCalcData = {
-    prospectName: document.getElementById('prospectName').value,
-    preparedBy: document.getElementById('preparedBy').value,
-    salesPerson: document.getElementById('salesPerson').value,
-    referredBy: document.getElementById('referredBy').value,
-    proposalNumber: document.getElementById('proposalNumber').value,
-    cityText: document.getElementById('quickCitySelect').value,
-    attritionPct: attrition * 100,
-    throughputPct: throughput * 100,
-    monthlyGrossHires,
-    workingModel: document.getElementById('workingModelSelect').value,
-    totalOffloadPercentage: (1 - totalCombinedSeatOffloadFactor) * 100,
-    shrinkagePct: shrinkagePct * 100,
-    billableFte,
-    billableSupportHeadcount,
-    totalBillableParityUnits,
-    effectiveBillableUnits,
-    totalPhysicalSeats,
-    v3, v4,
-    targetGm,
-    baseInfraPerSeat,
-    itPerSeat,
-    costPerHire,
-    recruitmentPerFte,
-    overheadFte,
-    otherFte,
-    crmCostPerFte,
-    totalAbsoluteHiringCost,
-    totalSupportMonthlyBudget,
-    totalSupportHeadcount,
-    totalCsaCount,
-    v4Extra,
-    v3Extra,
-    trainingLabel
+    prospectName: document.getElementById('prospectName')?.value,
+    preparedBy: document.getElementById('preparedBy')?.value,
+    salesPerson: document.getElementById('salesPerson')?.value,
+    referredBy: document.getElementById('referredBy')?.value,
+    proposalNumber: document.getElementById('proposalNumber')?.value,
+    cityText: document.getElementById('quickCitySelect')?.value,
+    attritionPct: attrition * 100, throughputPct: throughput * 100, monthlyGrossHires,
+    workingModel,
+    totalOffloadPercentage: (1 - totalCombinedSeatOffloadFactor) * 100, shrinkagePct: shrinkagePct * 100,
+    billableFte, billableSupportHeadcount, totalBillableParityUnits, effectiveBillableUnits, totalPhysicalSeats, v3, v4, targetGm
   };
 }
 
-// EMAIL GENERATION 
-function openEmailModal(type) {
-  if (!checkAllRequiredFields()) return;
-
+function buildExportTemplate(title, isEmail) {
   const d = currentCalcData;
-  if (!d.billableFte) return;
-
   const gmPct = (d.targetGm * 100).toFixed(0);
-  let subject = "";
-  let bodyHtml = "";
-
-  const tableStyle = 'width:100%; border-collapse:collapse; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; font-size:12.5px; margin:12px 0; border:1px solid #cbd5e1;';
-  const thStyle = 'border:1px solid #cbd5e1; padding:8px 10px; background:#f1f5f9; color:#0f172a; text-align:left; font-weight:700;';
-  const tdStyle = 'border:1px solid #cbd5e1; padding:7px 10px; text-align:left; color:#1e293b;';
+  const tbStyle = 'width:100%; border-collapse:collapse; font-size:12.5px; margin:12px 0; border:1px solid #cbd5e1;';
+  const thStyle = 'border:1px solid #cbd5e1; padding:8px 10px; background:#f1f5f9; text-align:left; font-weight:700;';
+  const tdStyle = 'border:1px solid #cbd5e1; padding:7px 10px; text-align:left;';
   const totalTdStyle = 'border:1px solid #cbd5e1; padding:8px 10px; text-align:left; background:#ecfdf5; font-weight:700; color:#166534;';
 
-  if (type === 'mgmt') {
-    subject = `[APPROVAL REQUEST] Commercial Cost Sheet & Parity Rate Proposal - ${d.prospectName} [${d.proposalNumber}] - Sales: ${d.salesPerson}`;
-    
-    bodyHtml = `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">` +
-      `<p>Dear Management & Finance Team,</p>` +
-      `<p>Please review and approve the commercial costing and rate proposal structured for <strong>${d.prospectName}</strong> (Ref: <strong>${d.proposalNumber}</strong>).</p>` +
-      `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
-      `<strong>1. PROGRAM ARCHITECTURE & STAKEHOLDER ATTRIBUTION</strong>` +
-      `<ul>` +
-      `<li>Prospect / Client: <strong>${d.prospectName}</strong></li>` +
-      `<li>Prepared By: <strong>${d.preparedBy}</strong> | Sales Person: <strong>${d.salesPerson}</strong> | Referred By: <strong>${d.referredBy}</strong></li>` +
-      `<li>Proposal Reference ID: <strong>${d.proposalNumber}</strong></li>` +
-      `<li>Location: <strong>${d.cityText}</strong></li>` +
-      `<li>Operational Dynamic: <strong>${d.attritionPct.toFixed(1)}% Attrition | ${d.throughputPct.toFixed(1)}% Throughput (${d.monthlyGrossHires.toFixed(2)} Monthly Gross Hires)</strong></li>` +
-      `<li>Working Model: <strong>${d.workingModel === '7_days' ? '7 Days Working Model' : '6 Days Working Model'} (${d.totalOffloadPercentage.toFixed(1)}% Combined Seat Footprint Offload: ${d.shrinkagePct.toFixed(1)}% Shrinkage)</strong></li>` +
-      `<li>Billable Headcount Scope: <strong>${d.billableFte} Agent FTEs + ${d.billableSupportHeadcount.toFixed(2)} Billable Support FTEs = ${d.totalBillableParityUnits.toFixed(2)} Total Billable FTEs</strong></li>` +
-      `<li>Total Physical Workstations Required: <strong>${d.totalPhysicalSeats.toFixed(2)} Physical Workstations</strong> (Offload Adjusted)</li>` +
-      `<li>Commercial Model: <strong>Uniform Parity Billing</strong></li>` +
-      `</ul>` +
-      `<strong>2. ITEMIZED COST BREAKDOWN (MONTHLY)</strong>` +
-      `<table style="${tableStyle}">` +
-      `<thead><tr><th style="${thStyle}">Cost Component</th><th style="${thStyle}">Unit Basis</th><th style="${thStyle}">Monthly Total (V3)</th><th style="${thStyle}">Cost / Billable FTE</th></tr></thead>` +
-      `<tbody>` +
-      `<tr><td style="${tdStyle}">Agent Direct Salary (Base)</td><td style="${tdStyle}">₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')} CTC / mo</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.agentBaseSalaryTotal / d.billableFte).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">Training Buffer Allocation</td><td style="${tdStyle}">${d.trainingLabel}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v3.trainingBufferCost / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">Support Staff Hierarchy</td><td style="${tdStyle}">${d.totalSupportHeadcount.toFixed(2)} FTEs</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.totalSupportMonthlyBudget / d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">Facility Infrastructure</td><td style="${tdStyle}">₹${d.baseInfraPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.baseInfraPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.baseInfraPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">IT & Technology Assets</td><td style="${tdStyle}">₹${d.itPerSeat.toLocaleString('en-IN')} / seat × ${d.totalPhysicalSeats.toFixed(2)} seats</td><td style="${tdStyle}">₹${Math.round(d.itPerSeat * d.totalPhysicalSeats).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.itPerSeat * d.totalPhysicalSeats)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">CRM & Dialer Telephony</td><td style="${tdStyle}">₹${d.crmCostPerFte.toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round((d.crmCostPerFte * d.billableFte)/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `<tr><td style="${tdStyle}">Recruitment & Hiring Cost</td><td style="${tdStyle}">₹${d.costPerHire.toLocaleString('en-IN')} / hire (${d.monthlyGrossHires.toFixed(2)} hires)</td><td style="${tdStyle}">₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${d.recruitmentPerFte.toFixed(2)}</td></tr>` +
-      `<tr><td style="${tdStyle}">Operations & Admin Overheads</td><td style="${tdStyle}">₹${(d.overheadFte + d.otherFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount)).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(((d.overheadFte + d.otherFte) * (d.billableFte + d.totalSupportHeadcount))/d.totalBillableParityUnits).toLocaleString('en-IN')}</td></tr>` +
-      `</tbody>` +
-      `</table>` +
-      `<strong>3. COMMERCIAL PRICING & P&L SUMMARY (@ ${gmPct}% GROSS MARGIN)</strong>` +
-      `<table style="${tableStyle}">` +
-      `<thead><tr><th style="${thStyle}">Financial Metric</th><th style="${thStyle}">Versant 3 Proposal</th><th style="${thStyle}">Versant 4 Proposal</th></tr></thead>` +
-      `<tbody>` +
-      `<tr><td style="${tdStyle}"><strong>Uniform Parity Rate / FTE</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</td><td style="${totalTdStyle}">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</td></tr>` +
-      `<tr><td style="${tdStyle}"><strong>Total Monthly Invoicing</strong></td><td style="${tdStyle}">₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td style="${tdStyle}">₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
-      `<tr><td style="${tdStyle}"><strong>Monthly Gross Margin Realized</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td style="${totalTdStyle}">₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td></tr>` +
-      `<tr><td style="${tdStyle}"><strong>Annual Contract Value (ACV)</strong></td><td style="${tdStyle}">₹${Math.round(d.v3.acv).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(d.v4.acv).toLocaleString('en-IN')}</td></tr>` +
-      `</tbody>` +
-      `</table>` +
-      `<p>Kindly review and provide commercial sign-off.</p>` +
-      `<p>Best regards,<br><strong>${d.preparedBy}</strong><br>Commercial & Pricing Delivery</p></div>`;
-      
-    document.getElementById('modalTitle').innerText = "📧 Management Approval Email Draft (Tabular Format)";
-  } else {
-    subject = `Commercial Proposal & Pricing Schedule - ${d.prospectName} [${d.proposalNumber}]`;
-    
-    bodyHtml = `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">` +
-      `<p>Dear ${d.prospectName} Team,</p>` +
-      `<p>Thank you for the opportunity to partner with your organization. We are pleased to present our formal commercial proposal (Ref: <strong>${d.proposalNumber}</strong>) for the <strong>${d.effectiveBillableUnits.toFixed(2)} Billed FTE</strong> engagement in <strong>${d.cityText}</strong>.</p>` +
-      `<hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">` +
-      `<strong>1. PROGRAM SCOPE & RESOURCE DELIVERY</strong>` +
-      `<ul>` +
-      `<li>Client / Prospect: <strong>${d.prospectName}</strong></li>` +
-      `<li>Proposal Reference ID: <strong>${d.proposalNumber}</strong></li>` +
-      `<li>Key Account Manager / Sales Lead: <strong>${d.salesPerson}</strong></li>` +
-      `<li>Billed Resource Scope: <strong>${d.billableFte} Dedicated Agent FTEs</strong> + <strong>${d.billableSupportHeadcount.toFixed(2)} Dedicated Billable Support FTEs</strong> (Total <strong>${d.totalBillableParityUnits.toFixed(2)} Billable Parity Units</strong>)</li>` +
-      `<li>Operational Work Model: <strong>${d.workingModel === '7_days' ? '7 Days Operations Model' : '6 Days Standard Operations'}</strong></li>` +
-      `<li>Dedicated Workstations: <strong>${d.totalPhysicalSeats.toFixed(2)} dedicated operational workstations optimized for the program</strong></li>` +
-      `<li>Support Governance: Fully aligned Team Leaders, Quality Analysts, Assistant Manager, MIS Lead & Voice Trainer</li>` +
-      `<li>Facility Enablement: Ergonomic seating, dual power backup, high-speed leased line connectivity, managed IT hardware, and dedicated facility security</li>` +
-      `</ul>` +
-      `<strong>2. COMMERCIAL RATE SCHEDULE (UNIFORM PARITY PRICING)</strong>` +
-      `<table style="${tableStyle}">` +
-      `<thead><tr><th style="${thStyle}">Engagement Profile</th><th style="${thStyle}">Common Rate per Billable FTE</th><th style="${thStyle}">Total Monthly Invoicing</th></tr></thead>` +
-      `<tbody>` +
-      `<tr><td style="${tdStyle}"><strong>Option A: Versant Level 3</strong><br><span style="font-size:11px; color:#64748b;">Standard Voice / Chat Profile</span></td><td style="${totalTdStyle}">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
-      `<tr><td style="${tdStyle}"><strong>Option B: Versant Level 4</strong><br><span style="font-size:11px; color:#64748b;">Enhanced Global Voice Profile</span></td><td style="${totalTdStyle}">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>` +
-      `</tbody>` +
-      `</table>` +
-      `<strong>3. COMMERCIAL GOVERNANCE & STATUTORY TERMS</strong>` +
-      `<ul>` +
-      `<li>Pricing Inclusions: All agent salaries, dedicated billable and supervisory staff, facility seating, workstation IT, recruitment, and management overheads.</li>` +
-      `<li>Statutory Compliance: 100% compliant with Central Gazette minimum wage baselines, PF, ESIC, and statutory gratuity regulations.</li>` +
-      `<li>Taxes: Goods & Services Tax (GST) applicable at statutory rates (18%).</li>` +
-      `<li>Payment Terms: Net 30 days from date of invoice submission.</li>` +
-      `</ul>` +
-      `<p>We look forward to partnering with your team on this engagement.</p>` +
-      `<p>Warm regards,<br><strong>${d.salesPerson}</strong><br>Client Solutions & Commercial Delivery</p></div>`;
-      
-    document.getElementById('modalTitle').innerText = "💼 Client Commercial Proposal Email Draft (Tabular Schedule)";
-  }
+  let costBreakupTrs = '';
+  storedBreakupLines.forEach(row => {
+    let rs = row.isFinal ? 'background:#ecfdf5; font-weight:800; border:2px solid #10b981; color:#065f46;' : (row.isTotal ? 'background:#f1f5f9; font-weight:700;' : '');
+    let ts = row.v3Cost < 0 ? 'color:#dc2626;' : ''; 
+    costBreakupTrs += `<tr style="${rs}"><td style="${tdStyle}">${row.cat}</td><td style="${tdStyle}">${row.basis}</td>
+      <td style="${tdStyle}; ${ts}">₹${Math.round(row.v3Cost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(row.v3Fte).toLocaleString('en-IN')}</td>
+      <td style="${tdStyle}; ${ts}">₹${Math.round(row.v4Cost).toLocaleString('en-IN')}</td><td style="${tdStyle}">₹${Math.round(row.v4Fte).toLocaleString('en-IN')}</td></tr>`;
+  });
 
+  const bodyContent = `
+    <hr style="border:0; border-top:1px solid #cbd5e1; margin:14px 0;">
+    <strong>1. PROGRAM ARCHITECTURE & STAKEHOLDER ATTRIBUTION</strong>
+    <ul>
+      <li>Client / Prospect: <strong>${d.prospectName}</strong> (Ref: <strong>${d.proposalNumber}</strong>)</li>
+      <li>Sales Person: <strong>${d.salesPerson}</strong> | Prepared By: <strong>${d.preparedBy}</strong></li>
+      <li>Working Model: <strong>${d.workingModel === '7_days' ? '7 Days Model' : '6 Days Model'} (${d.totalOffloadPercentage.toFixed(1)}% Combined Seat Offload)</strong></li>
+      <li>Billable Headcount Scope: <strong>${d.billableFte} Agent FTEs + ${d.billableSupportHeadcount.toFixed(2)} Billable Support FTEs = ${d.totalBillableParityUnits.toFixed(2)} Total Billable FTEs</strong></li>
+      <li>Total Physical Workstations: <strong>${d.totalPhysicalSeats.toFixed(2)} Dedicated Workstations</strong></li>
+    </ul>
+    <strong>2. COMMERCIAL RATE SCHEDULE</strong>
+    <table style="${tbStyle}">
+      <thead><tr><th style="${thStyle}">Engagement Profile</th><th style="${thStyle}">Common Rate per Billable FTE</th><th style="${thStyle}">Total Monthly Invoicing</th></tr></thead>
+      <tbody>
+        <tr><td style="${tdStyle}"><strong>Option A: Versant Level 3</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>
+        <tr><td style="${tdStyle}"><strong>Option B: Versant Level 4</strong></td><td style="${totalTdStyle}">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / FTE</td><td style="${tdStyle}">₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td></tr>
+      </tbody>
+    </table>
+    <strong>3. DETAILED COST BREAKDOWN (MONTHLY @ ${gmPct}% GM)</strong>
+    <table style="${tbStyle}">
+      <thead><tr><th style="${thStyle}">Cost Component</th><th style="${thStyle}">Unit Basis</th><th style="${thStyle}">Total (V3)</th><th style="${thStyle}">Cost / FTE (V3)</th><th style="${thStyle}">Total (V4)</th><th style="${thStyle}">Cost / FTE (V4)</th></tr></thead>
+      <tbody>${costBreakupTrs}</tbody>
+    </table>`;
+
+  if (isEmail) {
+    return `<div style="font-family:Arial,sans-serif; color:#0f172a; line-height:1.5;">
+      <p>Dear ${title === 'mgmt' ? 'Management Team' : d.prospectName + ' Team'},</p>
+      <p>Please review the commercial costing and rate proposal structured for <strong>${d.prospectName}</strong>.</p>
+      ${bodyContent}
+      <p>Warm regards,<br><strong>${d.salesPerson}</strong><br>Commercial & Pricing Delivery</p></div>`;
+  } else {
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>body { font-family: sans-serif; padding: 36px; line-height: 1.5; color: #0f172a; max-width: 1080px; margin: 0 auto; }</style></head><body>
+      <h1 style="color:#0f2756; border-bottom:2px solid #0f2756; padding-bottom:10px;">Commercial Proposal: ${d.prospectName}</h1>
+      ${bodyContent}
+      </body></html>`;
+  }
+}
+
+function openEmailModal(type) {
+  if (!checkAllRequiredFields() || !currentCalcData.billableFte) return;
+  const subject = type === 'mgmt' ? `[APPROVAL REQUEST] Commercial Cost Sheet - ${currentCalcData.prospectName} [${currentCalcData.proposalNumber}]` : `Commercial Proposal - ${currentCalcData.prospectName} [${currentCalcData.proposalNumber}]`;
+  const bodyHtml = buildExportTemplate(type, true);
+  
+  document.getElementById('modalTitle').innerText = `📧 ${type === 'mgmt' ? 'Management Approval' : 'Client Commercial'} Email Draft`;
   document.getElementById('modalSubject').innerText = subject;
   document.getElementById('modalEmailBody').innerHTML = bodyHtml;
   window.currentEmailHtml = bodyHtml;
 
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = bodyHtml;
-  const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(tempDiv.innerText)}`;
-  document.getElementById('modalMailtoLink').href = mailtoUrl;
-
+  const tempDiv = document.createElement('div'); tempDiv.innerHTML = bodyHtml;
+  document.getElementById('modalMailtoLink').href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(tempDiv.innerText)}`;
   document.getElementById('emailModal').style.display = 'flex';
-}
-
-function closeEmailModal() {
-  document.getElementById('emailModal').style.display = 'none';
 }
 
 function copyEmailHtml() {
   const blob = new Blob([window.currentEmailHtml], { type: 'text/html' });
   const textBlob = new Blob([document.getElementById('modalEmailBody').innerText], { type: 'text/plain' });
-  const item = new ClipboardItem({
-    'text/html': blob,
-    'text/plain': textBlob
-  });
-
-  navigator.clipboard.write([item]).then(() => {
-    alert("✅ Formatted email with table borders copied successfully! Paste directly into Outlook/Gmail.");
-  }).catch(() => {
-    navigator.clipboard.writeText(document.getElementById('modalEmailBody').innerText).then(() => {
-      alert("✅ Text version copied to clipboard.");
-    });
-  });
+  navigator.clipboard.write([new ClipboardItem({'text/html': blob, 'text/plain': textBlob})]).then(() => alert("✅ Formatted email copied successfully!"));
 }
 
 function openSaveHtmlModal() {
   if (!checkAllRequiredFields()) return;
-  const cleanProspect = (currentCalcData.prospectName || 'Prospect').replace(/[^a-zA-Z0-9]/g, '_');
-  const defaultDocName = `Commercial_Proposal_${cleanProspect}_${currentCalcData.proposalNumber || 'PROP'}`;
-  document.getElementById('customProposalName').value = defaultDocName;
+  document.getElementById('customProposalName').value = `Commercial_Proposal_${currentCalcData.prospectName.replace(/[^a-zA-Z0-9]/g, '_')}_${currentCalcData.proposalNumber}`;
   document.getElementById('saveHtmlModal').style.display = 'flex';
 }
 
-function closeSaveHtmlModal() {
-  document.getElementById('saveHtmlModal').style.display = 'none';
-}
-
 function executeHtmlDownload() {
-  const d = currentCalcData;
-  let customTitle = document.getElementById('customProposalName').value.trim();
-  if (!customTitle) {
-    customTitle = `Commercial_Proposal_${d.prospectName}_${d.proposalNumber}`;
-  }
-  const cleanFileName = customTitle.replace(/[^a-zA-Z0-9_-]/g, '_') + '.html';
-  const gmPct = (d.targetGm * 100).toFixed(0);
-
-  let supportRowsHtml = '';
-  supportRoles.forEach(r => {
-    const span = parseFloat(r.span) || 0;
-    const ctc = parseFloat(r.ctc) || 0;
-    const ijpPct = Math.max(0, Math.min(100, parseFloat(r.ijpPct) || 0));
-    const effCtc = ctc * (1 - (0.30 * (ijpPct / 100)));
-    const count = span > 0 ? (d.totalCsaCount) / span : 0;
-    const cost = count * effCtc;
-    const ijpBadge = ijpPct > 0 ? `<br><span style="font-size:10px; color:#166534;">(${ijpPct}% IJP)</span>` : '';
-
-    supportRowsHtml += `<tr>
-      <td>${r.name}</td>
-      <td>1:${r.span}</td>
-      <td>₹${Math.round(effCtc).toLocaleString('en-IN')} ${ijpBadge}</td>
-      <td>${count.toFixed(2)}</td>
-      <td>₹${Math.round(cost).toLocaleString('en-IN')}</td>
-      <td>${r.billable === 'yes' ? '<span class="pill pill-success">Billable at Parity</span>' : '<span class="pill pill-neutral">Absorbed Overhead</span>'}</td>
-    </tr>`;
-  });
-
-  const htmlDocContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${customTitle}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 36px 20px; line-height: 1.5; }
-  .container { max-width: 1080px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 36px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07); }
-  .header { border-bottom: 2px solid #0f2756; padding-bottom: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
-  h1 { color: #0f2756; font-size: 24px; margin: 0 0 6px 0; }
-  .meta { color: #64748b; font-size: 13px; font-weight: 500; }
-  h2 { font-size: 16px; color: #0f2756; margin: 28px 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-  .grid-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
-  .summary-card { background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px; }
-  .summary-card.v4 { background: #faf5ff; border-color: #ddd6fe; }
-  .card-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; }
-  .card-value { font-size: 22px; font-weight: 800; color: #0f2756; margin: 6px 0 2px 0; }
-  .card-sub { font-size: 12px; color: #475569; }
-  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
-  th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
-  th { background: #f1f5f9; color: #1e293b; font-weight: 700; }
-  tr:nth-child(even) { background: #f8fafc; }
-  .highlight-row { background: #ecfdf5 !important; font-weight: 700; color: #166534; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
-  .pill-success { background: #dcfce7; color: #166534; }
-  .pill-neutral { background: #f1f5f9; color: #475569; }
-  .footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; text-align: center; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div>
-      <h1>${d.prospectName}</h1>
-      <div class="meta">Prepared By: <strong>${d.preparedBy}</strong> | Sales Person: <strong>${d.salesPerson}</strong> | Referred By: <strong>${d.referredBy}</strong></div>
-    </div>
-    <div style="text-align:right;">
-      <span class="pill pill-success">Uniform Rate Parity</span>
-      <div class="meta" style="margin-top:4px;">Ref: <strong>${d.proposalNumber}</strong> | Date: ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-    </div>
-  </div>
-
-  <div class="grid-summary">
-    <div class="summary-card">
-      <div class="card-label">Versant 3 (Baseline Voice)</div>
-      <div class="card-value">₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')}</div>
-      <div class="card-sub">Per Billable FTE / Month (@ ${gmPct}% GM)</div>
-    </div>
-
-    <div class="summary-card v4">
-      <div class="card-label">Versant 4 (Enhanced Voice)</div>
-      <div class="card-value" style="color:#6d28d9;">₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')}</div>
-      <div class="card-sub">Per Billable FTE / Month (@ ${gmPct}% GM)</div>
-    </div>
-
-    <div class="summary-card" style="background:#f0fdf4; border-color:#bbf7d0;">
-      <div class="card-label">Total Contract Scale</div>
-      <div class="card-value" style="color:#166534;">${d.effectiveBillableUnits.toFixed(2)} FTEs</div>
-      <div class="card-sub">Effective Billed Load</div>
-    </div>
-  </div>
-
-  <h2>1. Program Sizing & Operational Architecture</h2>
-  <table>
-    <tr><th>Parameter</th><th>Value</th><th>Parameter</th><th>Value</th></tr>
-    <tr><td>Prospect / Client</td><td><strong>${d.prospectName}</strong></td><td>Proposal Reference ID</td><td><strong>${d.proposalNumber}</strong></td></tr>
-    <tr><td>Prepared By</td><td>${d.preparedBy}</td><td>Sales Person / Lead</td><td>${d.salesPerson}</td></tr>
-    <tr><td>Referred By</td><td>${d.referredBy}</td><td>Operational Working Model</td><td>${d.workingModel === '7_days' ? '7-Day Operations (-14% Seat Offload)' : '6-Day Standard Operations'}</td></tr>
-    <tr><td>Location & Tier</td><td>${d.cityText}</td><td>Total Physical Workstations</td><td>${d.totalPhysicalSeats.toFixed(2)} Dedicated Workstations</td></tr>
-    <tr><td>Monthly Attrition Rate</td><td>${d.attritionPct.toFixed(1)}%</td><td>Training Throughput</td><td>${d.throughputPct.toFixed(1)}%</td></tr>
-    <tr><td>Monthly Gross Hires</td><td>${d.monthlyGrossHires.toFixed(2)} Hires / mo</td><td>Total Monthly Sourcing Budget</td><td>₹${Math.round(d.totalAbsoluteHiringCost).toLocaleString('en-IN')} / mo (₹${d.recruitmentPerFte.toFixed(0)}/FTE)</td></tr>
-    <tr><td>Agent Workstation Footprint</td><td>${d.totalPhysicalSeats.toFixed(2)} Workstations</td><td>Total Combined Seat Offload</td><td>${d.totalOffloadPercentage.toFixed(1)}% (${d.shrinkagePct.toFixed(1)}% Shrinkage)</td></tr>
-  </table>
-
-  <h2>2. Support Staff Hierarchy & Alignment</h2>
-  <table>
-    <thead><tr><th>Role Name</th><th>Span (1:X)</th><th>Monthly CTC</th><th>FTE Count</th><th>Monthly Cost</th><th>Billing Status</th></tr></thead>
-    <tbody>${supportRowsHtml}</tbody>
-  </table>
-
-  <h2>3. Itemized Commercial Cost & Billing Comparison</h2>
-  <table>
-    <thead>
-      <tr><th>Commercial Line Item</th><th>Versant 3 Proposal</th><th>Versant 4 Proposal</th><th>Delta (V4 - V3)</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Agent Effective Monthly CTC</td><td>₹${Math.round(d.v3.agentCtc).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.agentCtc).toLocaleString('en-IN')}</td><td>+₹${Math.round(d.v4Extra).toLocaleString('en-IN')}</td></tr>
-      <tr><td>Agent Base Salary Total</td><td>₹${Math.round(d.v3.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.agentBaseSalaryTotal).toLocaleString('en-IN')}</td><td>-</td></tr>
-      <tr><td>Training Buffer Cost</td><td>₹${Math.round(d.v3.trainingBufferCost).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.trainingBufferCost).toLocaleString('en-IN')}</td><td>-</td></tr>
-      <tr><td>Support Staff Allocation</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.totalSupportMonthlyBudget).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
-      <tr><td>Facility Infra & IT Cost (Loaded)</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>₹${Math.round((d.baseInfraPerSeat + d.itPerSeat) * d.totalPhysicalSeats).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
-      <tr><td>CRM & Dialer Telephony</td><td>₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.crmCostPerFte * d.billableFte).toLocaleString('en-IN')} / mo</td><td>-</td></tr>
-      <tr><td>Target Gross Margin (%)</td><td>${gmPct}%</td><td>${gmPct}%</td><td>-</td></tr>
-      <tr class="highlight-row"><td><strong>FINAL COMMON RATE / BILLABLE FTE</strong></td><td><strong>₹${Math.round(d.v3.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>₹${Math.round(d.v4.billedRateFte).toLocaleString('en-IN')} / mo</strong></td><td><strong>+₹${Math.round(d.v4.billedRateFte - d.v3.billedRateFte).toLocaleString('en-IN')}</strong></td></tr>
-      <tr><td><strong>Total Monthly Invoicing</strong></td><td>₹${Math.round(d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyInvoiceTotal).toLocaleString('en-IN')} / mo</td><td>+₹${Math.round(d.v4.monthlyInvoiceTotal - d.v3.monthlyInvoiceTotal).toLocaleString('en-IN')}</td></tr>
-      <tr class="highlight-row"><td><strong>Monthly Gross Margin Realized</strong></td><td>₹${Math.round(d.v3.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td>₹${Math.round(d.v4.monthlyGrossMargin).toLocaleString('en-IN')} / mo</td><td>+₹${Math.round(d.v4.monthlyGrossMargin - d.v3.monthlyGrossMargin).toLocaleString('en-IN')}</td></tr>
-      <tr><td><strong>Annual Contract Value (ACV)</strong></td><td>₹${Math.round(d.v3.acv).toLocaleString('en-IN')}</td><td>₹${Math.round(d.v4.acv).toLocaleString('en-IN')}</td><td>+₹${Math.round(d.v4.acv - d.v3.acv).toLocaleString('en-IN')}</td></tr>
-    </tbody>
-  </table>
-
-  <div class="footer">Generated via Commercial Seat Rate &amp; Uniform Parity Billing Calculator</div>
-</div>
-</body>
-</html>`;
-
-  const blob = new Blob([htmlDocContent], { type: 'text/html;charset=utf-8' });
+  const cleanFileName = document.getElementById('customProposalName').value.trim().replace(/[^a-zA-Z0-9_-]/g, '_') + '.html';
+  const blob = new Blob([buildExportTemplate(cleanFileName, false)], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.href = url;
-  downloadAnchor.download = cleanFileName;
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  downloadAnchor.remove();
-  URL.revokeObjectURL(url);
-
-  closeSaveHtmlModal();
-  alert(`✅ Commercial proposal #${d.proposalNumber} successfully saved as: ${cleanFileName}`);
+  const a = document.createElement('a'); a.href = url; a.download = cleanFileName;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  closeModal('saveHtmlModal'); alert(`✅ Proposal saved as: ${cleanFileName}`);
 }
 
-window.onload = function() {
-  generateNewProposalNumber();
-  applyCityCosts(); 
-};
+window.onload = function() { generateNewProposalNumber(); applyCityCosts(); };
 </script>
 </body>
 </html>
